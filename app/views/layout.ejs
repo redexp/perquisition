@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><%= __(title || 'appName') %></title>
+
+    <% prependStyles([
+        'lib/font-awesome/css/font-awesome.min.css',
+        'lib/bootstrap/bootstrap.min.css'
+    ]) %>
+    <%- renderStyles() %>
+</head>
+<body>
+
+<%- body %>
+
+<% prependScripts([
+    'lib/define-module-name/define-module-name.min.js',
+    ['lib/jquery/dist/jquery.min.js', 'jquery'],
+    ['lib/declarative-view/declarative-view.js', 'view'],
+    'lib/utils/utils.js',
+    ['lib/noty/lib/noty.js', 'noty'],
+    'lib/notify/notify.js',
+    'lib/ajax/ajax.js',
+    'lib/dispatcher/dispatcher.js',
+    'lib/store/store.js',
+    'lib/lang/lang.js',
+    'lib/serverData/serverData.js'
+]) %>
+
+<%- renderScripts() %>
+
+</body>
+</html>

@@ -1,0 +1,32 @@
+{
+  "name": "component-composer",
+  "version": "1.0.1",
+  "description": "Composer of visual components",
+  "main": "component-composer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/redexp/component-composer.git"
+  },
+  "keywords": [
+    "composer",
+    "components",
+    "elements"
+  ],
+  "author": "Sergii Kliuchnyk",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/redexp/component-composer/issues"
+  },
+  "homepage": "https://github.com/redexp/component-composer#readme",
+  "dependencies": {
+    "declarative-view": "1.*"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-replace": "^0.6.1",
+    "gulp-uglifyjs": "^0.6.2"
+  }
+}

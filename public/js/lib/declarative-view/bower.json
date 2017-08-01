@@ -1,0 +1,34 @@
+{
+  "name": "declarative-view",
+  "main": "declarative-view.js",
+  "version": "1.5.0",
+  "homepage": "https://github.com/redexp/declarative-view",
+  "authors": [
+    "Sergii Kliuchnyk"
+  ],
+  "description": "View class based on jQuery with declarative configuration",
+  "keywords": [
+    "view",
+    "jquery",
+    "declarative"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "libs",
+    "tests"
+  ],
+  "devDependencies": {
+    "jquery": "^3.2.1",
+    "mocha": "^3.4.2",
+    "chai": "^4.0.1",
+    "chai-jquery": "^2.0.1",
+    "sinon": "^2.3.2",
+    "sinon-chai": "^2.10.0",
+    "define-module-name": "^1.9.2"
+  },
+  "scripts": {
+    "install-sinon": "cd libs/sinon && npm install"
+  }
+}

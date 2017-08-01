@@ -1,0 +1,33 @@
+{
+  "name": "component-composer",
+  "version": "1.0.1",
+  "description": "Composer of visual components",
+  "main": "component-composer.js",
+  "authors": [
+    "Sergii Kliuchnyk <redexp@ukr.net> (https://github.com/redexp)"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "composer",
+    "components",
+    "elements"
+  ],
+  "homepage": "https://github.com/redexp/component-composer",
+  "private": false,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "libs",
+    "tests",
+    "examples"
+  ],
+  "dependencies": {
+    "declarative-view": "1.*",
+    "jquery": "^3.2.1"
+  },
+  "devDependencies": {
+    "font-awesome": "fontawesome#^4.7.0",
+    "define-module-name": "^1.9.2",
+    "bootstrap": "^3.3.7"
+  }
+}

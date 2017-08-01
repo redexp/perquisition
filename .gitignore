@@ -1,0 +1,4 @@
+.idea/
+node_modules/
+public/js/cache/*.js
+public/js/cache/*.json
