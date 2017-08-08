@@ -34,10 +34,10 @@ function pathToScript(path, prefix) {
 	var script = {};
 
 	if (typeof path === 'string') {
-		script.src = prefix + path;
+		script.src = joinPath(prefix, path);
 	}
 	else if (typeof path === 'object') {
-		script.src = prefix + path[0];
+		script.src = joinPath(prefix, path[0]);
 
 		if (path[1]) {
 			script.defineName = path[1];
@@ -45,4 +45,8 @@ function pathToScript(path, prefix) {
 	}
 
 	return script;
+}
+
+function joinPath(prefix, path) {
+	return path.charAt(0) === '/' ? path : prefix + path;
 }

@@ -1,10 +1,12 @@
+var queue = require('app/db/lib/queue');
+
 module.exports = {
 	up: function (db) {
-		return [
+		return queue(db.sequelize, 'query', [
 			`CREATE TABLE public."session" 
 			(
 				sid VARCHAR(32) NOT NULL,
-				expire TIMESTAMP NOT NULL,
+				expires TIMESTAMP NOT NULL,
 				data TEXT
 			)`,
 
@@ -20,21 +22,13 @@ module.exports = {
 			)`,
 
 			`CREATE UNIQUE INDEX user_username_uindex ON public."user" (username)`,
-		].reduce(function (p, query) {
-			return p.then(function () {
-				return db.sequelize.query(query);
-			});
-		}, Promise.resolve());
+		]);
 	},
 
 	down: function (db) {
-		return [
+		return queue(db, 'dropTable', [
 			'session',
 			'user'
-		].reduce(function (p, table) {
-			return p.then(function () {
-				return db.dropTable(table);
-			});
-		}, Promise.resolve());
+		]);
 	}
 };

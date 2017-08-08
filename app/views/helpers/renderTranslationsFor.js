@@ -16,7 +16,7 @@ module.exports = function (req, res) {
 		var cachePath = app.PUBLIC_DIR + '/js/cache/' + hash + '.json';
 
 		if (fs.existsSync(cachePath)) {
-			return `<script type="application/json" id="${id || 'translations'}">${fs.readFileSync(cachePath).toString()}</script>`;
+			return `<script type="application/json" id="${id || 'translations'}-json">${fs.readFileSync(cachePath).toString()}</script>`;
 		}
 
 		var path = app.PUBLIC_DIR + '/js/' + dir;

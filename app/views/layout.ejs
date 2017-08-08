@@ -5,8 +5,11 @@
     <title><%= __(title || 'appName') %></title>
 
     <% prependStyles([
-        'lib/font-awesome/css/font-awesome.min.css',
-        'lib/bootstrap/bootstrap.min.css'
+        'lib/font-awesome/css/font-awesome.css',
+        'lib/bootstrap/bootstrap.min.css',
+        'lib/bootstrap/bootstrap.min.css',
+        '/js/lib/noty/lib/noty.css',
+        'main.css'
     ]) %>
     <%- renderStyles() %>
 </head>
@@ -19,6 +22,7 @@
     ['lib/jquery/dist/jquery.min.js', 'jquery'],
     ['lib/declarative-view/declarative-view.js', 'view'],
     'lib/utils/utils.js',
+    'lib/sprintf/sprintf.js',
     ['lib/noty/lib/noty.js', 'noty'],
     'lib/notify/notify.js',
     'lib/ajax/ajax.js',
@@ -27,6 +31,8 @@
     'lib/lang/lang.js',
     'lib/serverData/serverData.js'
 ]) %>
+
+<%- renderServerData() %>
 
 <%- renderScripts() %>
 

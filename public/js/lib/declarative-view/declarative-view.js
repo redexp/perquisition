@@ -413,18 +413,28 @@
 			this.parent = options.parent;
 		}
 
-		this.data = extendPrototypeProp({object: this, prop: 'data', deep: false});
-		this.ui = extendPrototypeProp({object: this, prop: 'ui', deep: false});
-		this.template = extendPrototypeProp({object: this, prop: 'template', deep: true});
+		if (options.wrappers) {
+			var wrappers = options.wrappers;
 
+			if (_DEV_) {
+				if (wrappers.sources.length !== wrappers.targets.length) throw new Error('Number of sources and targets should be equal');
+			}
+
+			this.wrappers.sources = [].concat(wrappers.sources);
+			this.wrappers.targets = [].concat(wrappers.targets);
+		}
+
+		this.data = extendPrototypeProp({object: this, prop: 'data', deep: false});
 		if (options.data) {
 			extend(this.data, options.data);
 		}
 
+		this.ui = extendPrototypeProp({object: this, prop: 'ui', deep: false});
 		if (options.ui) {
 			extend(this.ui, options.ui);
 		}
 
+		this.template = extendPrototypeProp({object: this, prop: 'template', deep: true});
 		if (options.template) {
 			extendDeep(this.template, options.template);
 		}
@@ -527,14 +537,23 @@
 				index = this.wrappers.sources.indexOf(source);
 
 			if (index === -1) {
+				var wrapper = this.wrapper(source, [prop]);
+				if (!wrapper) return;
+				this.wrappers.targets.push(wrapper);
 				index = this.wrappers.sources.push(source) - 1;
-				this.wrappers.targets.push(this.wrapper(source, [prop]));
 			}
 
 			return this.wrappers.targets[index];
 		},
 
+		modelOf: function (source) {
+			var index = this.wrappers.sources.indexOf(source);
+			return this.wrappers.targets[index];
+		},
+
 		wrapper: function (item, path) {
+			if (!item || typeof item !== 'object') return;
+
 			var Wrapper = item instanceof Array ? ViewArrayWrapper : ViewObjectWrapper;
 
 			return new Wrapper(this, path, item);
@@ -788,7 +807,8 @@
 		tpl.detach();
 
 		list.views = list.views || {};
-		list.views[selector] = views;
+		view.views = view.views || {};
+		list.views[selector] = view.views[selector] = views;
 
 		view.listenOn(list, 'add', add);
 		view.listenOn(list, 'remove', remove);
@@ -817,17 +837,33 @@
 				ViewClass = DeclarativeView;
 			}
 
-			if (ViewClass && options.template) {
-				ViewClass = ViewClass.extend({
-					template: options.template
-				});
-			}
-
 			if (ViewClass) {
+				var data = {},
+					wrappers = null;
+
+				if (options.viewProp) {
+					data[options.viewProp] = item;
+
+					if (typeof item === 'object' && item !== null) {
+						wrappers = {
+							sources: [item],
+							targets: [list.modelOf(item)]
+						};
+					}
+				}
+				else if (typeof item === 'object' && item !== null) {
+					extend(data, item);
+				}
+				else {
+					data.value = item;
+				}
+
 				itemView = new ViewClass({
 					node: tpl.clone(),
 					parent: view,
-					data: typeof item !== 'object' ? {value: item} : extend({}, item)
+					data: data,
+					wrappers: wrappers,
+					template: options.template
 				});
 			}
 
@@ -1050,8 +1086,10 @@
 				index = this.view.wrappers.sources.indexOf(source);
 
 			if (index === -1) {
+				var wrapper = this.view.wrapper(source, this.path.concat(prop));
+				if (!wrapper) return;
+				this.view.wrappers.targets.push(wrapper);
 				index = this.view.wrappers.sources.push(source) - 1;
-				this.view.wrappers.targets.push(this.view.wrapper(source, this.path.concat(prop)));
 			}
 
 			return this.view.wrappers.targets[index];
@@ -1288,6 +1326,10 @@
 	}
 
 	extendClass(ViewArrayWrapper, ArrayWrapper, ModelMixin);
+
+	ViewArrayWrapper.prototype.modelOf = function (source) {
+		return this.model(this.indexOf(source));
+	};
 
 	function ViewsList() {
 		ArrayWrapper.apply(this, arguments);

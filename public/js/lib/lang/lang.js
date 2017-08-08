@@ -1,13 +1,15 @@
 define('lang', [
-	'serverData'
+	'serverData',
+	'sprintf'
 ], function (
-	serverData
+	serverData,
+	sprintf
 ) {
 
 	var cache = {};
 
-	return function (key, id) {
-		id = id || 'translations';
+	return function (key) {
+		var id = 'translations';
 
 		var translations = cache[id];
 
@@ -15,6 +17,12 @@ define('lang', [
 			translations = cache[id] = serverData(id);
 		}
 
-		return translations.hasOwnProperty(key) ? translations[key] : key;
+		key = translations.hasOwnProperty(key) ? translations[key] : key;
+
+		if (arguments.length > 1) {
+			key = sprintf(key, Array.prototype.slice.call(arguments, 1));
+		}
+
+		return key;
 	};
 });

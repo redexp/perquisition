@@ -43,3 +43,5 @@ db.execute = function (query, type) {
 };
 
 module.exports = db;
+
+require('./relations');

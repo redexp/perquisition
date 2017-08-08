@@ -25,6 +25,7 @@
   "dependencies": {
     "bcrypt": "^1.0.2",
     "body-parser": "^1.17.2",
+    "connect-redis": "^3.3.0",
     "connect-session-sequelize": "^4.1.0",
     "cookie-parser": "^1.4.3",
     "dont-sniff-mimetype": "^1.0.0",
@@ -39,6 +40,7 @@
     "passport-local": "^1.0.0",
     "pg": "^7.0.2",
     "pg-pool": "^2.0.1",
+    "redis": "^2.7.1",
     "sequelize": "^4.4.2",
     "squel": "^5.11.1",
     "uuid": "^3.1.0",

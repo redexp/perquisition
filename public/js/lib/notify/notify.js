@@ -4,7 +4,7 @@ define('notify', [
 	'utils',
 	'jquery'
 ], function (
-	toastr,
+	Noty,
 	__,
     _,
 	$
@@ -39,7 +39,7 @@ define('notify', [
 		return showMessage(text, {
 			type: 'success',
 			args: _.rest(arguments),
-			hideDuration: 100
+			timeout: 4000
 		});
 	}
 
@@ -47,8 +47,7 @@ define('notify', [
 		return showMessage(text, {
 			type: 'error',
 			args: _.rest(arguments),
-			timeOut: 10000,
-			hideDuration: 100
+			timeout: 10000
 		});
 	}
 
@@ -68,16 +67,18 @@ define('notify', [
 	}
 
 	function toast(message, ops) {
-		var el = toastr[ops.type](message, ops.title || null, ops);
+		var item = new Noty({
+			type: ops.type,
+			text: message,
+			timeout: ops.timeout,
+			animation: {
+				close: null
+			}
+		});
 
-		if (ops.image) {
-			el.css({
-				'backgroundImage': 'url("' + ops.image +'")',
-				'backgroundSize': '28px'
-			});
-		}
+		item.show();
 
-		return el;
+		return item;
 	}
 
 	function popup(message, ops) {

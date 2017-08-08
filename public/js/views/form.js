@@ -14,13 +14,28 @@ define('views/form', [
 		constructor: Form,
 
 		ui: {
-			form: '@root'
+			form: '@root',
+			submit: '[data-submit], [type="submit"]'
 		},
 
 		data: function () {
 			return {
+				state: 'close',
 				errors: []
 			};
+		},
+
+		open: function (params) {
+			this.context = params.context;
+			this.callbacks.save = params.save;
+
+			this.set('state', 'open');
+			this.trigger('open', params);
+		},
+
+		close: function () {
+			this.set('state', 'close');
+			this.trigger('close');
 		},
 
 		submit: function (e) {
@@ -53,20 +68,69 @@ define('views/form', [
 		save: function (data) {
 			data = data || this.getValues();
 
+			this.set('state', 'saving');
 			this.trigger('save', data);
-			this.callCallback('save', data);
+
+			var save = this.callbacks.save;
+
+			if (!save) return;
+
+			var form = this;
+
+			if (save.length === 2) {
+				save(data, function () {
+					form.close();
+				});
+			}
+			else {
+				save(data);
+				form.close();
+			}
 		},
 
 		callCallback: function (name) {
-			if (this.callbacks.hasOwnProperty(name)) {
+			if (this.callbacks[name] && this.callbacks.hasOwnProperty(name)) {
 				this.callbacks[name].apply(this, Array.prototype.slice.call(arguments, 1));
 			}
 		},
 
+		propValueTemplateOf: function (modelName) {
+			var tpl = {};
+			var props = this.get(modelName);
+
+			for (var prop in props) {
+				if (!props.hasOwnProperty(prop)) continue;
+
+				tpl['[name="' + prop + '"]'] = {
+					prop: {
+						'value': '@' + modelName + '.' + prop
+					}
+				};
+			}
+
+			return tpl;
+		},
+
 		template: {
+			'@root': {
+				attr: {
+					'data-form-state': '@state'
+				}
+			},
+
 			'@form': {
 				on: {
 					'submit': 'submit'
+				}
+			},
+
+			'@submit': {
+				prop: {
+					'disabled': {
+						'@state': function (state) {
+							return state === 'saving';
+						}
+					}
 				}
 			}
 		}

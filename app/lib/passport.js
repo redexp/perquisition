@@ -25,7 +25,7 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(id, done) {
-	User.getById(id)
+	User.getFromCache(id)
 		.then(function (user) {
 		    done(null, user || false);
 		})

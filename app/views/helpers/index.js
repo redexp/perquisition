@@ -12,6 +12,7 @@ module.exports = function (req, res, next) {
 	require('./styles')(req, res);
 	require('./scripts')(req, res);
 	require('./renderTranslationsFor')(req, res);
+	require('./serverData')(req, res);
 
 	next();
 };

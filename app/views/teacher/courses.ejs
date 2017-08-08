@@ -1,0 +1,59 @@
+<% layout('layout') %>
+
+<% appendStyles([
+    'teacher/index.css'
+]) %>
+
+<% appendScripts([
+	'lib/bootstrap/transition.js',
+	'lib/bootstrap/dropdown.js',
+	'lib/bootstrap/modal.js',
+	'views/form.js',
+	'views/modal-form.js',
+    'teacher/courses/**/*.js'
+]) %>
+
+<%- renderTranslationsFor('teacher/courses') %>
+
+<div id="courses-list" class="courses">
+    <div data-list class="courses-list list-group">
+        <div class="course list-group-item">
+            <div data-title class="course-title"></div>
+            <div class="course-toolbar">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                        <%= __('actions') %> <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <li><a data-edit href="#"><%= __('edit_course') %></a></li>
+                        <li><a data-link href="/teacher/course/:id/questions"><%= __('edit_questions') %></a></li>
+                        <li><a data-link href="/teacher/course/:id/reports"><%= __('reports') %></a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a data-remove href="#"><%= __('delete') %></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button data-add-course class="btn btn-success"><%= __('add_course') %></button>
+</div>
+
+<div id="course-form" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"><%= __('add_course') %></h4>
+            </div>
+            <form class="modal-body">
+                <div class="form-group">
+                    <label><%= __('course_title') %></label>
+                    <input name="title" type="text" class="form-control"/>
+                </div>
+
+                <button data-submit type="submit" class="btn btn-primary"><span><%= __('save') %></span><i class="fa fa-circle-o-notch fa-spin"></i></button>
+                <button data-cancel type="button" class="btn btn-default"><%= __('cancel') %></button>
+            </form>
+        </div>
+    </div>
+</div>

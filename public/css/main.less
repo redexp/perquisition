@@ -1,0 +1,19 @@
+[data-form-state] button[data-submit] {
+    position: relative;
+
+    i {
+        display: none;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 12px;
+    }
+}
+[data-form-state="saving"] button[data-submit] {
+    i {
+        display: inline-block;
+    }
+    span {
+        visibility: hidden;
+    }
+}

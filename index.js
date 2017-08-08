@@ -15,7 +15,7 @@ app.use(require('cookie-parser')());
 app.use(require('express').static(app.PUBLIC_DIR));
 
 var session = require('express-session'),
-	SequelizeSession = require('connect-session-sequelize')(session.Store);
+	RedisSession = require('connect-redis')(session);
 
 var db = require('app/db');
 require('app/db/models/session');
@@ -25,10 +25,7 @@ app.use(session({
 	secret: app.IS_DEV ? '2156215kjlqsado@#$%' : require('uuid').v4(),
 	resave: false,
 	saveUninitialized: false,
-	store: new SequelizeSession({
-		db: db,
-		table: 'session'
-	})
+	store: new RedisSession()
 }));
 
 app.use(require('app/lib/passport').initialize());

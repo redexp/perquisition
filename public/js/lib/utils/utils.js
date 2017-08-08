@@ -20,6 +20,6 @@ define('utils', [], function () {
 			n = 1;
 		}
 
-		return Array.prototype.slice(arr, n);
+		return Array.prototype.slice.call(arr, n);
 	}
 });
