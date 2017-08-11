@@ -16,11 +16,28 @@ Course.findByUser = function (user) {
 	});
 };
 
-Course.findUserCourse = function (user, id) {
+Course.findUserCourse = function (course, user, perms) {
+	if (typeof course === 'object') {
+		course = course.id;
+	}
+
+	if (typeof user === 'object') {
+		user = user.id;
+	}
+
+	var permissions = {};
+
+	for (var name in perms) {
+		if (!perms.hasOwnProperty(name)) continue;
+
+		permissions['*,' + name] = perms[name] ? 'true' : 'false';
+		permissions[user + ',' + name] = perms[name] ? 'true' : 'false';
+	}
+
 	return Course.findOne({
 		where: {
-			id: id,
-			user_id: user.id
+			id: course,
+			users_permissions: permissions
 		}
 	});
 };

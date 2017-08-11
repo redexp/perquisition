@@ -2,7 +2,8 @@ define('utils', [], function () {
 
 	return {
 		extend: extend,
-		rest: rest
+		rest: rest,
+		map: map
 	};
 
 	function extend(target, source) {
@@ -21,5 +22,20 @@ define('utils', [], function () {
 		}
 
 		return Array.prototype.slice.call(arr, n);
+	}
+
+	function map(obj, cb) {
+		if (obj instanceof Array) {
+			return obj.map(cb);
+		}
+		else {
+			var arr = [];
+			for (var prop in obj) {
+				if (!obj.hasOwnProperty(prop)) continue;
+
+				arr.push(cb(obj[prop], prop));
+			}
+			return arr;
+		}
 	}
 });

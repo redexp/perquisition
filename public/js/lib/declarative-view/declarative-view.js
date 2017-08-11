@@ -601,6 +601,10 @@
 		on: onHelper,
 		once: onceHelper,
 		connect: connectHelper,
+		visible: visibleHelper,
+		show: visibleHelper,
+		hidden: hiddenHelper,
+		hide: hiddenHelper,
 		each: eachHelper
 	};
 
@@ -781,8 +785,14 @@
 				nodeProp = nodeProp[0];
 			}
 
+			var path = viewProp;
+
+			if (viewProp.indexOf('.') > -1) {
+				path = viewProp.split('.');
+			}
+
 			view.listenOn(node, event, function () {
-				view.set(viewProp, node.prop(nodeProp));
+				view.set(path, node.prop(nodeProp));
 			});
 
 			view.on('@' + viewProp, function (value) {
@@ -791,6 +801,30 @@
 				node.prop(nodeProp, value);
 			});
 		}
+	}
+
+	function visibleHelper(view, selector, options) {
+		convertHelperOptionsKeysToFirstArgument({
+			view: view,
+			node: view.find(selector),
+			method: 'css',
+			options: {'display': options},
+			wrapper: function (v) {
+				return v ? '' : 'none';
+			}
+		});
+	}
+
+	function hiddenHelper(view, selector, options) {
+		convertHelperOptionsKeysToFirstArgument({
+			view: view,
+			node: view.find(selector),
+			method: 'css',
+			options: {'display': options},
+			wrapper: function (v) {
+				return v ? 'none': '';
+			}
+		});
 	}
 
 	//endregion
@@ -992,6 +1026,10 @@
 			if (node.length === 0) {
 				console.warn('Empty result by selector "' + node.selector + '" in ' + params.view.constructor.name);
 			}
+		}
+
+		if (wrapper && typeof value !== 'function') {
+			value = wrapper(value);
 		}
 
 		if (typeof value === 'function') {
@@ -1380,29 +1418,37 @@
 		return Child;
 	}
 
-	function extend(target, source) {
-	    for (var name in source) {
-	    	if (!source.hasOwnProperty(name)) continue;
+	function extend(target) {
+		for (var i = 1, len = arguments.length; i < len; i++) {
+			var source = arguments[i];
 
-	    	target[name] = source[name];
+			for (var name in source) {
+				if (!source.hasOwnProperty(name)) continue;
+
+				target[name] = source[name];
+			}
 		}
 
 		return target;
 	}
 
-	function extendDeep(target, source) {
-		for (var name in source) {
-			if (!source.hasOwnProperty(name)) continue;
+	function extendDeep(target) {
+		for (var i = 1, len = arguments.length; i < len; i++) {
+			var source = arguments[i];
 
-			target[name] = (
-				target[name] &&
-				source[name] &&
-				typeof target[name] === 'object' &&
-				typeof source[name] === 'object'
-			) ?
-				extendDeep(target[name], source[name]) :
-				source[name]
-			;
+			for (var name in source) {
+				if (!source.hasOwnProperty(name)) continue;
+
+				target[name] = (
+					target[name] &&
+					source[name] &&
+					typeof target[name] === 'object' &&
+					typeof source[name] === 'object'
+				) ?
+					extendDeep(target[name], source[name]) :
+					source[name]
+				;
+			}
 		}
 
 		return target;

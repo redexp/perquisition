@@ -1,7 +1,9 @@
 define('views/courses-list', [
-	'view'
+	'view',
+	'store'
 ], function (
-	View
+	View,
+	store
 ) {
 
 	function CoursesList() {
@@ -50,10 +52,31 @@ define('views/courses-list', [
 
 	function Course() {
 		View.apply(this, arguments);
+
+		this.on('@course.users_permissions', function () {
+			this.set('read', this.hasPermission('read'));
+			this.set('write', this.hasPermission('write'));
+		});
 	}
 
 	View.extend({
 		constructor: Course,
+
+		data: {
+			course: null,
+			read: false,
+			write: false
+		},
+
+		hasPermission: function (name) {
+			var perms = this.get('course').users_permissions;
+			var id = store.get('user').id;
+
+			return !!(
+				(perms && perms['*'] && perms['*'][name]) ||
+				(perms && perms[id] && perms[id][name])
+			);
+		},
 
 		editCourse: function () {
 			this.parent.editCourse(this.data.course);
@@ -87,6 +110,12 @@ define('views/courses-list', [
 			'[data-remove]': {
 				on: {
 					'click': '!removeCourse'
+				}
+			},
+
+			'[data-write]': {
+				toggleClass: {
+					'hidden': '!@write'
 				}
 			}
 		}

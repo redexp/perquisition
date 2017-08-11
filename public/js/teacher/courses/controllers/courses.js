@@ -24,7 +24,7 @@ define('controllers/courses', [
 	courses.callbacks.addCourse = function () {
 		form.open({
 			save: function (data, done) {
-				ajax('/teacher/add-course', {course: data}, function (course) {
+				ajax('/teacher/course/create', {course: data}, function (course) {
 					courses.model('list').add(course);
 					done();
 				});
@@ -39,7 +39,7 @@ define('controllers/courses', [
 				data.id = course.id;
 				data.user_id = course.user_id;
 
-				ajax('/teacher/update-course', {course: data}, function () {
+				ajax('/teacher/course/update', {course: data}, function () {
 					courses.model('list').modelOf(course).set(data);
 					done();
 				});
@@ -48,8 +48,9 @@ define('controllers/courses', [
 	};
 
 	courses.callbacks.removeCourse = function (course) {
-		ajax('/teacher/remove-course', {id: course.id}, function () {
+		ajax('/teacher/course/delete', {id: course.id}, function () {
 			courses.model('list').remove(course);
 		});
 	};
+
 });

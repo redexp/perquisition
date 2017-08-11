@@ -42,4 +42,13 @@ User.getFromCache = function (id) {
 	;
 };
 
+User.findByIDs = function (ids) {
+	return User.findAll({
+		where: {
+			id: ids
+		},
+		order: [['id', 'ASC']]
+	});
+};
+
 module.exports = User;
