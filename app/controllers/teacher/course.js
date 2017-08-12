@@ -66,4 +66,21 @@ course.post('/delete', function (req, res) {
 	;
 });
 
+course.post('/users', function (req, res) {
+	var data = req.body;
+	var where = {};
+
+	if (data.name) {
+		where.name = {
+			$iLike: data.name + '%'
+		};
+	}
+
+	User.findAndCountAll({
+		where: where,
+		offset: data.offset,
+		limit: data.limit,
+	}).then(res.json, res.catch);
+});
+
 module.exports = course;

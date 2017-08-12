@@ -3,7 +3,8 @@ define('utils', [], function () {
 	return {
 		extend: extend,
 		rest: rest,
-		map: map
+		map: map,
+		debounce: debounce
 	};
 
 	function extend(target, source) {
@@ -37,5 +38,27 @@ define('utils', [], function () {
 			}
 			return arr;
 		}
+	}
+
+	function debounce(wait, func) {
+		var context, args, timestamp, timeout;
+
+		var later = function () {
+			var last = Date.now() - timestamp;
+
+			if (last < wait && last >= 0) {
+				timeout = setTimeout(later, wait - last);
+			} else {
+				timeout = null;
+				func.apply(context, args);
+			}
+		};
+
+		return function () {
+			context = this;
+			args = arguments;
+			timestamp = Date.now();
+			if (!timeout) timeout = setTimeout(later, wait);
+		};
 	}
 });

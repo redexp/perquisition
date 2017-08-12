@@ -1,15 +1,19 @@
 define('views/course-form', [
 	'view',
 	'views/modal-form',
+	'views/autocompleter',
 	'serverData',
 	'utils',
-	'lang'
+	'lang',
+	'jquery'
 ], function (
 	View,
 	ModalForm,
+	Autocompleter,
 	serverData,
 	utils,
-	__
+	__,
+	$
 ) {
 
 	var users = serverData('users').reduce(function (hash, user) {
@@ -17,7 +21,23 @@ define('views/course-form', [
 		return hash;
 	}, {});
 
-	function CourseForm() {
+	function CourseForm(options) {
+		var form = this;
+
+		this.userNameAutocompleter = new Autocompleter({
+			node: $(options.node).find('[data-user_name_autocompleter]').detach(),
+			getList: function (data) {
+				return form.callbacks.getUserNameList({
+					name: data.value,
+					offset: data.offset,
+					limit: data.limit
+				});
+			},
+			getItemTitle: function (user) {
+				return user.name;
+			}
+		});
+
 		ModalForm.apply(this, arguments);
 
 		this.on('open', function (params) {
@@ -87,12 +107,30 @@ define('views/course-form', [
 	View.extend({
 		constructor: Permission,
 
+		ui: {
+			userNameInput: '[data-user_name_input]'
+		},
+
 		getUserName: function () {
 			return this.data.permission.id && (this.data.permission.id === '*' ? __('all') : users[this.data.permission.id].name);
 		},
 
 		removePermission: function () {
 			this.parent.removePermission(this.data.permission);
+		},
+
+		openAutocompleter: function () {
+			var permission = this.model('permission');
+
+			this.parent.userNameAutocompleter.open({
+				input: this.ui.userNameInput,
+				change: function (user) {
+					permission.set('id', user.id);
+				},
+				clear: function () {
+					permission.set('id', '');
+				}
+			});
 		},
 
 		template: {
@@ -105,10 +143,8 @@ define('views/course-form', [
 			},
 
 			'[data-user_name_input]': {
-				prop: {
-					'value': function () {
-						return this.getUserName();
-					}
+				on: {
+					'click': 'openAutocompleter'
 				},
 
 				visible: '!=permission.id'

@@ -2,12 +2,14 @@ define('controllers/courses', [
 	'views/courses-list',
 	'views/course-form',
 	'serverData',
-	'ajax'
+	'ajax',
+	'lang'
 ], function (
 	CoursesList,
 	CourseForm,
 	serverData,
-	ajax
+	ajax,
+	__
 ) {
 
 	var courses = new CoursesList({
@@ -50,6 +52,20 @@ define('controllers/courses', [
 	courses.callbacks.removeCourse = function (course) {
 		ajax('/teacher/course/delete', {id: course.id}, function () {
 			courses.model('list').remove(course);
+		});
+	};
+
+	form.callbacks.getUserNameList = function (data) {
+		return ajax('/teacher/course/users', data).then(function (list) {
+			if (data.name === '') {
+				if (data.offset === 0) {
+					list.rows = [{id: '*', name: __('all_permission')}].concat(list.rows.slice(0, 9));
+				}
+
+				list.count += 1;
+			}
+
+			return list;
 		});
 	};
 

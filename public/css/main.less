@@ -17,3 +17,34 @@
         visibility: hidden;
     }
 }
+
+.autocompleter {
+    position: relative;
+    height: 0;
+    z-index: 100;
+
+    .autocompleter-dropdown {
+        position: absolute;
+        top: 0;
+        left: 0;
+
+        .list-group {
+            margin: 0;
+
+            a {
+                white-space: nowrap;
+                text-decoration: none;
+            }
+        }
+        .pagination {
+            display: flex;
+            margin-top: 5px;
+
+            a {
+                text-decoration: none;
+                min-width: 39px;
+                text-align: center;
+            }
+        }
+    }
+}

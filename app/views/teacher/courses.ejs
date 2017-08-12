@@ -10,6 +10,8 @@
 	'lib/bootstrap/modal.js',
 	'views/form.js',
 	'views/modal-form.js',
+	'views/paginator.js',
+	'views/autocompleter.js',
     'teacher/courses/**/*.js'
 ]) %>
 
@@ -67,6 +69,17 @@
                             <td>
                                 <span data-user_name></span>
                                 <input data-user_name_input type="text" class="form-control input-sm"/>
+
+                                <div data-user_name_autocompleter class="autocompleter">
+                                    <div class="autocompleter-dropdown">
+                                        <div data-list class="list-group">
+                                            <a href="#" class="list-group-item"></a>
+                                        </div>
+                                        <ul data-paginator class="pagination">
+                                            <li><a data-page-number href="#"></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
                             </td>
                             <td class="text-center">
                                 <input data-permission="read" type="checkbox"/>
