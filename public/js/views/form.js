@@ -8,6 +8,9 @@ define('views/form', [
 		View.apply(this, arguments);
 
 		this.callbacks = {};
+
+		this.listenOn(this.model('errors'), 'add', this.showError);
+		this.listenOn(this.model('errors'), 'remove', this.hideError);
 	}
 
 	View.extend({
@@ -29,6 +32,8 @@ define('views/form', [
 			this.context = params.context;
 			this.callbacks.save = params.save;
 
+			this.model('errors').removeAll();
+
 			this.set('state', 'open');
 			this.trigger('open', params);
 		},
@@ -38,13 +43,14 @@ define('views/form', [
 			this.trigger('close');
 		},
 
-		submit: function (e) {
-			e.preventDefault();
-
+		submit: function () {
 			var data = this.getValues();
 
 			if (this.validate(data)) {
 				this.save(data);
+			}
+			else {
+				this.set('state', 'error');
 			}
 		},
 
@@ -78,8 +84,13 @@ define('views/form', [
 			var form = this;
 
 			if (save.length === 2) {
-				save(data, function () {
-					form.close();
+				save(data, function (err) {
+					if (err) {
+						form.set('state', 'error');
+					}
+					else {
+						form.close();
+					}
 				});
 			}
 			else {
@@ -92,6 +103,24 @@ define('views/form', [
 			if (this.callbacks[name] && this.callbacks.hasOwnProperty(name)) {
 				this.callbacks[name].apply(this, Array.prototype.slice.call(arguments, 1));
 			}
+		},
+
+		showError: function (error) {
+			var node = typeof error === 'string' ? error : error.node;
+			if (typeof node === 'string') {
+				node = this.find(node);
+			}
+
+			node.addClass('error visible');
+		},
+
+		hideError: function (error) {
+			var node = typeof error === 'string' ? error : error.node;
+			if (typeof node === 'string') {
+				node = this.find(node);
+			}
+
+			node.removeClass('visible');
 		},
 
 		propValueTemplateOf: function (modelName) {
@@ -120,7 +149,7 @@ define('views/form', [
 
 			'@form': {
 				on: {
-					'submit': 'submit'
+					'submit': '!submit'
 				}
 			},
 
@@ -129,6 +158,14 @@ define('views/form', [
 					'disabled': {
 						'@state': function (state) {
 							return state === 'saving';
+						}
+					}
+				},
+
+				toggleClass: {
+					'btn-danger': {
+						'@state': function (state) {
+							return state === 'error';
 						}
 					}
 				}

@@ -13,7 +13,7 @@ app.use(function (req, res, next) {
 	res.catch = function (err) {
 		res.status(500);
 		if (req.xhr && err.message) {
-			res.json({message: err.message});
+			res.json({message: res.locals.__(err.message)});
 		}
 		else {
 			res.send();

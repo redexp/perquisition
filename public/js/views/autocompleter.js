@@ -36,6 +36,7 @@ define('views/autocompleter', [
 		data: function () {
 			return {
 				visible: false,
+				empty: false,
 				list: [],
 				item: null,
 				defaultValue: '',
@@ -47,6 +48,7 @@ define('views/autocompleter', [
 		},
 
 		ui: {
+			empty: '[data-empty]',
 			list: '[data-list]'
 		},
 
@@ -114,6 +116,7 @@ define('views/autocompleter', [
 				}
 
 				view.set('visible', true);
+				view.set('empty', view.data.list.length === 0);
 
 				return list;
 			});
@@ -156,6 +159,10 @@ define('views/autocompleter', [
 					view: Item,
 					viewProp: 'item'
 				}
+			},
+
+			'@empty': {
+				visible: '@empty'
 			}
 		}
 	});

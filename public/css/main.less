@@ -1,7 +1,11 @@
 [data-form-state] button[data-submit] {
     position: relative;
 
-    i {
+    .submit-error {
+        display: none;
+    }
+
+    .submit-loading {
         display: none;
         position: absolute;
         left: 0;
@@ -10,11 +14,19 @@
     }
 }
 [data-form-state="saving"] button[data-submit] {
-    i {
+    .submit-loading {
         display: inline-block;
     }
-    span {
+    .submit-default {
         visibility: hidden;
+    }
+}
+[data-form-state="error"] button[data-submit] {
+    .submit-default {
+        display: none;
+    }
+    .submit-error {
+        display: inline;
     }
 }
 
@@ -46,5 +58,12 @@
                 text-align: center;
             }
         }
+    }
+}
+
+.error {
+    display: none;
+    &.visible {
+        display: block;
     }
 }

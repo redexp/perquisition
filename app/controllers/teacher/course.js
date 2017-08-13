@@ -46,9 +46,7 @@ course.post('/update', function (req, res) {
 
 	Course.findUserCourse(data, req.user, {write: true})
 		.then(function (course) {
-			if (course.get('user_id') )
-
-				course.set(data);
+			course.set(data);
 			return course.save();
 		})
 		.then(res.json, res.catch)
@@ -73,6 +71,12 @@ course.post('/users', function (req, res) {
 	if (data.name) {
 		where.name = {
 			$iLike: data.name + '%'
+		};
+	}
+
+	if (data.exclude && data.exclude.length > 0) {
+		where.id = {
+			$notIn: data.exclude
 		};
 	}
 

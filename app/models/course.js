@@ -25,19 +25,32 @@ Course.findUserCourse = function (course, user, perms) {
 		user = user.id;
 	}
 
-	var permissions = {};
+	var permissions = [];
 
-	for (var name in perms) {
-		if (!perms.hasOwnProperty(name)) continue;
+	['*', user].forEach(function (id) {
+		var perm = {};
 
-		permissions['*,' + name] = perms[name] ? 'true' : 'false';
-		permissions[user + ',' + name] = perms[name] ? 'true' : 'false';
-	}
+		for (var name in perms) {
+			if (!perms.hasOwnProperty(name)) continue;
+
+			perm[id + ',' + name] = perms[name] ? 'true' : 'false';
+		}
+
+		permissions.push(perm);
+	});
 
 	return Course.findOne({
 		where: {
 			id: course,
-			users_permissions: permissions
+			users_permissions: {
+				$or: permissions
+			}
 		}
+	}).then(function (course) {
+		if (!course) {
+			throw new Error('course_access_denied');
+		}
+
+		return course;
 	});
 };

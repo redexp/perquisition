@@ -21,6 +21,8 @@ define('views/course-form', [
 		return hash;
 	}, {});
 
+	users['*'] = {name: __('all_permission')};
+
 	function CourseForm(options) {
 		var form = this;
 
@@ -44,13 +46,48 @@ define('views/course-form', [
 			var course = params.course || CourseForm.prototype.data().course;
 			this.model('course').set(course);
 
-			this.model('users_permissions').reset(utils.map(course.users_permissions || {}, function (perm, id) {
+			var users_permissions = course.users_permissions || {};
+
+			var perms = utils.map(users_permissions, function (perm, id) {
 				return {
 					id: id,
+					name: users[id].name,
 					read: !!perm.read,
 					write: !!perm.write
 				};
-			}));
+			});
+
+			perms.sort(function (a, b) {
+				return a.id === '*' ? -1 : b.id === '*' ? 1 : a.id - b.id;
+			});
+
+			this.model('users_permissions').reset(perms);
+
+			var form = this;
+
+			setTimeout(function () {
+				form.find('[name="title"]').focus();
+			}, 200);
+		});
+
+		this.on('validate', function (data, errors) {
+			if (!data.title.trim()) {
+				errors.push('[data-user_name_required]');
+			}
+
+			this.views['[data-users_permissions]'].forEach(function (view) {
+				view.trigger('validate', view.data.permission, errors);
+			});
+		});
+
+		this.on('save', function (data) {
+			data.users_permissions = this.data.users_permissions.reduce(function (hash, item) {
+				hash[item.id] = {
+					read: item.read,
+					write: item.write
+				};
+				return hash;
+			}, {});
 		});
 	}
 
@@ -69,6 +106,7 @@ define('views/course-form', [
 		addPermission: function () {
 			this.model('users_permissions').add({
 				id: '',
+				name: '',
 				read: true,
 				write: false
 			});
@@ -102,6 +140,14 @@ define('views/course-form', [
 
 	function Permission() {
 		View.apply(this, arguments);
+
+		this.on('validate', function (data, errors) {
+			if (!data.id) {
+				errors.push({
+					node: this.node.find('[data-user_name_required]')
+				});
+			}
+		});
 	}
 
 	View.extend({
@@ -109,10 +155,6 @@ define('views/course-form', [
 
 		ui: {
 			userNameInput: '[data-user_name_input]'
-		},
-
-		getUserName: function () {
-			return this.data.permission.id && (this.data.permission.id === '*' ? __('all') : users[this.data.permission.id].name);
 		},
 
 		removePermission: function () {
@@ -135,10 +177,7 @@ define('views/course-form', [
 
 		template: {
 			'[data-user_name]': {
-				text: function () {
-					return this.getUserName();
-				},
-
+				text: '=permission.name',
 				visible: '=permission.id'
 			},
 
@@ -165,6 +204,9 @@ define('views/course-form', [
 			'[data-remove_permission]': {
 				on: {
 					'click': 'removePermission'
+				},
+				hidden: function () {
+					return this.data.permission.id === '*';
 				}
 			}
 		}

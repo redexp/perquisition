@@ -1,12 +1,14 @@
 define('controllers/courses', [
 	'views/courses-list',
 	'views/course-form',
+	'store',
 	'serverData',
 	'ajax',
 	'lang'
 ], function (
 	CoursesList,
 	CourseForm,
+	store,
 	serverData,
 	ajax,
 	__
@@ -24,12 +26,28 @@ define('controllers/courses', [
 	});
 
 	courses.callbacks.addCourse = function () {
+		var course = {
+			title: '',
+			users_permissions: {
+				'*': {
+					read: true,
+					write: false
+				}
+			}
+		};
+
+		course.users_permissions[store.get('user').id] = {
+			read: true,
+			write: true
+		};
+
 		form.open({
+			course: course,
 			save: function (data, done) {
 				ajax('/teacher/course/create', {course: data}, function (course) {
 					courses.model('list').add(course);
 					done();
-				});
+				}).catch(done);
 			}
 		});
 	};
@@ -44,29 +62,30 @@ define('controllers/courses', [
 				ajax('/teacher/course/update', {course: data}, function () {
 					courses.model('list').modelOf(course).set(data);
 					done();
-				});
+				}).catch(done);
 			}
 		});
 	};
 
 	courses.callbacks.removeCourse = function (course) {
+		if (!confirm(__('confirm_delete'))) return;
+
 		ajax('/teacher/course/delete', {id: course.id}, function () {
 			courses.model('list').remove(course);
 		});
 	};
 
 	form.callbacks.getUserNameList = function (data) {
-		return ajax('/teacher/course/users', data).then(function (list) {
-			if (data.name === '') {
-				if (data.offset === 0) {
-					list.rows = [{id: '*', name: __('all_permission')}].concat(list.rows.slice(0, 9));
-				}
+		data.exclude = form.get('users_permissions')
+			.filter(function (item) {
+				return !!item.id && item.id !== '*';
+			})
+			.map(function (item) {
+				return item.id;
+			})
+		;
 
-				list.count += 1;
-			}
-
-			return list;
-		});
+		return ajax('/teacher/course/users', data);
 	};
 
 });
