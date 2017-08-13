@@ -72,7 +72,7 @@ define('views/course-form', [
 
 		this.on('validate', function (data, errors) {
 			if (!data.title.trim()) {
-				errors.push('[data-user_name_required]');
+				errors.push('[data-course_title_required]');
 			}
 
 			this.views['[data-users_permissions]'].forEach(function (view) {
@@ -167,7 +167,10 @@ define('views/course-form', [
 			this.parent.userNameAutocompleter.open({
 				input: this.ui.userNameInput,
 				change: function (user) {
-					permission.set('id', user.id);
+					permission.set({
+						id: user.id,
+						name: user.name
+					});
 				},
 				clear: function () {
 					permission.set('id', '');
@@ -204,9 +207,6 @@ define('views/course-form', [
 			'[data-remove_permission]': {
 				on: {
 					'click': 'removePermission'
-				},
-				hidden: function () {
-					return this.data.permission.id === '*';
 				}
 			}
 		}

@@ -81,6 +81,7 @@ course.post('/users', function (req, res) {
 	}
 
 	User.findAndCountAll({
+		attributes: ['id', 'name'],
 		where: where,
 		offset: data.offset,
 		limit: data.limit,
