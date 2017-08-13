@@ -85,7 +85,7 @@ define('controllers/courses', [
 			})
 		;
 
-		return ajax('/teacher/course/users', data);
+		return ajax('/teacher/course/teachers', data);
 	};
 
 });

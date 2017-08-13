@@ -64,9 +64,14 @@ course.post('/delete', function (req, res) {
 	;
 });
 
-course.post('/users', function (req, res) {
+course.post('/teachers', function (req, res) {
 	var data = req.body;
-	var where = {};
+
+	var where = {
+		roles: {
+			$contains: ['teacher']
+		}
+	};
 
 	if (data.name) {
 		where.name = {
