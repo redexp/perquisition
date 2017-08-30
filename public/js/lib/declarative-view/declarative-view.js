@@ -62,16 +62,13 @@
 
 				if (event.charAt(0) === '=') {
 					eq = true;
-					prop = event.slice(1);
 				}
 				else if (event.charAt(0) === '@') {
 					a = true;
-					prop = event.slice(1);
-					event = 'set/' + prop;
 				}
 
-				if ((eq || a) && prop.indexOf('.') > -1) {
-					prop = prop.split('.');
+				if (eq || a) {
+					prop = event.slice(1).split('.');
 				}
 
 				if (not || prop) {
@@ -85,7 +82,7 @@
 						var args = [arg];
 
 						if (arguments.length > 0) {
-							args = args.concat(slice(arguments, prop && !not ? 1 : 0));
+							args = args.concat(slice(arguments, not || (prop && arguments[0] !== arg) ? 0 : 1));
 						}
 
 						callback.apply(context || view, args);
@@ -97,6 +94,19 @@
 				}
 
 				if (eq) return;
+
+				if (a) {
+					var model = modelByProp(view, prop);
+
+					if (view !== model) {
+						event = model instanceof ArrayWrapper ? 'change' : 'set/' + lastItem(prop);
+						view.listenOn(model, event, wrapper);
+						return;
+					}
+					else {
+						event = 'set/' + prop.join('.');
+					}
+				}
 
 				var callbacks = view.events[event];
 
@@ -110,10 +120,6 @@
 					callback: callback,
 					wrapper: wrapper
 				});
-
-				if (prop instanceof Array) {
-					view.listenOn(modelByProp(view, prop), 'set/' + lastItem(prop), wrapper);
-				}
 			});
 
 			return this;
@@ -551,6 +557,21 @@
 			return this.wrappers.targets[index];
 		},
 
+		assign: function (props) {
+			for (var prop in props) {
+				if (!props.hasOwnProperty(prop)) continue;
+
+				var value = props[prop];
+
+				if (value && typeof value === 'object') {
+					this.model(prop).assign(value);
+				}
+				else {
+					this.set(prop, value);
+				}
+			}
+		},
+
 		wrapper: function (item, path) {
 			if (!item || typeof item !== 'object') return;
 
@@ -840,7 +861,7 @@
 		var tpl = typeof tplSelector === 'string' && tplSelector.charAt(0) !== '<' ? root.find(tplSelector) : $(tplSelector);
 		tpl.detach();
 
-		list.views = list.views || {};
+		list.views = list.views || views;
 		view.views = view.views || {};
 		list.views[selector] = view.views[selector] = views;
 
@@ -1078,6 +1099,55 @@
 
 	//endregion
 
+	//region ====================== Model =========================================
+
+	var ModelMixin = {
+		model: function (prop) {
+			var source = this.get(prop),
+				index = this.view.wrappers.sources.indexOf(source);
+
+			if (index === -1) {
+				var wrapper = this.view.wrapper(source, this.path.concat(prop));
+				if (!wrapper) return;
+				this.view.wrappers.targets.push(wrapper);
+				index = this.view.wrappers.sources.push(source) - 1;
+			}
+
+			return this.view.wrappers.targets[index];
+		},
+
+		assign: DeclarativeView.prototype.assign,
+
+		clear: function () {
+			var index = this.view.wrappers.sources.indexOf(this.context);
+
+			if (index !== -1) {
+				var target = this.view.wrappers.targets[index];
+
+				this.view.stopListening(target);
+
+				this.view.wrappers.sources.splice(index, 1);
+				this.view.wrappers.targets.splice(index, 1);
+			}
+
+			var props = this.get();
+
+			for (var prop in props) {
+				if (!props.hasOwnProperty(prop)) continue;
+
+				index = this.view.wrappers.sources.indexOf(props[prop]);
+
+				if (index !== -1) {
+					this.view.wrappers.targets[index].clear();
+				}
+			}
+
+			this.view = this.path = this.context = null;
+		}
+	};
+
+	//endregion
+
 	//region ====================== ObjectWrapper =================================
 
 	function ObjectWrapper(context) {
@@ -1117,49 +1187,6 @@
 			return this;
 		}
 	});
-
-	var ModelMixin = {
-		model: function (prop) {
-			var source = this.get(prop),
-				index = this.view.wrappers.sources.indexOf(source);
-
-			if (index === -1) {
-				var wrapper = this.view.wrapper(source, this.path.concat(prop));
-				if (!wrapper) return;
-				this.view.wrappers.targets.push(wrapper);
-				index = this.view.wrappers.sources.push(source) - 1;
-			}
-
-			return this.view.wrappers.targets[index];
-		},
-
-		clear: function () {
-			var index = this.view.wrappers.sources.indexOf(this.context);
-
-			if (index !== -1) {
-				var target = this.view.wrappers.targets[index];
-
-				this.view.stopListening(target);
-
-				this.view.wrappers.sources.splice(index, 1);
-				this.view.wrappers.targets.splice(index, 1);
-			}
-
-			var props = this.get();
-
-			for (var prop in props) {
-				if (!props.hasOwnProperty(prop)) continue;
-
-				index = this.view.wrappers.sources.indexOf(props[prop]);
-
-				if (index !== -1) {
-					this.view.wrappers.targets[index].clear();
-				}
-			}
-
-			this.view = this.path = this.context = null;
-		}
-	};
 
 	function ViewObjectWrapper(view, path, context) {
 		ObjectWrapper.call(this, context);
@@ -1235,6 +1262,7 @@
 				}
 
 				this.trigger('add', item, itemIndex);
+				this.trigger('change', 'add', item, itemIndex);
 			}
 
 			return this;
@@ -1289,6 +1317,7 @@
 			}
 
 			this.trigger('remove', item, index);
+			this.trigger('change', 'remove', item, index);
 
 			return this;
 		},
@@ -1335,12 +1364,14 @@
 			this.context.splice(oldIndex, 1);
 			this.context.splice(newIndex, 0, item);
 			this.trigger('move', item, newIndex, oldIndex);
+			this.trigger('change', 'move', item, newIndex, oldIndex);
 			return this;
 		},
 
 		sort: function (callback) {
 			this.context.sort(callback);
 			this.trigger('sort');
+			this.trigger('change', 'sort');
 			return this;
 		},
 
@@ -1363,11 +1394,19 @@
 		});
 	}
 
-	extendClass(ViewArrayWrapper, ArrayWrapper, ModelMixin);
+	extendClass(ViewArrayWrapper, ArrayWrapper, extend({}, ModelMixin, {
+		modelOf: function (source) {
+			return this.model(this.indexOf(source));
+		},
 
-	ViewArrayWrapper.prototype.modelOf = function (source) {
-		return this.model(this.indexOf(source));
-	};
+		assign: function (items) {
+			return this.reset(items);
+		}
+	}));
+
+	//endregion
+
+	//region ====================== ViewsList =====================================
 
 	function ViewsList() {
 		ArrayWrapper.apply(this, arguments);
@@ -1378,6 +1417,13 @@
 			var arr = this.context;
 			for (var i = 0, len = arr.length; i < len; i++) {
 				if (arr[i].context === context) return i;
+			}
+		},
+
+		viewOf: function (context) {
+			var arr = this.context;
+			for (var i = 0, len = arr.length; i < len; i++) {
+				if (arr[i].context === context) return arr[i];
 			}
 		}
 	});
@@ -1578,6 +1624,14 @@
 		for (var i = 0, len = prop.length - 1; i < len; i++) {
 			model = model.model(prop[i]);
 		}
+
+		var last = lastItem(prop),
+			value = model.get(last);
+
+		if (value && typeof value === 'object') {
+			model = model.model(last);
+		}
+
 		return model;
 	}
 

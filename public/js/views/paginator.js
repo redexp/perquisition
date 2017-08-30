@@ -90,6 +90,7 @@ define('views/paginator', [
 			if (page === this.data.dots) return;
 
 			this.set('page', page);
+			this.trigger('page', page);
 		},
 
 		template: {

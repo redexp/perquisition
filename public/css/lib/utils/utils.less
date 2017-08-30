@@ -1,0 +1,43 @@
+.toolbared {
+    display: flex;
+    flex-direction: row;
+
+    > *:first-child {
+        flex-grow: 1;
+    }
+}
+
+.box {
+    border: 1px solid #e2e2e2;
+}
+
+.m {
+    margin: 15px;
+
+    &-t {
+        margin-top: 15px;
+    }
+    &-r {
+        margin-right: 15px;
+        &-sm {
+            margin-right: 10px;
+        }
+    }
+    &-b {
+        margin-bottom: 15px;
+        &-sm {
+            margin-bottom: 10px;
+        }
+    }
+    &-none {
+        margin: 0;
+    }
+}
+
+.p {
+    padding: 15px;
+
+    &-sm {
+        padding: 10px;
+    }
+}

@@ -15,6 +15,9 @@ define('views/autocompleter', [
 		this.callbacks.getList = options.getList;
 		this.callbacks.getItemTitle = options.getItemTitle;
 
+		this.options = {};
+		this.options.titleProp = options.titleProp;
+
 		this.paginator = new Paginator({
 			node: this.find('[data-paginator]')
 		});
@@ -55,6 +58,8 @@ define('views/autocompleter', [
 		open: function (options) {
 			this.callbacks.change = options.change;
 			this.callbacks.clear = options.clear;
+
+			this.options.query = options.query;
 
 			if (this.input && this.input.get(0) === options.input.get(0)) return;
 
@@ -123,15 +128,27 @@ define('views/autocompleter', [
 		},
 
 		getList: function () {
-			return this.callbacks.getList({
-				value: this.data.value,
+			var query = {
 				offset: this.data.offset,
 				limit: this.data.limit
-			});
+			};
+
+			query[this.options.titleProp || 'value'] = this.data.value;
+
+			if (this.options.query) {
+				utils.extend(query, this.options.query);
+			}
+
+			return this.callbacks.getList(query);
 		},
 
 		getItemTitle: function (item) {
-			return this.callbacks.getItemTitle(item);
+			if (this.callbacks.getItemTitle) {
+				return this.callbacks.getItemTitle(item);
+			}
+			else if (this.options.titleProp) {
+				return item[this.options.titleProp];
+			}
 		},
 
 		selectItem: function (item) {

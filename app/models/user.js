@@ -1,4 +1,3 @@
-var crypt = require('bcrypt');
 var User = require('app/db/models/user');
 var redis = require('app/db/redis');
 
@@ -12,11 +11,11 @@ User.login = function (username, password) {
 		.then(function (user) {
 			if (!user) throw new Error('User not found');
 
-			if (!crypt.compareSync(password, user.get('password'))) throw new Error('Wrong user password');
+			if (!user.validatePassword(password)) throw new Error('Wrong user password');
 
 			return user;
 		})
-		;
+	;
 };
 
 User.getById = function (id) {
@@ -48,6 +47,36 @@ User.findByIDs = function (ids) {
 			id: ids
 		},
 		order: [['id', 'ASC']]
+	});
+};
+
+User.search = function (params) {
+	var where = {};
+
+	if (params.name) {
+		where.name = {
+			$iLike: '%' + params.name + '%'
+		};
+	}
+
+	if (params.roles && params.roles.length > 0) {
+		where.roles = {
+			$or: params.roles.map(function (role) {
+				return {
+					$contains: role
+				};
+			})
+		};
+	}
+
+	var method = params.hasOwnProperty('offset') || params.hasOwnProperty('limit') ? 'findAndCount' : 'findAll';
+
+	return User[method]({
+		attributes: {exclude: ['password']},
+		where: where,
+		offset: params.offset,
+		limit: params.limit,
+		order: [['name', 'ASC']]
 	});
 };
 

@@ -1,0 +1,60 @@
+[data-form-state] button[data-submit] {
+    position: relative;
+
+    .submit-error {
+        display: none;
+    }
+
+    .submit-loading {
+        display: none;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 12px;
+    }
+}
+[data-form-state="saving"] button[data-submit] {
+    .submit-loading {
+        display: inline-block;
+    }
+    .submit-default {
+        visibility: hidden;
+    }
+}
+[data-form-state="error"] button[data-submit] {
+    .submit-default {
+        display: none;
+    }
+    .submit-error {
+        display: inline;
+    }
+}
+
+.error {
+    display: none;
+    &.visible {
+        display: block;
+    }
+}
+
+.form-group {
+    > label {
+        font-weight: bold;
+    }
+
+    > label ~ .checkbox:nth-child(2) {
+        margin-top: 0;
+    }
+}
+
+.form-inline {
+    > .form-group {
+        margin-right: 10px;
+
+        .checkbox input {
+            position: relative;
+            top: 2px;
+            margin: 0;
+        }
+    }
+}
