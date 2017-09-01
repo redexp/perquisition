@@ -27,6 +27,8 @@ define('controllers/users', [
 	});
 
 	filter.callbacks.save = function (data, done) {
+		data.teams = true;
+
 		ajax('/admin/users/search', data, function (res) {
 			users.model('list').reset(res.rows);
 			filter.paginator.set('count', res.count);

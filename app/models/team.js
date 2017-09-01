@@ -1,4 +1,5 @@
 var Team = require('app/db/models/team');
+var omit = require('lodash/omit');
 
 Team.search = function (params) {
 	var where = {};
@@ -27,6 +28,10 @@ Team.search = function (params) {
 		limit: params.limit,
 		order: [['name', 'ASC']]
 	});
+};
+
+Team.prototype.toJSON = function () {
+	return omit(this.get(), ['user_team']);
 };
 
 module.exports = Team;

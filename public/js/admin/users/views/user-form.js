@@ -25,10 +25,16 @@ define('views/user-form', [
 
 		this.on('open', function (params) {
 			var user = params.user || UserForm.prototype.data().user;
-			this.model('user').assign(user);
-			this.set({
+			this.assign({
+				user: user,
 				password: '',
-				confirm_password: ''
+				confirm_password: '',
+				teachers_teams: user.teams.filter(function (team) {
+					return team.role === 'teacher';
+				}),
+				students_teams: user.teams.filter(function (team) {
+					return team.role === 'student';
+				})
 			});
 		});
 
@@ -60,6 +66,8 @@ define('views/user-form', [
 			if (this.data.password) {
 				data.password = this.data.password;
 			}
+
+			data.teams = [].concat(this.data.teachers_teams, this.data.students_teams);
 		});
 	}
 
@@ -72,7 +80,8 @@ define('views/user-form', [
 					id: '',
 					name: '',
 					username: '',
-					roles: []
+					roles: [],
+					teams: []
 				},
 				password: '',
 				confirm_password: '',
@@ -104,7 +113,6 @@ define('views/user-form', [
 		openTeamsAutocompleter: function (team) {
 			var list = this.getTeamArrayModel(team);
 
-			var model = list.modelOf(team);
 			var view = list.views.viewOf(team);
 
 			this.teamsAutocompleter.open({
@@ -119,11 +127,8 @@ define('views/user-form', [
 							return !!id;
 						})
 				},
-				change: function (data) {
-					model.set(data);
-				},
-				clear: function () {
-					model.set('id', null);
+				change: function (newTeam) {
+					list.replace(team, newTeam);
 				}
 			});
 		},
@@ -252,7 +257,7 @@ define('views/user-form', [
 		template: {
 			'[data-team_name]': {
 				text: '@team.name',
-				hidden: '!@team.id'
+				hidden: '!=team.id'
 			},
 
 			'[data-team_name_input]': {
@@ -260,7 +265,7 @@ define('views/user-form', [
 					'click': 'openAutocompleter'
 				},
 
-				visible: '!@team.id'
+				visible: '!=team.id'
 			},
 
 			'[data-remove_team]': {

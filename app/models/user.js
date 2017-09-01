@@ -1,5 +1,7 @@
 var User = require('app/db/models/user');
 var redis = require('app/db/redis');
+var crypt = require('bcrypt');
+var omit = require('lodash/omit');
 
 User.login = function (username, password) {
 	return User
@@ -52,6 +54,7 @@ User.findByIDs = function (ids) {
 
 User.search = function (params) {
 	var where = {};
+	var include = [];
 
 	if (params.name) {
 		where.name = {
@@ -69,15 +72,35 @@ User.search = function (params) {
 		};
 	}
 
+	if (params.teams) {
+		include.push('teams');
+	}
+
 	var method = params.hasOwnProperty('offset') || params.hasOwnProperty('limit') ? 'findAndCount' : 'findAll';
 
 	return User[method]({
-		attributes: {exclude: ['password']},
 		where: where,
+		include: include,
 		offset: params.offset,
 		limit: params.limit,
 		order: [['name', 'ASC']]
 	});
+};
+
+User.prototype.hasRole = function (role) {
+	return this.get('roles').indexOf(role) > -1;
+};
+
+User.prototype.validatePassword = function (password) {
+	return crypt.compareSync(password, this.password);
+};
+
+User.prototype.generatePassword = function (password) {
+	return crypt.hashSync(password, 10);
+};
+
+User.prototype.toJSON = function () {
+	return omit(this.get(), ['password']);
 };
 
 module.exports = User;

@@ -23,7 +23,24 @@ users.post('/update', function (req, res) {
 	var data = req.body;
 
 	User.getById(data.id).then(function (user) {
-		return user.set(data).save();
+		return user
+			.set(data)
+			.save()
+			.then(function (user) {
+				if (data.teams) {
+					return user
+						.setTeams(data.teams.map(function (team) {
+							return team.id;
+						}))
+						.then(function () {
+							return user;
+						})
+					;
+				}
+
+				return user;
+			})
+		;
 	}).then(res.json, res.catch);
 });
 
