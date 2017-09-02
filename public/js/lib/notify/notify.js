@@ -107,6 +107,7 @@ define('notify', [
 			text: __(message, _.rest(arguments)),
 			type: 'alert',
 			layout: 'center',
+			closeWith: [],
 			buttons: [
 				Noty.button(__('ok'), 'btn btn-success m-r-sm', d.resolve),
 				Noty.button(__('cancel'), 'btn btn-default', d.reject)
