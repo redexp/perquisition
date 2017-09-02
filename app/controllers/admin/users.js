@@ -1,6 +1,8 @@
 var users = require('express').Router();
 var User = require('app/models/user');
 
+module.exports = users;
+
 users.get('/', function (req, res) {
 	res.render('admin/users');
 });
@@ -16,32 +18,52 @@ users.post('/create', function (req, res) {
 
 	user.password = user.generatePassword(data.password);
 
-	user.save().then(res.json, res.catch);
+	user
+		.save()
+		.then(setTeams(data.teams))
+		.then(res.json, res.catch)
+	;
 });
 
 users.post('/update', function (req, res) {
 	var data = req.body;
 
-	User.getById(data.id).then(function (user) {
-		return user
-			.set(data)
-			.save()
-			.then(function (user) {
-				if (data.teams) {
-					return user
-						.setTeams(data.teams.map(function (team) {
-							return team.id;
-						}))
-						.then(function () {
-							return user;
-						})
-					;
-				}
-
-				return user;
-			})
-		;
-	}).then(res.json, res.catch);
+	User
+		.getById(data.id)
+		.then(function (user) {
+			return user
+				.set(data)
+				.save()
+				.then(setTeams(data.teams))
+			;
+		})
+		.then(res.json, res.catch)
+	;
 });
 
-module.exports = users;
+users.post('/delete', function (req, res) {
+	User
+		.getById(req.body.id)
+		.then(function (user) {
+			return user.destroy();
+		})
+		.then(res.json, res.catch)
+	;
+});
+
+function setTeams(teams) {
+	return function (user) {
+		if (teams) {
+			return user
+				.setTeams(teams.map(function (team) {
+					return team.id;
+				}))
+				.then(function () {
+					return user;
+				})
+			;
+		}
+
+		return user;
+	};
+}

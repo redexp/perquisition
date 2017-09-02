@@ -15,7 +15,8 @@ define('notify', [
 		popupGranted: false,
 		success: showSuccess,
 		error: showError,
-		close: close
+		close: close,
+		confirm: confirm
 	};
 
 	$(window)
@@ -95,6 +96,34 @@ define('notify', [
 		else if (message instanceof $) {
 			message.remove();
 		}
+	}
+
+	function confirm(message) {
+		var d = $.Deferred();
+
+		var overlay = $('<div class="overlay">').appendTo('body');
+
+		var dialog = new Noty({
+			text: __(message, _.rest(arguments)),
+			type: 'alert',
+			layout: 'center',
+			buttons: [
+				Noty.button(__('ok'), 'btn btn-success m-r-sm', d.resolve),
+				Noty.button(__('cancel'), 'btn btn-default', d.reject)
+			],
+			animation: {
+				close: null
+			}
+		}).show();
+
+		var p = d.promise();
+
+		p.always(function () {
+			dialog.close();
+			overlay.remove();
+		});
+
+		return p;
 	}
 
 });

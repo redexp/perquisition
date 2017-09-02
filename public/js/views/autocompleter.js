@@ -17,6 +17,8 @@ define('views/autocompleter', [
 
 		this.options = {};
 		this.options.titleProp = options.titleProp;
+		this.options.hiddenProp = options.hiddenProp;
+		this.options.asHint = options.asHint;
 
 		this.paginator = new Paginator({
 			node: this.find('[data-paginator]')
@@ -29,8 +31,52 @@ define('views/autocompleter', [
 			});
 		});
 
-		this.on('set/offset', this.updateList);
-		this.on('set/value open', utils.debounce(300, this.updateList));
+		this.on('set/visible', function (visible) {
+			if (!visible) {
+				this.set('left', 0);
+				this.node.detach();
+			}
+			else {
+				this.node.insertAfter(this.input);
+
+				var inp = this.input.get(0).getBoundingClientRect(),
+					dd = this.ui.dropdown.get(0).getBoundingClientRect();
+
+				this.set('left', inp.left - dd.left);
+			}
+		});
+		this.on('set/value', function (value) {
+			var item = this.data.item;
+			if (item && this.data.visible && value !== this.getItemTitle(item)) {
+				this.set('item', null);
+			}
+		});
+		this.on('open set/offset', this.updateList);
+		this.on('set/value', utils.debounce(300, function () {
+			if (this.data.visible) {
+				this.updateList();
+			}
+		}));
+		this.on('set/item', function (item) {
+			if (item === null) {
+				this.hidden && this.hidden.val('');
+			}
+			else {
+				this.input.val(this.getItemTitle(item));
+				this.hidden && this.hidden.val(this.getHiddenValue(item));
+			}
+		});
+
+		if (options.input) {
+			this.listenOn(options.input, 'focus', function () {
+				this.open({
+					input: options.input,
+					hidden: options.hidden
+				});
+			});
+		}
+
+		this.node.detach();
 	}
 
 	View.extend({
@@ -46,13 +92,15 @@ define('views/autocompleter', [
 				value: '',
 				page: 1,
 				offset: 0,
-				limit: 10
+				limit: 10,
+				left: 0
 			};
 		},
 
 		ui: {
-			empty: '[data-empty]',
-			list: '[data-list]'
+			dropdown: '[data-dropdown]',
+			list: '[data-list]',
+			empty: '[data-empty]'
 		},
 
 		open: function (options) {
@@ -61,15 +109,21 @@ define('views/autocompleter', [
 
 			this.options.query = options.query;
 
-			if (this.input && this.input.get(0) === options.input.get(0)) return;
+			if (
+				this.input &&
+				this.input.get(0) === options.input.get(0)
+			) {
+				this.node.insertAfter(this.input);
+				this.trigger('open');
+				return;
+			}
 
 			if (this.input) {
 				this.stopListening(this.input);
 			}
 
 			this.input = options.input;
-
-			this.node.insertAfter(this.input);
+			this.hidden = options.hidden;
 
 			this.set({
 				defaultValue: this.input.val(),
@@ -82,7 +136,7 @@ define('views/autocompleter', [
 				page: 1
 			});
 
-			this.listenOn(this.input, 'keyup', function () {
+			this.listenOn(this.input, 'keyup', function (e) {
 				this.set('value', this.input.val());
 			});
 
@@ -98,12 +152,10 @@ define('views/autocompleter', [
 		close: function () {
 			this.set('visible', false);
 			this.model('list').removeAll();
-			if (this.input) {
-				if (!this.data.item) {
-					this.input.val(this.data.defaultValue);
-				}
-				this.stopListening(this.input);
-				this.input = null;
+
+			if (!this.options.asHint && !this.data.item) {
+				this.set('value', this.data.defaultValue);
+				this.input.val(this.data.defaultValue);
 			}
 		},
 
@@ -151,22 +203,24 @@ define('views/autocompleter', [
 			}
 		},
 
-		selectItem: function (item) {
-			this.callbacks.change(item);
-			this.set('item', item);
-			this.input.val(this.getItemTitle(item));
-			this.close();
+		getHiddenValue: function (item) {
+			return item[this.options.hiddenProp];
 		},
 
-		focusInput: function () {
-			if (this.input) this.input.focus();
+		selectItem: function (item) {
+			this.set('item', item);
+			this.callbacks.change && this.callbacks.change(item);
+			this.close();
 		},
 
 		template: {
 			'@root': {
-				visible: '@visible',
-				on: {
-					'click': 'focusInput'
+				visible: '@visible'
+			},
+
+			'@dropdown': {
+				style: {
+					'left': '@left'
 				}
 			},
 

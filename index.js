@@ -6,13 +6,13 @@ app.set('views', 'app/views');
 app.set('view engine', 'ejs');
 app.disable('x-powered-by');
 
-app.use(require('app/views/helpers'));
 app.use(require('dont-sniff-mimetype')());
 app.use(require('frameguard')());
 app.use(require('x-xss-protection')());
 app.use(require('body-parser').json());
 app.use(require('cookie-parser')());
 app.use(require('express').static(app.PUBLIC_DIR));
+app.use(require('app/views/helpers'));
 
 var session = require('express-session'),
 	RedisSession = require('connect-redis')(session);

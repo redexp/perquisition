@@ -1,5 +1,6 @@
 var app = module.exports = require('express')();
 var path = require('path');
+var translateError = require('app/lib/translateError');
 
 app.config = require('app/config');
 app.IS_DEV = app.get('env') === 'development';
@@ -12,8 +13,8 @@ app.use(function (req, res, next) {
 	res.json = res.json.bind(res);
 	res.catch = function (err) {
 		res.status(500);
-		if (req.xhr && err.message) {
-			res.json({message: res.locals.__(err.message)});
+		if (req.xhr) {
+			res.json({message: translateError(req.lang, err)});
 		}
 		else {
 			res.send();

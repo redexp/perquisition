@@ -55,11 +55,19 @@ User.findByIDs = function (ids) {
 User.search = function (params) {
 	var where = {};
 	var include = [];
+	var teams = {association: 'teams'};
 
 	if (params.name) {
 		where.name = {
 			$iLike: '%' + params.name + '%'
 		};
+	}
+
+	if (params.name_or_username) {
+		where.$or = [
+			{name: {$iLike: '%' + params.name_or_username + '%'}},
+			{username: {$iLike: '%' + params.name_or_username + '%'}},
+		];
 	}
 
 	if (params.roles && params.roles.length > 0) {
@@ -72,8 +80,20 @@ User.search = function (params) {
 		};
 	}
 
+	if (params.team_id) {
+		if (include.indexOf(teams) === -1) {
+			include.push(teams);
+		}
+
+		teams.where = teams.where || {};
+
+		teams.where.id = Number(params.team_id);
+	}
+
 	if (params.teams) {
-		include.push('teams');
+		if (include.indexOf(teams) === -1) {
+			include.push(teams);
+		}
 	}
 
 	var method = params.hasOwnProperty('offset') || params.hasOwnProperty('limit') ? 'findAndCount' : 'findAll';
@@ -86,6 +106,12 @@ User.search = function (params) {
 		order: [['name', 'ASC']]
 	});
 };
+
+User.hook('beforeCount', function (options) {
+	if (options.include && options.include.length > 0) {
+		options.distinct = true;
+	}
+});
 
 User.prototype.hasRole = function (role) {
 	return this.get('roles').indexOf(role) > -1;

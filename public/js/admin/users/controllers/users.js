@@ -4,14 +4,16 @@ define('controllers/users', [
 	'views/users-list',
 	'views/paginator',
 	'views/user-form',
-	'ajax'
+	'ajax',
+	'notify'
 ], function (
 	FilterForm,
 	UsersToolbar,
 	UsersList,
 	Paginator,
 	UserForm,
-	ajax
+	ajax,
+	notify
 ) {
 
 	var filter = new FilterForm({
@@ -22,6 +24,10 @@ define('controllers/users', [
 		}
 	});
 
+	filter.callbacks.getTeamsList = function (query) {
+		return ajax('/admin/teams/search', query);
+	};
+
 	var users = new UsersList({
 		node: '#users-list'
 	});
@@ -29,7 +35,7 @@ define('controllers/users', [
 	filter.callbacks.save = function (data, done) {
 		data.teams = true;
 
-		ajax('/admin/users/search', data, function (res) {
+		ajax('/admin/users/search', data).then(function (res) {
 			users.model('list').reset(res.rows);
 			filter.paginator.set('count', res.count);
 		}).always(done);
@@ -49,11 +55,22 @@ define('controllers/users', [
 		form.open({
 			user: user,
 			save: function (data, done) {
-				ajax('/admin/users/update', data, function () {
-					filter.save();
+				ajax('/admin/users/update', data).then(function () {
+					users.modelOf(user).assign(data);
 				}).always(done);
 			}
 		});
+	};
+
+	users.callbacks.deleteUser = function (user) {
+		notify.confirm('confirm_delete_user', user.name)
+			.then(function () {
+				return ajax('/admin/users/delete', {id: user.id});
+			})
+			.then(function () {
+				filter.save();
+			})
+		;
 	};
 
 	var toolbar = new UsersToolbar({

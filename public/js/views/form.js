@@ -85,7 +85,16 @@ define('views/form', [
 
 			if (save.length === 2) {
 				save(data, function (err) {
-					if (err === false || (err.responseText && typeof err.status === 'number' && err.status !== 200)) {
+					if (
+						err === false ||
+						err instanceof Error ||
+						(
+							err &&
+							err.responseText &&
+							typeof err.status === 'number' &&
+							err.status !== 200
+						)
+					) {
 						form.set('state', 'error');
 					}
 					else {

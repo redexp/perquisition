@@ -26,8 +26,9 @@
 
         <div class="form-group">
             <label><%= __('name') %>:</label>
-            <input type="text" name="name" class="form-control" autocomplete="off"/>
+            <input type="text" name="name_or_username" class="form-control" autocomplete="off"/>
         </div>
+
         <div class="form-group">
             <label><%= __('role') %>:</label>
             <div class="checkbox">
@@ -50,6 +51,26 @@
             </div>
         </div>
 
+        <div class="form-group">
+            <label><%= __('team') %>:</label>
+            <input type="hidden" name="team_id" autocomplete="off"/>
+            <input type="text" data-team class="form-control" autocomplete="off"/>
+
+            <div data-team_name_autocompleter class="autocompleter" style="display: none;">
+                <div data-dropdown class="autocompleter-dropdown">
+                    <div data-empty class="well well-sm text-center text-muted">
+                        <strong><%= __('empty_list') %></strong>
+                    </div>
+                    <div data-list class="list-group">
+                        <a href="#" class="list-group-item"></a>
+                    </div>
+                    <ul data-paginator class="pagination">
+                        <li><a data-page-number href="#"></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
         <button data-submit type="submit" class="btn btn-primary">
             <span class="submit-default"><%= __('filter') %></span>
             <span class="submit-error"><%= __('error') %></span>
@@ -61,21 +82,35 @@
         <button data-add_user class="btn btn-success"><%= __('add') %></button>
     </div>
 
-    <div id="users-list" class="list-group">
-        <div class="list-group-item toolbared">
-            <div data-name></div>
-            <div>
-                <span class="m-r">
-                    <span data-role="admin" class="label label-primary"><%= __('admin') %></span>
-                    <span data-role="teacher" class="label label-primary"><%= __('teacher') %></span>
-                    <span data-role="student" class="label label-primary"><%= __('student') %></span>
-                </span>
-
+    <table id="users-list" class="table table-striped">
+        <thead>
+        <tr>
+            <th><%= __('name') %></th>
+            <th><%= __('username') %></th>
+            <th><%= __('role') %></th>
+            <th><%= __('teams') %></th>
+            <th>&nbsp;</th>
+        </tr>
+        </thead>
+        <tbody data-list>
+        <tr>
+            <td data-name></td>
+            <td data-username></td>
+            <td>
+                <span data-role="admin" class="label label-primary"><%= __('admin') %></span>
+                <span data-role="teacher" class="label label-primary"><%= __('teacher') %></span>
+                <span data-role="student" class="label label-primary"><%= __('student') %></span>
+            </td>
+            <td data-teams>
+                <div></div>
+            </td>
+            <td class="text-right">
                 <button data-edit class="btn btn-xs btn-default"><%= __('edit') %></button>
                 <button data-delete class="btn btn-xs btn-default"><%= __('delete') %></button>
-            </div>
-        </div>
-    </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 
     <ul id="paginator" class="pagination">
         <li><a data-page-number href="#"></a></li>
@@ -159,7 +194,7 @@
                                 <input data-team_name_input type="text" class="form-control input-sm"/>
 
                                 <div data-team_name_autocompleter class="autocompleter">
-                                    <div class="autocompleter-dropdown">
+                                    <div data-dropdown class="autocompleter-dropdown">
                                         <div data-empty class="well well-sm text-center text-muted">
                                             <strong><%= __('empty_list') %></strong>
                                         </div>

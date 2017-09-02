@@ -139,13 +139,13 @@ define('views/user-form', [
 
 		template: {
 			'[name="name"]': {
-				prop: {
-					'value': '@user.name'
+				connect: {
+					'value': 'user.name'
 				}
 			},
 			'[name="username"]': {
-				prop: {
-					'value': '@user.username'
+				connect: {
+					'value': 'user.username'
 				}
 			},
 

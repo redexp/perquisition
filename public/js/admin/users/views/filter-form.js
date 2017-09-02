@@ -1,9 +1,11 @@
 define('views/filter-form', [
 	'views/form',
-	'views/paginator'
+	'views/paginator',
+	'views/autocompleter'
 ], function (
 	Form,
-	Paginator
+	Paginator,
+	Autocompleter
 ) {
 
 	function FilterForm(params) {
@@ -16,14 +18,34 @@ define('views/filter-form', [
 			}
 		});
 
-		this.listenOn(this.paginator, 'page', function (page) {
+		var form = this;
+
+		this.teamAutocompleter = new Autocompleter({
+			node: this.find('[data-team_name_autocompleter]'),
+			input: this.find('[data-team]'),
+			hidden: this.find('[name="team_id"]'),
+			titleProp: 'name',
+			hiddenProp: 'id',
+			getList: function (data) {
+				return form.callbacks.getTeamsList(data);
+			}
+		});
+
+		this.listenOn(this.paginator, 'set/page', function (page) {
 			this.set('offset', (page - 1) * this.get('limit'));
+		});
+
+		this.listenOn(this.paginator, 'page', function () {
 			this.save();
 		});
 	}
 
 	Form.extend({
 		constructor: FilterForm,
+
+		ui: {
+			team: '[data-team]'
+		},
 
 		data: function () {
 			return {

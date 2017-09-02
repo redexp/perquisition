@@ -20,7 +20,7 @@ define('views/users-list', [
 		},
 
 		template: {
-			'@root': {
+			'[data-list]': {
 				each: {
 					prop: 'list',
 					view: User,
@@ -41,16 +41,32 @@ define('views/users-list', [
 			this.parent.callbacks.editUser(this.data.user);
 		},
 
+		deleteUser: function () {
+			this.parent.callbacks.deleteUser(this.data.user);
+		},
+
 		template: {
 			'[data-name]': {
-				text: '=user.name'
+				text: '@user.name'
+			},
+			'[data-username]': {
+				text: '@user.username'
 			},
 
 			'[data-role]': {
-				visible: function () {
-					return function (node) {
-						return this.data.user.roles.indexOf(node.attr('data-role')) > -1;
-					};
+				visible: {
+					'@user.roles': function (roles) {
+						return function (node) {
+							return roles.indexOf(node.attr('data-role')) > -1;
+						};
+					}
+				}
+			},
+
+			'[data-teams]': {
+				each: {
+					prop: 'user.teams',
+					view: Team
 				}
 			},
 
@@ -58,6 +74,26 @@ define('views/users-list', [
 				on: {
 					'click': 'editUser'
 				}
+			},
+
+			'[data-delete]': {
+				on: {
+					'click': 'deleteUser'
+				}
+			}
+		}
+	});
+
+	function Team() {
+		View.apply(this, arguments);
+	}
+
+	View.extend({
+		constructor: Team,
+
+		template: {
+			'@root': {
+				text: '=name'
 			}
 		}
 	});
