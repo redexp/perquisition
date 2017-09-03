@@ -1,7 +1,9 @@
 define('views/form', [
-	'view'
+	'view',
+	'jquery'
 ], function (
-	View
+	View,
+	$
 ) {
 
 	function Form() {
@@ -83,28 +85,37 @@ define('views/form', [
 
 			var form = this;
 
+			var done = function (err) {
+				if (
+					err === false ||
+					err instanceof Error ||
+					(
+						err &&
+						err.responseText &&
+						typeof err.status === 'number' &&
+						err.status !== 200
+					)
+				) {
+					form.set('state', 'error');
+					console.error(err);
+				}
+				else {
+					form.close();
+				}
+			};
+
 			if (save.length === 2) {
-				save(data, function (err) {
-					if (
-						err === false ||
-						err instanceof Error ||
-						(
-							err &&
-							err.responseText &&
-							typeof err.status === 'number' &&
-							err.status !== 200
-						)
-					) {
-						form.set('state', 'error');
-					}
-					else {
-						form.close();
-					}
-				});
+				save(data, done);
 			}
 			else {
-				save(data);
-				form.close();
+				var p = save(data);
+
+				if (p && typeof p.then === 'function') {
+					p.then(done, done);
+				}
+				else {
+					form.close();
+				}
 			}
 		},
 
@@ -115,21 +126,23 @@ define('views/form', [
 		},
 
 		showError: function (error) {
-			var node = typeof error === 'string' ? error : error.node;
-			if (typeof node === 'string') {
-				node = this.find(node);
-			}
-
-			node.addClass('error visible');
+			this.getErrorNode(error).addClass('error visible');
 		},
 
 		hideError: function (error) {
-			var node = typeof error === 'string' ? error : error.node;
-			if (typeof node === 'string') {
-				node = this.find(node);
-			}
+			this.getErrorNode(error).removeClass('visible');
+		},
 
-			node.removeClass('visible');
+		getErrorNode: function (error) {
+			if (typeof error === 'string') {
+				return this.find(error);
+			}
+			else if (error instanceof $) {
+				return error;
+			}
+			else {
+				return error.node;
+			}
 		},
 
 		propValueTemplateOf: function (modelName) {

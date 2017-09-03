@@ -20,9 +20,7 @@ User.login = function (username, password) {
 	;
 };
 
-User.getById = function (id) {
-	return User.findById(id);
-};
+User.getById = User.findById;
 
 User.setToCache = function (user) {
 	return redis.setJSON('user-' + user.id, user);
@@ -94,6 +92,12 @@ User.search = function (params) {
 		if (include.indexOf(teams) === -1) {
 			include.push(teams);
 		}
+	}
+
+	if (params.exclude) {
+		where.id = {
+			$notIn: params.exclude
+		};
 	}
 
 	var method = params.hasOwnProperty('offset') || params.hasOwnProperty('limit') ? 'findAndCount' : 'findAll';

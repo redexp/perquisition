@@ -1,0 +1,180 @@
+<% layout('layout') %>
+
+<% appendScripts([
+    'lib/bootstrap/transition.js',
+    'lib/bootstrap/dropdown.js',
+    'lib/bootstrap/modal.js',
+    'views/form.js',
+    'views/modal-form.js',
+    'views/filter-form.js',
+    'views/paginator.js',
+    'views/autocompleter.js',
+    'admin/teams/**/*.js'
+]) %>
+
+<%- renderTranslationsFor('admin/teams') %>
+
+<nav class="navbar navbar-default">
+    <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+            <li><a href="/admin/users"><%= __('users') %></a></li>
+            <li class="active"><a href="/admin/teams"><%= __('teams') %></a></li>
+        </ul>
+    </div>
+</nav>
+
+<div id="teams" class="p">
+    <form id="filter-form" class="box p m-b form-inline">
+        <input type="hidden" name="offset" value="0"/>
+        <input type="hidden" name="limit" value="10"/>
+
+        <div class="form-group">
+            <label><%= __('name') %>:</label>
+            <input type="text" name="name" class="form-control" autocomplete="off"/>
+        </div>
+
+        <div class="form-group">
+            <label><%= __('role') %>:</label>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="role[]" value="teacher"/>
+                    <%= __('teachers') %>
+                </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="role[]" value="student"/>
+                    <%= __('students') %>
+                </label>
+            </div>
+        </div>
+
+        <button data-submit type="submit" class="btn btn-primary">
+            <span class="submit-default"><%= __('filter') %></span>
+            <span class="submit-error"><%= __('error') %></span>
+            <i class="submit-loading fa fa-circle-o-notch fa-spin"></i>
+        </button>
+    </form>
+
+    <div id="toolbar" class="m-b">
+        <button data-add_team class="btn btn-success"><%= __('add') %></button>
+    </div>
+
+    <table id="teams-list" class="table table-striped">
+        <thead>
+        <tr>
+            <th><%= __('name') %></th>
+            <th><%= __('role') %></th>
+            <th><%= __('users_count') %></th>
+            <th>&nbsp;</th>
+        </tr>
+        </thead>
+        <tbody data-list>
+        <tr>
+            <td data-name></td>
+            <td>
+                <span data-role="teacher" class="label label-primary"><%= __('teachers') %></span>
+                <span data-role="student" class="label label-primary"><%= __('students') %></span>
+            </td>
+            <td data-users_count></td>
+            <td class="text-right">
+                <button data-edit class="btn btn-xs btn-default"><%= __('edit') %></button>
+                <button data-delete class="btn btn-xs btn-default"><%= __('delete') %></button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <ul id="paginator" class="pagination">
+        <li><a data-page-number href="#"></a></li>
+    </ul>
+</div>
+
+<div id="team-form" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"><%= __('team') %></h4>
+            </div>
+            <form class="modal-body">
+                <div class="form-group">
+                    <label><%= __('name') %></label>
+                    <input name="name" type="text" class="form-control" autocomplete="off"/>
+
+                    <p data-name_required class="error help-block text-danger">
+                        <%= __('required') %>
+                    </p>
+                </div>
+
+                <div class="form-group">
+                    <label><%= __('role') %></label>
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="role" value="teacher" autocomplete="off"/>
+                            <%= __('teachers') %>
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="role" value="student" autocomplete="off"/>
+                            <%= __('students') %>
+                        </label>
+                    </div>
+
+                    <p data-role_required class="error help-block text-danger">
+                        <%= __('required') %>
+                    </p>
+                </div>
+
+                <div class="form-group">
+                    <label><%= __('users') %></label>
+                    <div  data-users>
+                        <div class="toolbared m-b-sm">
+                            <div class="m-r-sm">
+                                <span data-user_name></span>
+
+                                <input data-user_name_input type="text" class="form-control input-sm"/>
+
+                                <div data-user_name_autocompleter class="autocompleter">
+                                    <div data-dropdown class="autocompleter-dropdown">
+                                        <div data-empty class="well well-sm text-center text-muted">
+                                            <strong><%= __('empty_list') %></strong>
+                                        </div>
+                                        <div data-list class="list-group">
+                                            <a href="#" class="list-group-item"></a>
+                                        </div>
+                                        <ul data-paginator class="pagination">
+                                            <li><a data-page-number href="#"></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div data-user_required class="help-block text-danger error">
+                                    <%= __('required') %>
+                                </div>
+                                <div data-not_teacher class="help-block text-danger error">
+                                    <%= __('not_teacher') %>
+                                </div>
+                                <div data-not_student class="help-block text-danger error">
+                                    <%= __('not_student') %>
+                                </div>
+                            </div>
+                            <div>
+                                <button data-remove_user type="button" class="btn btn-default btn-xs"><%= __('delete') %></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button data-add_user type="button" class="btn btn-sm btn-success"><%= __('add') %></button>
+                </div>
+
+                <button data-submit type="submit" class="btn btn-primary">
+                    <span class="submit-default"><%= __('save') %></span>
+                    <span class="submit-error"><%= __('error') %></span>
+                    <i class="submit-loading fa fa-circle-o-notch fa-spin"></i>
+                </button>
+                <button data-cancel type="button" class="btn btn-default"><%= __('cancel') %></button>
+            </form>
+        </div>
+    </div>
+</div>

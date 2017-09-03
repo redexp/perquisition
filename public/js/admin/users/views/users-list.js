@@ -1,7 +1,9 @@
 define('views/users-list', [
-	'view'
+	'view',
+	'jquery'
 ], function (
-	View
+	View,
+	$
 ) {
 
 	function UsersList() {
@@ -92,8 +94,13 @@ define('views/users-list', [
 		constructor: Team,
 
 		template: {
-			'@root': {
-				text: '=name'
+			'[data-name]': {
+				text: '=name',
+				attr: {
+					'href': function () {
+						return '/admin/teams?' + $.param({name: this.data.name, role: this.data.role});
+					}
+				}
 			}
 		}
 	});

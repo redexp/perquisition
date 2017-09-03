@@ -1,4 +1,4 @@
-[data-form-state] button[data-submit] {
+button[data-submit] {
     position: relative;
 
     .submit-error {
@@ -42,7 +42,8 @@
         font-weight: bold;
     }
 
-    > label ~ .checkbox:nth-child(2) {
+    > label ~ .checkbox:nth-child(2),
+    > label ~ .radio:nth-child(2) {
         margin-top: 0;
     }
 }
