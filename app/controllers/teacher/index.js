@@ -10,9 +10,9 @@ teacher.use(function (req, res, next) {
 });
 
 teacher.get('/', function (req, res) {
-	res.redirect('/teacher/course/list');
+	res.redirect('/teacher/courses');
 });
 
-teacher.use('/course', require('./course'));
+teacher.use('/courses', require('./courses'));
 
 module.exports = teacher;

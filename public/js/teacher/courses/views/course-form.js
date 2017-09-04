@@ -16,27 +16,38 @@ define('views/course-form', [
 	$
 ) {
 
-	var users = serverData('users').reduce(function (hash, user) {
-		hash[user.id] = user;
-		return hash;
-	}, {});
-
-	users['*'] = {name: __('all_permission')};
-
 	function CourseForm(options) {
 		var form = this;
 
-		this.userNameAutocompleter = new Autocompleter({
-			node: $(options.node).find('[data-user_name_autocompleter]').detach(),
-			getList: function (data) {
-				return form.callbacks.getUserNameList({
-					name: data.value,
-					offset: data.offset,
-					limit: data.limit
-				});
-			},
-			getItemTitle: function (user) {
-				return user.name;
+		this.userAutocompleter = new Autocompleter({
+			node: $(options.node).find('[data-user_autocompleter]'),
+			titleProp: 'name',
+			getList: function (query) {
+				query.exclude = form.data.users
+					.map(function (user) {
+						return user.id;
+					})
+					.filter(function (id) {
+						return !!id;
+					});
+
+				return form.callbacks.getUsersList(query);
+			}
+		});
+
+		this.teamAutocompleter = new Autocompleter({
+			node: $(options.node).find('[data-team_autocompleter]'),
+			titleProp: 'name',
+			getList: function (query) {
+				query.exclude = form.data.teams
+					.map(function (user) {
+						return user.id;
+					})
+					.filter(function (id) {
+						return !!id;
+					});
+
+				return form.callbacks.getTeamsList(query);
 			}
 		});
 
@@ -44,30 +55,40 @@ define('views/course-form', [
 
 		this.on('open', function (params) {
 			var course = params.course || CourseForm.prototype.data().course;
+
 			this.model('course').set(course);
-
-			var users_permissions = course.users_permissions || {};
-
-			var perms = utils.map(users_permissions, function (perm, id) {
-				return {
-					id: id,
-					name: users[id].name,
-					read: !!perm.read,
-					write: !!perm.write
-				};
+			this.assign({
+				users: [],
+				teams: []
 			});
-
-			perms.sort(function (a, b) {
-				return a.id === '*' ? -1 : b.id === '*' ? 1 : a.id - b.id;
-			});
-
-			this.model('users_permissions').reset(perms);
 
 			var form = this;
 
-			setTimeout(function () {
-				form.find('[name="title"]').focus();
-			}, 200);
+			if (course.id) {
+				this.callbacks.getCourseUsers(course).then(function (users) {
+					form.model('users').reset(users.map(function (user) {
+						return {
+							id: user.id,
+							name: user.name,
+							read: !!course.users_permissions[user.id].read,
+							write: !!course.users_permissions[user.id].write,
+							pass: !!course.users_permissions[user.id].pass
+						};
+					}));
+				});
+
+				this.callbacks.getCourseTeams(course).then(function (teams) {
+					form.model('teams').reset(teams.map(function (team) {
+						return {
+							id: team.id,
+							name: team.name,
+							read: !!course.teams_permissions[team.id].read,
+							write: !!course.teams_permissions[team.id].write,
+							pass: !!course.teams_permissions[team.id].pass
+						};
+					}));
+				});
+			}
 		});
 
 		this.on('validate', function (data, errors) {
@@ -75,16 +96,29 @@ define('views/course-form', [
 				errors.push('[data-course_title_required]');
 			}
 
-			this.views['[data-users_permissions]'].forEach(function (view) {
-				view.trigger('validate', view.data.permission, errors);
+			this.model('users').views.forEach(function (view) {
+				view.trigger('validate', view.data.user, errors);
+			});
+
+			this.model('teams').views.forEach(function (view) {
+				view.trigger('validate', view.data.team, errors);
 			});
 		});
 
 		this.on('save', function (data) {
-			data.users_permissions = this.data.users_permissions.reduce(function (hash, item) {
+			data.users_permissions = this.data.users.reduce(function (hash, item) {
 				hash[item.id] = {
 					read: item.read,
-					write: item.write
+					write: item.write,
+					pass: item.pass
+				};
+				return hash;
+			}, {});
+			data.teams_permissions = this.data.teams.reduce(function (hash, item) {
+				hash[item.id] = {
+					read: item.read,
+					write: item.write,
+					pass: item.pass
 				};
 				return hash;
 			}, {});
@@ -99,89 +133,142 @@ define('views/course-form', [
 				course: {
 					title: ''
 				},
-				users_permissions: []
+				users: [],
+				teams: []
 			};
 		},
 
-		addPermission: function () {
-			this.model('users_permissions').add({
+		addUser: function () {
+			this.model('users').add({
 				id: '',
 				name: '',
-				read: true,
-				write: false
+				read: false,
+				write: false,
+				pass: false
 			});
 		},
 
-		removePermission: function (permission) {
-			this.model('users_permissions').remove(permission);
+		removeUser: function (user) {
+			this.model('users').remove(user);
 		},
 
-		template: function (extend) {
-			return extend({},
-				this.propValueTemplateOf('course'),
-				{
-					'[data-users_permissions]': {
-						each: {
-							prop: 'users_permissions',
-							view: Permission,
-							viewProp: 'permission'
-						}
-					},
+		openUserAutocompleter: function (user) {
+			var users = this.model('users'),
+				model = users.modelOf(user),
+				view = users.views.viewOf(user);
 
-					'[data-add_permission]': {
-						on: {
-							'click': 'addPermission'
-						}
+			this.userAutocompleter.open({
+				input: view.ui.nameInput,
+				change: function (newUser) {
+					model.set({
+						id: newUser.id,
+						name: newUser.name
+					});
+				}
+			});
+		},
+
+		addTeam: function () {
+			this.model('teams').add({
+				id: '',
+				name: '',
+				read: false,
+				write: false,
+				pass: false
+			});
+		},
+
+		removeTeam: function (team) {
+			this.model('teams').remove(team);
+		},
+
+		openTeamAutocompleter: function (team) {
+			var teams = this.model('teams'),
+				model = teams.modelOf(team),
+				view = teams.views.viewOf(team);
+
+			this.teamAutocompleter.open({
+				input: view.ui.nameInput,
+				change: function (newTeam) {
+					model.set({
+						id: newTeam.id,
+						name: newTeam.name
+					});
+				}
+			});
+		},
+
+		template: {
+			'[name="title"]': {
+				prop: {
+					'value': '@course.title'
+				}
+			},
+
+			'[data-users]': {
+				'& [data-list]': {
+					each: {
+						prop: 'users',
+						view: User,
+						viewProp: 'user'
+					}
+				},
+
+				'& [data-add_user]': {
+					on: {
+						'click': 'addUser'
 					}
 				}
-			);
+			},
+			'[data-teams]': {
+				'& [data-list]': {
+					each: {
+						prop: 'teams',
+						view: Team,
+						viewProp: 'team'
+					}
+				},
+
+				'& [data-add_team]': {
+					on: {
+						'click': 'addTeam'
+					}
+				}
+			}
 		}
 	});
 
-	function Permission() {
+	function User() {
 		View.apply(this, arguments);
 
 		this.on('validate', function (data, errors) {
 			if (!data.id) {
 				errors.push({
-					node: this.node.find('[data-user_name_required]')
+					node: this.node.find('[data-user_required]')
 				});
 			}
 		});
 	}
 
 	View.extend({
-		constructor: Permission,
+		constructor: User,
 
 		ui: {
-			userNameInput: '[data-user_name_input]'
+			nameInput: '[data-user_name_input]'
 		},
 
-		removePermission: function () {
-			this.parent.removePermission(this.data.permission);
+		removeUser: function () {
+			this.parent.removeUser(this.data.user);
 		},
 
 		openAutocompleter: function () {
-			var permission = this.model('permission');
-
-			this.parent.userNameAutocompleter.open({
-				input: this.ui.userNameInput,
-				change: function (user) {
-					permission.set({
-						id: user.id,
-						name: user.name
-					});
-				},
-				clear: function () {
-					permission.set('id', '');
-				}
-			});
+			this.parent.openUserAutocompleter(this.data.user);
 		},
 
 		template: {
 			'[data-user_name]': {
-				text: '=permission.name',
-				visible: '=permission.id'
+				text: '@user.name',
+				hidden: '!@user.id'
 			},
 
 			'[data-user_name_input]': {
@@ -189,24 +276,97 @@ define('views/course-form', [
 					'click': 'openAutocompleter'
 				},
 
-				visible: '!=permission.id'
+				visible: '!@user.id'
 			},
 
 			'[data-permission="read"]': {
 				connect: {
-					'checked': 'permission.read'
+					'checked': 'user.read'
 				}
 			},
 
 			'[data-permission="write"]': {
 				connect: {
-					'checked': 'permission.write'
+					'checked': 'user.write'
 				}
 			},
 
-			'[data-remove_permission]': {
+			'[data-permission="pass"]': {
+				connect: {
+					'checked': 'user.pass'
+				}
+			},
+
+			'[data-remove_user]': {
 				on: {
-					'click': 'removePermission'
+					'click': 'removeUser'
+				}
+			}
+		}
+	});
+
+	function Team() {
+		View.apply(this, arguments);
+
+		this.on('validate', function (data, errors) {
+			if (!data.id) {
+				errors.push({
+					node: this.node.find('[data-team_required]')
+				});
+			}
+		});
+	}
+
+	View.extend({
+		constructor: Team,
+
+		ui: {
+			nameInput: '[data-team_name_input]'
+		},
+
+		removeTeam: function () {
+			this.parent.removeTeam(this.data.team);
+		},
+
+		openAutocompleter: function () {
+			this.parent.openTeamAutocompleter(this.data.team);
+		},
+
+		template: {
+			'[data-team_name]': {
+				text: '@team.name',
+				hidden: '!@team.id'
+			},
+
+			'[data-team_name_input]': {
+				on: {
+					'click': 'openAutocompleter'
+				},
+
+				visible: '!@team.id'
+			},
+
+			'[data-permission="read"]': {
+				connect: {
+					'checked': 'team.read'
+				}
+			},
+
+			'[data-permission="write"]': {
+				connect: {
+					'checked': 'team.write'
+				}
+			},
+
+			'[data-permission="pass"]': {
+				connect: {
+					'checked': 'team.pass'
+				}
+			},
+
+			'[data-remove_team]': {
+				on: {
+					'click': 'removeTeam'
 				}
 			}
 		}

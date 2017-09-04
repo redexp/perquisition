@@ -91,31 +91,15 @@ define('views/courses-list', [
 				text: '@course.title'
 			},
 
-			'[data-link]': {
-				attr: {
-					'href': function () {
-						return function (link) {
-							return link.attr('href').replace(':id', this.data.course.id);
-						};
-					}
-				}
-			},
-
 			'[data-edit]': {
 				on: {
-					'click': '!editCourse'
+					'click': 'editCourse'
 				}
 			},
 
 			'[data-remove]': {
 				on: {
 					'click': '!removeCourse'
-				}
-			},
-
-			'[data-write]': {
-				toggleClass: {
-					'hidden': '!@write'
 				}
 			}
 		}

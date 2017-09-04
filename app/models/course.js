@@ -1,6 +1,33 @@
 var Course = require('app/db/models/course');
+var User = require('app/models/user');
+var Team = require('app/models/team');
 
 module.exports = Course;
+
+Course.search = function (params) {
+	var where = {};
+
+	if (params.title) {
+		where.title = {
+			$iLike: '%' + params.title + '%'
+		};
+	}
+
+	if (params.exclude && params.exclude.length > 0) {
+		where.id = {
+			$notIn: params.exclude
+		};
+	}
+
+	var method = params.hasOwnProperty('offset') && params.hasOwnProperty('limit') ? 'findAndCount' : 'findAll';
+
+	return Course[method]({
+		where: where,
+		offset: params.offset,
+		limit: params.limit,
+		order: [['title', 'ASC']]
+	});
+};
 
 Course.findByUser = function (user) {
 	return Course.findAll({
@@ -53,4 +80,24 @@ Course.findUserCourse = function (course, user, perms) {
 
 		return course;
 	});
+};
+
+Course.prototype.toJSON = function () {
+	return this.get();
+};
+
+Course.prototype.getUsers = function () {
+	return User.findAll({
+		where: {
+			id: {$in: Object.keys(this.users_permissions)}
+		}
+	})
+};
+
+Course.prototype.getTeams = function () {
+	return Team.findAll({
+		where: {
+			id: {$in: Object.keys(this.teams_permissions)}
+		}
+	})
 };

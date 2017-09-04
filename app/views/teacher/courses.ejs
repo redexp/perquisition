@@ -1,15 +1,12 @@
 <% layout('layout') %>
 
-<% appendStyles([
-    'teacher/index.css'
-]) %>
-
 <% appendScripts([
 	'lib/bootstrap/transition.js',
 	'lib/bootstrap/dropdown.js',
 	'lib/bootstrap/modal.js',
 	'views/form.js',
 	'views/modal-form.js',
+	'views/filter-form.js',
 	'views/paginator.js',
 	'views/autocompleter.js',
     'teacher/courses/**/*.js'
@@ -17,67 +14,102 @@
 
 <%- renderTranslationsFor('teacher/courses') %>
 
-<div id="courses-list" class="courses">
-    <div data-list class="courses-list list-group">
-        <div class="course list-group-item">
-            <div data-title class="course-title"></div>
-            <div class="course-toolbar">
-                <div class="btn-group">
-                    <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-                        <%= __('actions') %> <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-right">
-                        <li data-edit data-write><a href="#"><%= __('edit') %></a></li>
-                        <li data-edit_questions data-write><a data-link href="/teacher/course/:id/questions"><%= __('edit_questions') %></a></li>
-                        <li data-reports><a data-link href="/teacher/course/:id/reports"><%= __('reports') %></a></li>
-                        <li data-write class="divider"></li>
-                        <li data-remove data-write><a href="#"><%= __('delete') %></a></li>
-                    </ul>
-                </div>
-            </div>
+<nav class="navbar navbar-default">
+    <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+            <li><a href="/admin/users"><%= __('users') %></a></li>
+            <li><a href="/admin/teams"><%= __('teams') %></a></li>
+            <li class="active"><a href="/teacher/courses"><%= __('courses') %></a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="p">
+    <form id="filter-form" class="box p m-b form-inline">
+        <input type="hidden" name="offset" value="0"/>
+        <input type="hidden" name="limit" value="10"/>
+
+        <div class="form-group">
+            <label><%= __('title') %>:</label>
+            <input type="text" name="title" class="form-control" autocomplete="off"/>
         </div>
+
+        <button data-submit type="submit" class="btn btn-primary">
+            <span class="submit-default"><%= __('filter') %></span>
+            <span class="submit-error"><%= __('error') %></span>
+            <i class="submit-loading fa fa-circle-o-notch fa-spin"></i>
+        </button>
+    </form>
+
+    <div id="toolbar" class="m-b">
+        <button data-add_course class="btn btn-success"><%= __('add') %></button>
     </div>
 
-    <button data-add-course class="btn btn-success"><%= __('add_course') %></button>
+    <table id="courses-list" class="table table-striped">
+        <thead>
+        <tr>
+            <th><%= __('title') %></th>
+            <th>&nbsp;</th>
+        </tr>
+        </thead>
+        <tbody data-list>
+        <tr>
+            <td data-title></td>
+            <td class="text-right">
+                <button data-edit type="button" class="btn btn-xs btn-default"><%= __('edit') %></button>
+                <button data-edit_questions type="button" class="btn btn-xs btn-default"><%= __('edit_questions') %></button>
+                <button data-reports type="button" class="btn btn-xs btn-default"><%= __('reports') %></button>
+                <button data-delete type="button" class="btn btn-xs btn-default"><%= __('delete') %></button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <ul id="paginator" class="pagination">
+        <li><a data-page-number href="#"></a></li>
+    </ul>
 </div>
 
 <div id="course-form" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title"><%= __('add_course') %></h4>
+                <h4 class="modal-title"><%= __('course') %></h4>
             </div>
             <form class="modal-body">
-                <div data-user_name_block class="form-group">
+                <div class="form-group">
                     <label><%= __('course_title') %></label>
                     <input name="title" type="text" class="form-control"/>
+
                     <p data-course_title_required class="error help-block text-danger">
                         <%= __('required') %>
                     </p>
                 </div>
 
-                <div class="form-group">
-                    <label><%= __('course_user_permissions') %></label>
+                <div data-users class="form-group">
+                    <label><%= __('users_permissions') %></label>
                     <table class="table">
                         <thead>
                         <tr>
-                            <th><%= __('user_name') %></th>
+                            <th><%= __('name') %></th>
                             <th><%= __('read_permission') %></th>
                             <th><%= __('write_remove_permission') %></th>
+                            <th><%= __('pass_permission') %></th>
                             <th>&nbsp;</th>
                         </tr>
                         </thead>
-                        <tbody data-users_permissions>
+                        <tbody data-list>
                         <tr>
                             <td>
                                 <span data-user_name></span>
-                                <input data-user_name_input type="text" class="form-control input-sm"/>
-                                <div data-user_name_required class="help-block text-danger error">
+                                <input data-user_name_input type="text" class="form-control input-sm" autocomplete="off"/>
+
+                                <div data-user_required class="help-block text-danger error">
                                     <%= __('required') %>
                                 </div>
 
-                                <div data-user_name_autocompleter class="autocompleter">
-                                    <div class="autocompleter-dropdown">
+                                <div data-user_autocompleter class="autocompleter">
+                                    <div data-dropdown class="autocompleter-dropdown">
                                         <div data-empty class="well well-sm text-center text-muted">
                                             <strong><%= __('empty_list') %></strong>
                                         </div>
@@ -96,14 +128,72 @@
                             <td class="text-center">
                                 <input data-permission="write" type="checkbox"/>
                             </td>
+                            <td class="text-center">
+                                <input data-permission="pass" type="checkbox"/>
+                            </td>
                             <td>
-                                <button data-remove_permission type="button" class="btn btn-default btn-xs"><%= __('remove_permission') %></button>
+                                <button data-remove_user type="button" class="btn btn-default btn-xs"><%= __('delete') %></button>
                             </td>
                         </tr>
                         </tbody>
                     </table>
 
-                    <button data-add_permission type="button" class="btn btn-success btn-sm"><%= __('add_permission') %></button>
+                    <button data-add_user type="button" class="btn btn-success btn-sm"><%= __('add') %></button>
+                </div>
+
+                <div data-teams class="form-group">
+                    <label><%= __('teams_permissions') %></label>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th><%= __('name') %></th>
+                            <th><%= __('read_permission') %></th>
+                            <th><%= __('write_remove_permission') %></th>
+                            <th><%= __('pass_permission') %></th>
+                            <th>&nbsp;</th>
+                        </tr>
+                        </thead>
+                        <tbody data-list>
+                        <tr>
+                            <td>
+                                <span data-team_name></span>
+                                <input data-team_name_input type="text" class="form-control input-sm" autocomplete="off"/>
+
+                                <div data-team_required class="help-block text-danger error">
+                                    <%= __('required') %>
+                                </div>
+
+                                <div data-team_autocompleter class="autocompleter">
+                                    <div data-dropdown class="autocompleter-dropdown">
+                                        <div data-empty class="well well-sm text-center text-muted">
+                                            <strong><%= __('empty_list') %></strong>
+                                        </div>
+                                        <div data-list class="list-group">
+                                            <a href="#" class="list-group-item"></a>
+                                        </div>
+                                        <ul data-paginator class="pagination">
+                                            <li><a data-page-number href="#"></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <input data-permission="read" type="checkbox"/>
+                            </td>
+                            <td class="text-center">
+                                <input data-permission="write" type="checkbox"/>
+                            </td>
+                            <td class="text-center">
+                                <input data-permission="pass" type="checkbox"/>
+                            </td>
+                            <td>
+                                <button data-remove_team type="button" class="btn btn-default btn-xs"><%= __('delete') %></button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <button data-add_team type="button" class="btn btn-success btn-sm"><%= __('add') %></button>
                 </div>
 
                 <button data-submit type="submit" class="btn btn-primary">

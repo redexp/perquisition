@@ -1,4 +1,6 @@
 define('controllers/courses', [
+	'views/filter-form',
+	'views/toolbar',
 	'views/courses-list',
 	'views/course-form',
 	'store',
@@ -6,6 +8,8 @@ define('controllers/courses', [
 	'ajax',
 	'lang'
 ], function (
+	FilterForm,
+	Toolbar,
 	CoursesList,
 	CourseForm,
 	store,
@@ -14,40 +18,62 @@ define('controllers/courses', [
 	__
 ) {
 
-	var courses = new CoursesList({
-		node: '#courses-list',
-		data: {
-			list: serverData('courses')
-		}
+	var filter = new FilterForm({
+		node: '#filter-form',
+		paginator: '#paginator'
 	});
+
+	var courses = new CoursesList({
+		node: '#courses-list'
+	});
+
+	filter.callbacks.save = function (data) {
+		return ajax('/teacher/courses/search', data).then(function (res) {
+			courses.model('list').reset(res.rows);
+			filter.paginator.set('count', res.count);
+		});
+	};
+
+	filter.submit();
 
 	var form = new CourseForm({
 		node: '#course-form'
 	});
 
-	courses.callbacks.addCourse = function () {
-		var course = {
-			title: '',
-			users_permissions: {
-				'*': {
-					read: true,
-					write: false
-				}
-			}
-		};
+	form.callbacks.getCourseUsers = function (course) {
+		return ajax('/teacher/courses/users', {id: course.id});
+	};
 
-		course.users_permissions[store.get('user').id] = {
-			read: true,
-			write: true
+	form.callbacks.getCourseTeams = function (course) {
+		return ajax('/teacher/courses/teams', {id: course.id});
+	};
+
+	form.callbacks.getUsersList = function (query) {
+		return ajax('/teacher/courses/users/search', query);
+	};
+
+	form.callbacks.getTeamsList = function (query) {
+		return ajax('/teacher/courses/teams/search', query);
+	};
+
+	var toolbar = new Toolbar({
+		node: '#toolbar'
+	});
+
+	toolbar.callbacks.addCourse = function () {
+		var course = {
+			id: '',
+			title: '',
+			users_permissions: {},
+			teams_permissions: {}
 		};
 
 		form.open({
 			course: course,
-			save: function (data, done) {
-				ajax('/teacher/course/create', {course: data}, function (course) {
-					courses.model('list').add(course);
-					done();
-				}).catch(done);
+			save: function (data) {
+				return ajax('/teacher/courses/create', data).then(function () {
+					filter.save();
+				});
 			}
 		});
 	};
@@ -55,14 +81,12 @@ define('controllers/courses', [
 	courses.callbacks.editCourse = function (course) {
 		form.open({
 			course: course,
-			save: function (data, done) {
+			save: function (data) {
 				data.id = course.id;
-				data.user_id = course.user_id;
 
-				ajax('/teacher/course/update', {course: data}, function () {
+				return ajax('/teacher/courses/update', data).then(function () {
 					courses.model('list').modelOf(course).set(data);
-					done();
-				}).catch(done);
+				});
 			}
 		});
 	};
@@ -73,19 +97,6 @@ define('controllers/courses', [
 		ajax('/teacher/course/delete', {id: course.id}, function () {
 			courses.model('list').remove(course);
 		});
-	};
-
-	form.callbacks.getUserNameList = function (data) {
-		data.exclude = form.get('users_permissions')
-			.filter(function (item) {
-				return !!item.id && item.id !== '*';
-			})
-			.map(function (item) {
-				return item.id;
-			})
-		;
-
-		return ajax('/teacher/course/teachers', data);
 	};
 
 });
