@@ -23,7 +23,15 @@ User.login = function (username, password) {
 User.getById = User.findById;
 
 User.setToCache = function (user) {
-	return redis.setJSON('user-' + user.id, user);
+	return redis.setJSON('user-' + user.id, user).then(function () {
+		return user;
+	});
+};
+
+User.removeFromCache = function (user) {
+	return redis.remove('user-' + user.id).then(function () {
+		return user;
+	});
 };
 
 User.getFromCache = function (id) {

@@ -31,12 +31,10 @@ users.post('/update', function (req, res) {
 	User
 		.getById(data.id)
 		.then(function (user) {
-			return user
-				.set(data)
-				.save()
-				.then(setTeams(data.teams))
-			;
+			return user.set(data).save();
 		})
+		.then(setTeams(data.teams))
+		.then(User.removeFromCache)
 		.then(res.json, res.catch)
 	;
 });

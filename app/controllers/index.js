@@ -1,6 +1,6 @@
 var app = require('app');
 
-app.use('/login', require('./login'));
+app.use(require('./login'));
 
 app.use(function (req, res, next) {
 	if (!req.user) {

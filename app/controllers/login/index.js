@@ -1,8 +1,13 @@
-var login = require('express').Router();
+var auth = require('express').Router();
 var passport = require('app/lib/passport');
 
-login.post('/', passport.authenticate('local'), function (req, res) {
+module.exports = auth;
+
+auth.post('/login', passport.authenticate('local'), function (req, res) {
 	res.json({id: req.user.id});
 });
 
-module.exports = login;
+auth.get('/logout', function (req, res) {
+	req.logout();
+	res.redirect('/');
+});

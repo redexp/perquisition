@@ -14,14 +14,7 @@
 
 <%- renderTranslationsFor('admin/teams') %>
 
-<nav class="navbar navbar-default">
-    <div class="collapse navbar-collapse">
-        <ul class="nav navbar-nav">
-            <li><a href="/admin/users"><%= __('users') %></a></li>
-            <li class="active"><a href="/admin/teams"><%= __('teams') %></a></li>
-        </ul>
-    </div>
-</nav>
+<%- partial('components/header') %>
 
 <div id="teams" class="p">
     <form id="filter-form" class="box p m-b form-inline">

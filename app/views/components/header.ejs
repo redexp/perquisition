@@ -1,0 +1,26 @@
+<%
+function link(url, title) {
+	return `<li ${url === route ? 'class="active"' : ''}><a href="${url}">${ __(title) }</a></li>`;
+}
+%>
+
+<nav class="navbar navbar-default">
+    <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+            <% if (user.hasRole('admin')) { %>
+            <%- link('/admin/users', 'users') %>
+            <%- link('/admin/teams', 'teams') %>
+            <% } %>
+            <% if (user.hasRole('teacher')) { %>
+            <%- link('/teacher/courses', 'courses') %>
+            <% } %>
+            <% if (user.hasRole('student')) { %>
+            <%- link('/student/courses', 'student_courses') %>
+            <% } %>
+        </ul>
+
+        <ul class="nav navbar-nav navbar-right">
+            <li><a href="/logout"><%= __('logout') %></a></li>
+        </ul>
+    </div>
+</nav>
