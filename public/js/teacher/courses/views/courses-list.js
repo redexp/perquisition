@@ -96,7 +96,17 @@ define('views/courses-list', [
 			},
 
 			'[data-edit], [data-edit_questions], [data-delete]': {
-				hidden: '!=course.user_permission.write'
+				hidden: '!=course.permissions.write'
+			},
+
+			'a[href^="/teacher/"]': {
+				attr: {
+					'href': function () {
+						return function (node) {
+							return node.attr('href').replace(':id', this.data.course.id);
+						};
+					}
+				}
 			}
 		}
 	});

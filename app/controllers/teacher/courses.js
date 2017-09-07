@@ -19,8 +19,11 @@ courses.post('/search', function (req, res) {
 		[req.user.id]: {read: true}
 	};
 
-	if (params.user_permission) {
-		params.user_permission = req.user.id;
+	if (params.permissions) {
+		params.permissions = {
+			user: req.user.id,
+			teams: []
+		};
 	}
 
 	req.user.getTeams()
@@ -28,6 +31,12 @@ courses.post('/search', function (req, res) {
 			if (teams.length > 0) {
 				params.teams_permissions = teams.map(function (team) {
 					return {[team.id]: {read: true}};
+				});
+			}
+
+			if (params.permissions) {
+				params.permissions.teams = teams.map(function (team) {
+					return team.id;
 				});
 			}
 		})

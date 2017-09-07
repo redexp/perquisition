@@ -48,10 +48,10 @@
         <tr>
             <td data-title></td>
             <td class="text-right">
-                <button data-edit type="button" class="btn btn-xs btn-default"><%= __('edit') %></button>
-                <button data-edit_questions type="button" class="btn btn-xs btn-default"><%= __('edit_questions') %></button>
-                <button data-reports type="button" class="btn btn-xs btn-default"><%= __('reports') %></button>
-                <button data-delete type="button" class="btn btn-xs btn-default"><%= __('delete') %></button>
+                <button data-edit class="btn btn-xs btn-default" type="button"><%= __('edit') %></button>
+                <a data-edit_questions href="/teacher/courses/:id/questions" class="btn btn-xs btn-default"><%= __('edit_questions') %></a>
+                <a data-reports href="/teacher/courses/:id/reports" class="btn btn-xs btn-default"><%= __('reports') %></a>
+                <button data-delete class="btn btn-xs btn-default" type="button"><%= __('delete') %></button>
             </td>
         </tr>
         </tbody>

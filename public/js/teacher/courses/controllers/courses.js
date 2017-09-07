@@ -30,7 +30,7 @@ define('controllers/courses', [
 	});
 
 	filter.callbacks.save = function (data) {
-		data.user_permission = true;
+		data.permissions = true;
 
 		return ajax('/teacher/courses/search', data).then(function (res) {
 			courses.model('list').reset(res.rows);

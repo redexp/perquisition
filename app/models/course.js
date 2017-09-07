@@ -52,19 +52,25 @@ Course.search = function (params) {
 		limit: params.limit,
 		order: [['title', 'ASC']]
 	}).then(function (res) {
-		if (params.user_permission) {
+		if (params.permissions) {
+			var user = params.permissions.user;
+			var teams = params.permissions.teams || [];
+
 			search.list(params, res).forEach(function (item) {
-				var perms = item.users_permissions[params.user_permission];
+				var permissions = item.users_permissions[user] || {
+					read: false,
+					write: false,
+					pass: false,
+				};
 
-				if (!perms) {
-					perms = {
-						read: false,
-						write: false,
-						pass: false,
-					};
-				}
+				teams.forEach(function (id) {
+					var perms = item.teams_permissions[id] || {};
+					permissions.read = permissions.read || !!perms.read;
+					permissions.write = permissions.write || !!perms.write;
+					permissions.pass = permissions.pass || !!perms.pass;
+				});
 
-				item.set('user_permission', perms, {raw: true});
+				item.set('permissions', permissions, {raw: true});
 			});
 		}
 
