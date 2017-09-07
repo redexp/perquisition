@@ -25,14 +25,6 @@ define('views/courses-list', [
 			this.callbacks.addCourse();
 		},
 
-		editCourse: function (course) {
-			this.callbacks.editCourse(course);
-		},
-
-		removeCourse: function (course) {
-			this.callbacks.removeCourse(course);
-		},
-
 		template: {
 			'[data-list]': {
 				each: {
@@ -79,11 +71,11 @@ define('views/courses-list', [
 		},
 
 		editCourse: function () {
-			this.parent.editCourse(this.data.course);
+			this.parent.callbacks.editCourse(this.data.course);
 		},
 
-		removeCourse: function () {
-			this.parent.removeCourse(this.data.course);
+		deleteCourse: function () {
+			this.parent.callbacks.deleteCourse(this.data.course);
 		},
 
 		template: {
@@ -97,10 +89,14 @@ define('views/courses-list', [
 				}
 			},
 
-			'[data-remove]': {
+			'[data-delete]': {
 				on: {
-					'click': '!removeCourse'
+					'click': 'deleteCourse'
 				}
+			},
+
+			'[data-edit], [data-edit_questions], [data-delete]': {
+				hidden: '!=course.user_permission.write'
 			}
 		}
 	});

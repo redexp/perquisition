@@ -6,7 +6,8 @@ define('controllers/teams', [
 	'views/team-form',
 	'ajax',
 	'notify',
-	'serverData'
+	'serverData',
+	'lang'
 ], function (
 	TeamsFilter,
 	Toolbar,
@@ -15,7 +16,8 @@ define('controllers/teams', [
 	TeamForm,
 	ajax,
 	notify,
-	serverData
+	serverData,
+	__
 ) {
 
 	var filterQuery = serverData('query');
@@ -71,7 +73,7 @@ define('controllers/teams', [
 	};
 
 	teams.callbacks.deleteTeam = function (team) {
-		notify.confirm('confirm_delete_team', team.name)
+		notify.confirm(__('confirm_delete_team', team.name))
 			.then(function () {
 				return ajax('/admin/team/delete', {id: team.id});
 			})

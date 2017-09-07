@@ -6,6 +6,7 @@ define('controllers/courses', [
 	'store',
 	'serverData',
 	'ajax',
+	'notify',
 	'lang'
 ], function (
 	FilterForm,
@@ -15,6 +16,7 @@ define('controllers/courses', [
 	store,
 	serverData,
 	ajax,
+	notify,
 	__
 ) {
 
@@ -28,6 +30,8 @@ define('controllers/courses', [
 	});
 
 	filter.callbacks.save = function (data) {
+		data.user_permission = true;
+
 		return ajax('/teacher/courses/search', data).then(function (res) {
 			courses.model('list').reset(res.rows);
 			filter.paginator.set('count', res.count);
@@ -91,12 +95,15 @@ define('controllers/courses', [
 		});
 	};
 
-	courses.callbacks.removeCourse = function (course) {
-		if (!confirm(__('confirm_delete'))) return;
-
-		ajax('/teacher/course/delete', {id: course.id}, function () {
-			courses.model('list').remove(course);
-		});
+	courses.callbacks.deleteCourse = function (course) {
+		notify.confirm(__('confirm_delete'))
+			.then(function () {
+				return ajax('/teacher/course/delete', {id: course.id});
+			})
+			.then(function () {
+				filter.save();
+			})
+		;
 	};
 
 });

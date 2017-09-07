@@ -5,7 +5,8 @@ define('controllers/users', [
 	'views/paginator',
 	'views/user-form',
 	'ajax',
-	'notify'
+	'notify',
+	'lang'
 ], function (
 	FilterForm,
 	UsersToolbar,
@@ -13,7 +14,8 @@ define('controllers/users', [
 	Paginator,
 	UserForm,
 	ajax,
-	notify
+	notify,
+	__
 ) {
 
 	var filter = new FilterForm({
@@ -63,7 +65,7 @@ define('controllers/users', [
 	};
 
 	users.callbacks.deleteUser = function (user) {
-		notify.confirm('confirm_delete_user', user.name)
+		notify.confirm(__('confirm_delete_user', user.name))
 			.then(function () {
 				return ajax('/admin/users/delete', {id: user.id});
 			})

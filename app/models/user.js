@@ -1,4 +1,5 @@
 var User = require('app/db/models/user');
+var search = require('app/models/lib/search');
 var redis = require('app/db/redis');
 var crypt = require('bcrypt');
 var omit = require('lodash/omit');
@@ -108,9 +109,7 @@ User.search = function (params) {
 		};
 	}
 
-	var method = params.hasOwnProperty('offset') || params.hasOwnProperty('limit') ? 'findAndCount' : 'findAll';
-
-	return User[method]({
+	return User[search.method(params)]({
 		where: where,
 		include: include,
 		offset: params.offset,

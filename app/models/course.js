@@ -1,6 +1,7 @@
 var Course = require('app/db/models/course');
 var User = require('app/models/user');
 var Team = require('app/models/team');
+var search = require('app/models/lib/search');
 
 module.exports = Course;
 
@@ -13,19 +14,61 @@ Course.search = function (params) {
 		};
 	}
 
+	if (params.users_permissions) {
+		where.users_permissions = {
+			$contains: params.users_permissions
+		};
+	}
+
+	if (params.teams_permissions) {
+		where.teams_permissions = {
+			$or: params.teams_permissions.map(function (perms) {
+				return {
+					$contains: perms
+				}
+			})
+		};
+	}
+
+	if (where.users_permissions && where.teams_permissions) {
+		where.$or = [
+			{users_permissions: where.users_permissions},
+			{teams_permissions: where.teams_permissions},
+		];
+
+		delete where.users_permissions;
+		delete where.teams_permissions;
+	}
+
 	if (params.exclude && params.exclude.length > 0) {
 		where.id = {
 			$notIn: params.exclude
 		};
 	}
 
-	var method = params.hasOwnProperty('offset') && params.hasOwnProperty('limit') ? 'findAndCount' : 'findAll';
-
-	return Course[method]({
+	return Course[search.method(params)]({
 		where: where,
 		offset: params.offset,
 		limit: params.limit,
 		order: [['title', 'ASC']]
+	}).then(function (res) {
+		if (params.user_permission) {
+			search.list(params, res).forEach(function (item) {
+				var perms = item.users_permissions[params.user_permission];
+
+				if (!perms) {
+					perms = {
+						read: false,
+						write: false,
+						pass: false,
+					};
+				}
+
+				item.set('user_permission', perms, {raw: true});
+			});
+		}
+
+		return res;
 	});
 };
 

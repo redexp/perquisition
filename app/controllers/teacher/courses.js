@@ -13,7 +13,29 @@ courses.get('/', function (req, res) {
 });
 
 courses.post('/search', function (req, res) {
-	Course.search(req.body).then(res.json, res.catch);
+	var params = req.body;
+
+	params.users_permissions = {
+		[req.user.id]: {read: true}
+	};
+
+	if (params.user_permission) {
+		params.user_permission = req.user.id;
+	}
+
+	req.user.getTeams()
+		.then(function (teams) {
+			if (teams.length > 0) {
+				params.teams_permissions = teams.map(function (team) {
+					return {[team.id]: {read: true}};
+				});
+			}
+		})
+		.then(function () {
+			return Course.search(params);
+		})
+		.then(res.json, res.catch)
+	;
 });
 
 courses.post('/users', function (req, res) {

@@ -1,5 +1,6 @@
 var Team = require('app/db/models/team');
 var db = require('app/db');
+var search = require('app/models/lib/search');
 var s = require('squel');
 var omit = require('lodash/omit');
 
@@ -29,9 +30,7 @@ Team.search = function (params) {
 		};
 	}
 
-	var method = params.hasOwnProperty('offset') || params.hasOwnProperty('limit') ? 'findAndCount' : 'findAll';
-
-	return Team[method]({
+	return Team[search.method(params)]({
 		where: where,
 		offset: params.offset,
 		limit: params.limit,
@@ -39,9 +38,7 @@ Team.search = function (params) {
 	}).then(function (res) {
 		if (!params.users_count) return res;
 
-		var teams = method === 'findAll' ? res : res.rows;
-
-		return Team.setUsersCount(teams).then(function () {
+		return Team.setUsersCount(search.list(params, res)).then(function () {
 			return res;
 		});
 	});
