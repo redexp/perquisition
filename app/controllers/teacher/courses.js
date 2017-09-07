@@ -21,7 +21,7 @@ courses.post('/search', function (req, res) {
 
 	if (params.permissions) {
 		params.permissions = {
-			user: req.user.id,
+			user: req.user,
 			teams: []
 		};
 	}
@@ -35,9 +35,7 @@ courses.post('/search', function (req, res) {
 			}
 
 			if (params.permissions) {
-				params.permissions.teams = teams.map(function (team) {
-					return team.id;
-				});
+				params.permissions.teams = teams;
 			}
 		})
 		.then(function () {
@@ -84,7 +82,7 @@ courses.post('/create', function (req, res) {
 courses.post('/update', function (req, res) {
 	var data = req.body;
 
-	Course.findById(data.id)
+	Course.findUserCourse(data.id, req.user)
 		.then(function (course) {
 			return course.set(data).save();
 		})

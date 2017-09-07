@@ -54,23 +54,9 @@ Course.search = function (params) {
 	}).then(function (res) {
 		if (params.permissions) {
 			var user = params.permissions.user;
-			var teams = params.permissions.teams || [];
-
-			search.list(params, res).forEach(function (item) {
-				var permissions = item.users_permissions[user] || {
-					read: false,
-					write: false,
-					pass: false,
-				};
-
-				teams.forEach(function (id) {
-					var perms = item.teams_permissions[id] || {};
-					permissions.read = permissions.read || !!perms.read;
-					permissions.write = permissions.write || !!perms.write;
-					permissions.pass = permissions.pass || !!perms.pass;
-				});
-
-				item.set('permissions', permissions, {raw: true});
+			var teams = params.permissions.teams;
+			search.list(params, res).forEach(function (course) {
+				course.set('permissions', course.getPermissions(user, teams), {raw: true});
 			});
 		}
 
@@ -92,42 +78,25 @@ Course.findByUser = function (user) {
 	});
 };
 
-Course.findUserCourse = function (course, user, perms) {
-	if (typeof course === 'object') {
-		course = course.id;
-	}
-
-	if (typeof user === 'object') {
-		user = user.id;
-	}
-
-	var permissions = [];
-
-	['*', user].forEach(function (id) {
-		var perm = {};
-
-		for (var name in perms) {
-			if (!perms.hasOwnProperty(name)) continue;
-
-			perm[id + ',' + name] = perms[name] ? 'true' : 'false';
-		}
-
-		permissions.push(perm);
-	});
-
-	return Course.findOne({
-		where: {
-			id: course,
-			users_permissions: {
-				$or: permissions
-			}
-		}
-	}).then(function (course) {
+Course.findUserCourse = function (id, user, perms) {
+	return Course.findById(id).then(function (course) {
 		if (!course) {
-			throw new Error('course_access_denied');
+			throw new Error(__('course.not_found'));
 		}
 
-		return course;
+		return user.getTeams().then(function (teams) {
+			var permissions = course.getPermissions(user, teams);
+
+			for (var name in perms) {
+				if (!perms.hasOwnProperty(name)) continue;
+
+				if (permissions[name] !== perms[name]) {
+					throw new Error(__('course.not_found'));
+				}
+			}
+
+			return course;
+		});
 	});
 };
 
@@ -150,3 +119,24 @@ Course.prototype.getTeams = function () {
 		}
 	})
 };
+
+Course.prototype.getPermissions = function (user, teams) {
+	var course = this;
+	var permissions = mergePermissions({}, course.users_permissions[user.id]);
+
+	teams.forEach(function (team) {
+		mergePermissions(permissions, course.teams_permissions[team.id]);
+	});
+
+	return permissions;
+};
+
+function mergePermissions(a, b) {
+	b = b || {};
+
+	a.read = a.read || !!b.read;
+	a.write = a.write || !!b.write;
+	a.pass = a.pass || !!b.pass;
+
+	return a;
+}
