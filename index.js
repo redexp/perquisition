@@ -58,3 +58,16 @@ if (config.ssl && config.portSSL) {
 else {
 	app.listen(config.portWEB);
 }
+
+if (app.IS_DEV) {
+	var socket = new (require('ws').Server)({port: 8100});
+	socket.on('connection', function (item) {
+		item.on('message', function (data) {
+			socket.clients.forEach(function (client) {
+				if (client !== item && client.readyState === 1) {
+					client.send(data);
+				}
+			});
+		});
+	});
+}

@@ -1,0 +1,148 @@
+<% layout('layout') %>
+
+<% appendStyles([
+    'teacher/questions.css'
+]) %>
+
+<% appendScripts([
+    ['lib/component-composer/component-composer.js', 'composer'],
+    'lib/bootstrap/transition.js',
+    'lib/bootstrap/dropdown.js',
+    'lib/bootstrap/modal.js',
+    'views/form.js',
+    'views/modal-form.js',
+    'views/autocompleter.js',
+    'teacher/questions/**/*.js'
+]) %>
+
+<%- renderTranslationsFor('teacher/questions') %>
+
+<%- partial('components/header', {route: '/teacher/courses'}) %>
+
+<div id="questions-list" class="questions">
+    <div data-arrow data-direction="vertical" class="questions-arrow">
+        <i class="fa fa-long-arrow-right"></i>
+    </div>
+
+    <div data-questions class="questions-container">
+
+        <div data-question-type="row" class="panel panel-default">
+            <div data-drag-clone class="question-clone"><%= __('questions.row') %></div>
+
+            <div data-toolbar class="panel-heading toolbared">
+                <div data-drag-zone class="question-drag-block"><%= __('questions.row') %></div>
+
+                <div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                            <%= __('main.actions') %> <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li data-edit><a href="#"><%= __('main.edit') %></a></li>
+                            <li data-clone><a href="#"><%= __('main.clone') %></a></li>
+                            <li class="divider"></li>
+                            <li data-delete><a href="#"><%= __('main.delete') %></a></li>
+                        </ul>
+                    </div>
+
+                    <button data-collapse class="btn btn-xs btn-default"><i class="fa fa-angle-up"></i></button>
+                    <button data-expand class="btn btn-xs btn-default"><i class="fa fa-angle-down"></i></button>
+                </div>
+            </div>
+
+            <div class="question-content panel-body">
+                <div data-questions></div>
+
+                <div class="add-question">
+                    <div class="btn-group">
+                        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><i class="fa fa-plus"></i></button>
+                        <ul class="dropdown-menu dropdown-menu-right" data-questions-types>
+                            <li><a data-type-title href="#"></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div data-question-type="section" class="panel panel-default">
+            <div data-drag-clone class="question-clone"><%= __('questions.section') %></div>
+
+            <div data-toolbar class="panel-heading toolbared">
+                <div data-drag-zone class="question-drag-block"><%= __('questions.section') %></div>
+
+                <div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                            <%= __('main.actions') %> <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li data-edit><a href="#"><%= __('main.edit') %></a></li>
+                            <li data-clone><a href="#"><%= __('main.clone') %></a></li>
+                            <li class="divider"></li>
+                            <li data-delete><a href="#"><%= __('main.delete') %></a></li>
+                        </ul>
+                    </div>
+
+                    <button data-collapse class="btn btn-xs btn-default"><i class="fa fa-angle-up"></i></button>
+                    <button data-expand class="btn btn-xs btn-default"><i class="fa fa-angle-down"></i></button>
+                </div>
+            </div>
+
+            <div class="question-content panel-body">
+                <div data-questions></div>
+
+                <div class="add-question">
+                    <div class="btn-group">
+                        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><i class="fa fa-plus"></i></button>
+                        <ul class="dropdown-menu" data-questions-types>
+                            <li><a data-type-title href="#"></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div data-question-type="choice" class="panel panel-default">
+            <div data-drag-clone class="question-clone"><%= __('questions.choice') %></div>
+
+            <div data-toolbar class="panel-heading toolbared">
+                <div data-drag-zone class="question-drag-block"><%= __('questions.choice') %></div>
+
+                <div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                            <%= __('main.actions') %> <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li data-edit><a href="#"><%= __('main.edit') %></a></li>
+                            <li data-clone><a href="#"><%= __('main.clone') %></a></li>
+                            <li class="divider"></li>
+                            <li data-delete><a href="#"><%= __('main.delete') %></a></li>
+                        </ul>
+                    </div>
+
+                    <button data-collapse class="btn btn-xs btn-default"><i class="fa fa-angle-up"></i></button>
+                    <button data-expand class="btn btn-xs btn-default"><i class="fa fa-angle-down"></i></button>
+                </div>
+            </div>
+
+            <div class="question-content panel-body">
+                <div data-title></div>
+                <div data-options>
+                    <label>
+                        <input data-option-type type="checkbox"/> <span data-option-title></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="add-question">
+        <div class="btn-group">
+            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><i class="fa fa-plus"></i></button>
+            <ul class="dropdown-menu" data-types>
+                <li><a data-title href="#"></a></li>
+            </ul>
+        </div>
+    </div>
+</div>

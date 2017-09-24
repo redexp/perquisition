@@ -82,7 +82,7 @@ courses.post('/create', function (req, res) {
 courses.post('/update', function (req, res) {
 	var data = req.body;
 
-	Course.findUserCourse(data.id, req.user)
+	Course.findUserCourse(data.id, req.user, {write: true})
 		.then(function (course) {
 			return course.set(data).save();
 		})
@@ -96,5 +96,21 @@ courses.post('/delete', function (req, res) {
 			return course.destroy();
 		})
 		.then(res.json, res.catch)
+	;
+});
+
+courses.get('/:id/questions', function (req, res) {
+	Course.findUserCourse(req.params.id, req.user, {write: true})
+		.then(function (course) {
+			res.locals.serverData.course = course;
+
+			return course.getQuestions();
+		})
+		.then(function (questions) {
+			res.locals.serverData.questions = questions;
+		})
+		.then(function () {
+			res.render('teacher/questions');
+		})
 	;
 });

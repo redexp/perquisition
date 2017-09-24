@@ -190,7 +190,7 @@ define('views/user-form', [
 					each: {
 						prop: 'teachers_teams',
 						view: Team,
-						viewProp: 'team'
+						dataProp: 'team'
 					}
 				},
 
@@ -212,7 +212,7 @@ define('views/user-form', [
 					each: {
 						prop: 'students_teams',
 						view: Team,
-						viewProp: 'team'
+						dataProp: 'team'
 					}
 				},
 

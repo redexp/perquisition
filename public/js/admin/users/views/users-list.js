@@ -26,7 +26,7 @@ define('views/users-list', [
 				each: {
 					prop: 'list',
 					view: User,
-					viewProp: 'user'
+					dataProp: 'user'
 				}
 			}
 		}

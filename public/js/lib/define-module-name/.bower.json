@@ -29,7 +29,6 @@
     "commit": "6533003736f5409206fc6bde6b7c0a3add6b8898"
   },
   "_source": "https://github.com/redexp/define-module-name.git",
-  "_target": "^1.9.2",
-  "_originalSource": "define-module-name",
-  "_direct": true
+  "_target": "1.*",
+  "_originalSource": "define-module-name"
 }

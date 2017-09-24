@@ -159,7 +159,7 @@ define('views/team-form', [
 				each: {
 					prop: 'users',
 					view: User,
-					viewProp: 'user'
+					dataProp: 'user'
 				}
 			},
 

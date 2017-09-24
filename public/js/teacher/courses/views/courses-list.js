@@ -30,7 +30,7 @@ define('views/courses-list', [
 				each: {
 					prop: 'list',
 					view: Course,
-					viewProp: 'course'
+					dataProp: 'course'
 				}
 			},
 

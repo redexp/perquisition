@@ -7,11 +7,15 @@ define('utils', [], function () {
 		debounce: debounce
 	};
 
-	function extend(target, source) {
-		for (var prop in source) {
-			if (!source.hasOwnProperty(prop)) continue;
+	function extend(target) {
+		for (var i = 1, len = arguments.length; i < len; i++) {
+			var source = arguments[i];
 
-			target[prop] = source[prop];
+			for (var name in source) {
+				if (!source.hasOwnProperty(name)) continue;
+
+				target[name] = source[name];
+			}
 		}
 
 		return target;

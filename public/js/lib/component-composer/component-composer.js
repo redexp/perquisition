@@ -14,13 +14,7 @@
 
 	function ComponentComposer(options) {
 		View.call(this, options);
-
-		this.window = $(window);
-		this.documentBody = $(document.body);
-		this.listenOn(this.documentBody, 'keydown', this.validatePasteStartDragging);
 	}
-
-	ComponentComposer.CUT_KEY = 'ComponentComposer:cut';
 
 	View.extend({
 		constructor: ComponentComposer,
@@ -37,42 +31,39 @@
 				},
 				toolbar: [],
 				components: [],
-				componentsDirection: 'vertical'
+				componentsDirection: 'vertical',
+				componentsProp: 'components',
+				componentDataProp: 'component',
+				componentTypeProp: 'type'
 			};
 		},
 
 		ui: {
 			arrow: '> [data-arrow]',
 			toolbar: '> [data-toolbar]',
-			components: '> [data-components]',
-			copyTextarea: '<textarea style="position: fixed; left: -1000px;">'
+			components: '> [data-components]'
 		},
 
 		forEachComponent: function (callback) {
-			this.data.components.forEach(function (item, i) {
-				getAllComponents(item, i);
-			});
+			this.views['@components'].forEach(getAllComponents);
 
 			function getAllComponents(item, i) {
 				var res = callback(item, i);
 
 				if (res === false) return;
 
-				if (item.data.components && item.data.components.length > 0) {
-					item.data.components.forEach(function (item, i) {
-						getAllComponents(item, i);
-					});
+				var views = item.views && item.views['@components'];
+
+				if (views) {
+					views.forEach(getAllComponents);
 				}
 			}
 		},
 
-		updateComponentsPositions: function (options) {
-			options = options || {};
+		updateComponentsPositions: function () {
+			var list = [];
 
-			var list = [],
-				exclude = options.exclude;
-
-			if (this.data.components.length === 0) {
+			if (this.data[this.data.componentsProp].length === 0) {
 				var main = getContainerOffset(this.ui.components);
 
 				main.container = true;
@@ -83,8 +74,6 @@
 			}
 
 			this.forEachComponent(function (component, index) {
-				if (component === exclude) return false;
-
 				var offset = getOffset(component.node);
 
 				offset.component = component;
@@ -93,7 +82,13 @@
 
 				list.push(offset);
 
-				if (component.data.components && component.ui.components && component.data.components.length === 0) {
+				var componentsProp = component.data.componentsProp,
+					components = componentsProp && component.get(componentsProp);
+
+				if (
+					components &&
+					components.length === 0
+				) {
 					var inner = getContainerOffset(component.ui.components);
 
 					inner.container = true;
@@ -142,7 +137,7 @@
 							direction: offset.direction,
 							top: offset.innerTop,
 							left: offset.innerLeft,
-							visible: true,
+							visible: offset.component !== pos.component,
 							component: null,
 							parent: offset.component,
 							index: 0
@@ -159,7 +154,7 @@
 							direction: offset.direction,
 							top: offset.top,
 							left: offset.left,
-							visible: true,
+							visible: offset.component !== pos.component,
 							component: offset.component,
 							parent: offset.component.parent,
 							index: offset.index
@@ -172,7 +167,7 @@
 							direction: offset.direction,
 							top: offset.bottom,
 							left: offset.left,
-							visible: true,
+							visible: offset.component !== pos.component,
 							component: offset.component,
 							parent: offset.component.parent,
 							index: offset.index + 1
@@ -189,7 +184,7 @@
 							direction: offset.direction,
 							top: offset.top,
 							left: offset.left,
-							visible: true,
+							visible: offset.component !== pos.component,
 							component: offset.component,
 							parent: offset.component.parent,
 							index: offset.index
@@ -202,7 +197,7 @@
 							direction: offset.direction,
 							top: offset.top,
 							left: offset.right,
-							visible: true,
+							visible: offset.component !== pos.component,
 							component: offset.component,
 							parent: offset.component.parent,
 							index: offset.index + 1
@@ -238,28 +233,25 @@
 
 			arrow.set('visible', false);
 
-			var component = new item.context.view({
-				parent: this,
-				node: item.context.node && item.context.node.clone(),
-				data: {
-					uuid: uuid(),
-					title: item.context.title,
-					viewName: item.context.viewName || item.context.view.name
-				}
-			});
+			var parent = arrow.get('parent');
 
-			component.context = item.context;
-			component.composer = this;
-
-			arrow.get('parent').model('components').add(component, arrow.get('index'));
+			parent
+				.model(parent.data.componentsProp)
+				.add(this.getComponentData(item.data.type), arrow.get('index'))
+			;
 		},
 
-		onComponentStartDragging: function (component) {
-			this.updateComponentsPositions({exclude: component});
+		onComponentStartDragging: function () {
+			this.updateComponentsPositions();
 		},
 
 		onComponentDragging: function (component) {
-			this.updateArrow(component.get('position'));
+			var pos = component.get('position');
+			this.updateArrow({
+				top: pos.top,
+				left: pos.left,
+				component: component
+			});
 		},
 
 		onComponentStopDragging: function (component) {
@@ -271,282 +263,81 @@
 
 			arrow.set('visible', false);
 
-			var parent = arrow.get('parent'),
-				components = parent.model('components'),
+			var newParent = arrow.get('parent'),
+				oldParent = component.parent,
+				list = newParent.model(newParent.data.componentsProp),
+				item = component.data[oldParent.data.componentDataProp],
 				index = arrow.get('index');
 
-			if (components.indexOf(component) === index) return;
+			if (list.indexOf(item) === index) return;
 
-			if (component.parent === parent) {
-				components.move(component, index);
+			if (oldParent === newParent) {
+				list.move(item, index);
 			}
 			else {
-				component.parent.model('components').remove(component);
-				components.add(component, index);
+				oldParent.model(oldParent.data.componentsProp).remove(item);
+				list.add(item, index);
 			}
 		},
 
-		validatePasteStartDragging: function (e) {
-			if (e.keyCode !== 17) return;
+		getComponentView: function (data) {
+			var typeProp = this.data.componentTypeProp,
+				type = data[typeProp];
 
-			this.onPasteStartDragging(e);
-		},
-
-		onPasteStartDragging: function (e) {
-			this.updateComponentsPositions();
-
-			this.listenOn(this.documentBody, 'mousemove.onPasteDragging', this.onPasteDragging);
-			this.listenOn(this.documentBody, 'keyup.onPasteStopDragging', this.onPasteStopDragging);
-			this.listenOn(this.documentBody, 'paste.onPaste', this.onPaste);
-		},
-
-		onPasteDragging: function (e) {
-			this.updateArrow({top: e.pageY, left: e.pageX});
-		},
-
-		onPasteStopDragging: function (e) {
-			if (e.keyCode !== 17) return;
-
-			this.componentsPositions = null;
-			this.model('arrow').set('visible', false);
-			this.stopListening(this.documentBody, 'mousemove.onPasteDragging');
-			this.stopListening(this.documentBody, 'mousemove.onPasteStopDragging');
-			this.stopListening(this.documentBody, 'paste.onPaste');
-		},
-
-		onPaste: function (e) {
-			var arrow = this.model('arrow');
-
-			if (!arrow.get('visible')) return;
-
-			try {
-				var json = e.originalEvent.clipboardData.getData('text');
-			}
-			catch (err) {
-				console.error('clipboardData.getData() error:', err);
-				return;
+			if (!type) {
+				throw new Error('Undefined prop ' + JSON.stringify(typeProp));
 			}
 
-			try {
-				var data = JSON.parse(json);
-			}
-			catch (err) {
-				console.error('JSON.parse() error:', err);
-				return;
-			}
+			var types = this.data.types;
 
-			var components = arrow.get('parent').model('components'),
-				index = arrow.get('index');
-
-			var component = this.getComponentByUuid(data.uuid),
-				cutKey = ComponentComposer.CUT_KEY,
-				cutUuid = localStorage.getItem(cutKey);
-
-			if (component && component.data.uuid === cutUuid) {
-				this.onComponentStopDragging(component);
-			}
-			else {
-				component = this.createComponent(data);
-				this.updateComponentUuid(component);
-				components.add(component, index);
-			}
-
-			localStorage.removeItem(cutKey);
-		},
-
-		createComponent: function (data) {
-			if (data instanceof Array) {
-				var self = this;
-				return data
-					.map(function (data) {
-						return self.createComponent(data);
-					})
-					.filter(function (component) {
-						return !!component;
-					})
-				;
-			}
-
-			var item = this.model('toolbar').find(function (item) {
-				return item.viewName === data.viewName || item.view.name === data.viewName;
-			});
-
-			if (!item) {
-				console.warn("Can't find view with name", data.viewName);
-				return;
-			}
-
-			var components = data.components;
-
-			if (components) {
-				data.components = [];
-			}
-
-			var component = new item.view({
-				node: item.node && item.node.clone(),
-				data: data
-			});
-
-			component.composer = this;
-
-			if (components) {
-				component.model('components').add(this.createComponent(components));
-			}
-
-			return component;
-		},
-
-		updateComponentUuid: function (component) {
-			component.data.uuid = uuid();
-			if (component.data.components) {
-				var self = this;
-				component.data.components.forEach(function (component) {
-					self.updateComponentUuid(component);
-				});
-			}
-		},
-
-		getComponentByUuid: function (uuid) {
-			function find(list) {
-				for (var i = 0, len = list.length; i < len; i++) {
-					var item = list[i];
-					if (item.data.uuid === uuid) return item;
-					if (item.data.components) {
-						return find(item.data.components);
-					}
+			for (var i = 0, item; item = types[i]; i++) {
+				if (item.id === type) {
+					return typeof item === 'function' ? item : item.view;
 				}
 			}
 
-			return find(this.data.components);
-
+			throw new Error('Unknown type ' + JSON.stringify(type));
 		},
 
-		copyComponent: function (component) {
-			var json = JSON.stringify(component);
-
-			this.ui.copyTextarea
-				.appendTo('body')
-				.val(json)
-				.get(0)
-				.select()
-			;
-
-			document.execCommand('copy');
-
-			this.ui.copyTextarea
-				.detach()
-				.val('')
-			;
+		getComponentData: function (item) {
+			return item.data();
 		},
 
-		cutComponent: function (component) {
-			this.copyComponent(component);
-
-			this.stopListening(this.window, 'storage.cutComponent');
-
-			var cutKey = ComponentComposer.CUT_KEY;
-
-			localStorage.setItem(cutKey, component.data.uuid);
-
-			this.listenOn(this.window, 'storage.cutComponent', function (e) {
-				e = e.originalEvent;
-
-				if (e.key !== cutKey) return;
-
-				if (!e.newValue) {
-					this.removeComponent(component);
-				}
-
-				this.stopListening(this.window, 'storage.cutComponent');
-			});
-		},
-
-		cloneComponent: function (component) {
-			if (component instanceof Array) {
-				var self = this;
-				return component.map(function (component) {
-					return self.cloneComponent(component);
-				});
-			}
-
-			var context = component.context,
-				data = $.extend({}, component.data),
-				components = data.components;
-
-			if (components) {
-				data.components = [];
-			}
-
-			var clone = new context.view({
-				context: context,
-				node: context.node && context.node.clone(),
-				data: data
-			});
-
-			clone.context = context;
-			clone.composer = this;
-
-			if (components) {
-				clone.model('components').add(this.cloneComponent(components));
-			}
-
-			return clone;
-		},
-
-		removeComponent: function (component) {
-			component.parent.model('components').remove(component);
-			Draggable.prototype.remove.call(component);
-		},
-
-		template: {
-			'@arrow': {
-				style: {
-					top: '@arrow.top',
-					left: '@arrow.left',
-					display: {
-						'@arrow.visible': function (visible) {
-							return visible ? 'block' : 'none';
+		template: function () {
+			return {
+				'@arrow': {
+					style: {
+						top: '@arrow.top',
+						left: '@arrow.left',
+						display: {
+							'@arrow.visible': function (visible) {
+								return visible ? 'block' : 'none';
+							}
 						}
+					},
+
+					attr: {
+						'data-direction': '@arrow.direction'
 					}
 				},
 
-				attr: {
-					'data-direction': '@arrow.direction'
-				}
-			},
+				'@toolbar': {
+					each: {
+						prop: 'types',
+						view: ToolbarItem,
+						dataProp: 'type'
+					}
+				},
 
-			'@toolbar': {
-				each: {
-					prop: 'toolbar',
-					view: function (item, node) {
-						return new ToolbarItem({
-							parent: this,
-
-							node: node,
-
-							context: item,
-
-							data: {
-								title: item.title
-							}
-						});
+				'@components': {
+					each: {
+						prop: this.data.componentsProp,
+						view: this.getComponentView,
+						dataProp: this.data.componentDataProp,
+						node: false
 					}
 				}
-			},
-
-			'@components': {
-				each: {
-					prop: 'components',
-					view: function (component) {
-						component.parent = this;
-						return component;
-					},
-					node: '> *:nth-child(2)',
-					remove: function (ul, component) {
-						component.node.detach();
-					}
-				}
-			}
+			};
 		}
 	});
 
@@ -566,7 +357,7 @@
 		constructor: Draggable,
 
 		ui: {
-			dragZone: '@root',
+			dragZone: '[data-drag-zone]',
 			dragClone: '[data-drag-clone]'
 		},
 
@@ -653,10 +444,18 @@
 		constructor: ToolbarItem,
 
 		ui: {
-			title: '[data-title]'
+			title: '[data-title]',
+			dragZone: '@root'
 		},
 
 		onStartDragging: function (e) {
+			var zone = this.ui.dragZone.offset();
+
+			this.model('offset').set({
+				top: e.pageY - zone.top,
+				left: e.pageX - zone.left
+			});
+
 			Draggable.prototype.onStartDragging.call(this, e);
 
 			this.parent.onToolbarItemStartDragging(this);
@@ -676,7 +475,7 @@
 
 		template: {
 			'@title': {
-				text: '=title'
+				text: '=type.title'
 			}
 		}
 	});
@@ -686,28 +485,13 @@
 	//region ====================== Component =====================================
 
 	function Component(options) {
+		this.composer = (options.parent && options.parent.composer) || options.parent;
+
 		Draggable.call(this, options);
 	}
 
 	Draggable.extend({
 		constructor: Component,
-
-		ui: {
-			dragZone: '[data-drag-zone]',
-			title: '[data-title]',
-			edit: '[data-edit]',
-			cut: '[data-cut]',
-			copy: '[data-copy]',
-			clone: '[data-clone]',
-			remove: '[data-remove]',
-			collapse: '[data-collapse]',
-			expand: '[data-expand]',
-			content: '[data-content]'
-		},
-
-		data: {
-			collapsed: false
-		},
 
 		onStartDragging: function (e) {
 			Draggable.prototype.onStartDragging.call(this, e);
@@ -725,93 +509,6 @@
 			Draggable.prototype.onStopDragging.call(this, e);
 
 			this.composer.onComponentStopDragging(this);
-		},
-
-		collapse: function () {
-			this.set('collapsed', true);
-		},
-
-		expand: function () {
-			this.set('collapsed', false);
-		},
-
-		copy: function () {
-			this.composer.copyComponent(this);
-		},
-
-		cut: function () {
-			this.composer.cutComponent(this);
-		},
-
-		clone: function () {
-			var clone = this.composer.cloneComponent(this);
-			var list = this.parent.model('components');
-			list.add(clone, list.indexOf(this) + 1);
-		},
-
-		remove: function () {
-			this.composer.removeComponent(this);
-		},
-
-		toJSON: function () {
-			var data = $.extend({}, this.data);
-
-			if (data.components) {
-				data.components = data.components.map(function (component) {
-					return component.toJSON();
-				});
-			}
-
-			data.viewName = data.viewName || this.constructor.name;
-
-			return data;
-		},
-
-		template: {
-			'@root': {
-				toggleClass: {
-					'component-collapsed': '@collapsed'
-				}
-			},
-
-			'@title': {
-				text: '=title'
-			},
-
-			'@collapse': {
-				on: {
-					'click': 'collapse'
-				}
-			},
-			'@expand': {
-				on: {
-					'click': 'expand'
-				}
-			},
-
-			'@copy': {
-				on: {
-					'click': 'copy'
-				}
-			},
-
-			'@cut': {
-				on: {
-					'click': 'cut'
-				}
-			},
-
-			'@clone': {
-				on: {
-					'click': 'clone'
-				}
-			},
-
-			'@remove': {
-				on: {
-					'click': 'remove'
-				}
-			}
 		}
 	});
 
@@ -830,73 +527,29 @@
 			components: '[data-components]'
 		},
 
-		data: function () {
-			return {
-				components: [],
-				componentsDirection: 'vertical'
-			}
+		data: {
+			componentsProp: ['component', 'components'],
+			componentDataProp: 'component',
+			componentsDirection: 'vertical'
 		},
 
 		forEachComponent: ComponentComposer.prototype.forEachComponent,
 
-		remove: function () {
-			this.forEachComponent(function (component) {
-				component.off().stopListening();
-			});
-
-			return Component.prototype.remove.call(this);
-		},
-
-		template: {
-			'@components': {
-				each: {
-					prop: 'components',
-					node: false,
-					view: function (component) {
-						component.parent = this;
-
-						return component;
-					},
-					remove: function (ul, component) {
-						component.node.detach();
+		template: function () {
+			return {
+				'@components': {
+					each: {
+						prop: this.data.componentsProp,
+						view: function (item) {
+							return this.composer.getComponentView(item);
+						},
+						dataProp: this.data.componentDataProp,
+						node: false
 					}
 				}
-			}
+			};
 		}
 	});
-
-	//endregion
-
-	//region ====================== Utils =========================================
-
-	var uuid = (function () {
-		return (window.crypto && typeof window.crypto.getRandomValues === 'function') ?
-			function () {
-				// If we have a cryptographically secure PRNG, use that
-				// http://stackoverflow.com/questions/6906916/collisions-when-generating-uuids-in-javascript
-				var buf = new Uint16Array(8);
-				window.crypto.getRandomValues(buf);
-				var S4 = function(num){
-					var ret = num.toString(16);
-					while (ret.length < 4) {
-						ret = "0" + ret;
-					}
-					return ret;
-				};
-				return (S4(buf[0]) + S4(buf[1]) + "-" + S4(buf[2]) + "-" + S4(buf[3]) + "-" + S4(buf[4]) + "-" + S4(buf[5]) + S4(buf[6]) + S4(buf[7]));
-			}
-			:
-			function () {
-				// Otherwise, just use Math.random
-				// http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/2117523#2117523
-				return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c){
-					var r = Math.random() * 16 | 0,
-						v = c == 'x' ? r : (r & 0x3 | 0x8);
-					return v.toString(16);
-				});
-			}
-		;
-	})();
 
 	//endregion
 

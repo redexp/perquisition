@@ -31,6 +31,10 @@
     'lib/serverData/serverData.js'
 ]) %>
 
+<% if (IS_DEV) appendScripts([
+    'lib/style-watcher/style-watcher.js'
+]) %>
+
 <%- renderServerData() %>
 
 <%- renderScripts() %>

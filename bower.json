@@ -19,8 +19,10 @@
     "tests"
   ],
   "dependencies": {
-    "define-module-name": "^1.9.2",
-    "component-composer": "^1.0.1",
-    "noty": "^3.1.2"
+    "define-module-name": "1.*",
+    "jquery": "3.*",
+    "declarative-view": "1.*",
+    "component-composer": "1.*",
+    "noty": "3.*"
   }
 }

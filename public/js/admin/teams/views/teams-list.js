@@ -24,7 +24,7 @@ define('views/teams-list', [
 				each: {
 					prop: 'list',
 					view: Team,
-					viewProp: 'team'
+					dataProp: 'team'
 				}
 			}
 		}

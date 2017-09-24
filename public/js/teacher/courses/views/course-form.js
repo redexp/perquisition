@@ -210,7 +210,7 @@ define('views/course-form', [
 					each: {
 						prop: 'users',
 						view: User,
-						viewProp: 'user'
+						dataProp: 'user'
 					}
 				},
 
@@ -225,7 +225,7 @@ define('views/course-form', [
 					each: {
 						prop: 'teams',
 						view: Team,
-						viewProp: 'team'
+						dataProp: 'team'
 					}
 				},
 

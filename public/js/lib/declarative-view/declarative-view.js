@@ -621,6 +621,7 @@
 		text: textHelper,
 		on: onHelper,
 		once: onceHelper,
+		click: clickHelper,
 		connect: connectHelper,
 		visible: visibleHelper,
 		show: visibleHelper,
@@ -636,6 +637,10 @@
 			if (!template.hasOwnProperty(selector)) return;
 
 			var helpers = template[selector];
+
+			if (typeof helpers === 'function') {
+				helpers = helpers.call(view);
+			}
 
 			if (selector.charAt(0) === '&') {
 				selector = selector.slice(1);
@@ -788,6 +793,10 @@
 		onHelper(view, selector, events, true);
 	}
 
+	function clickHelper(view, selector, options) {
+		onHelper(view, selector, {click: options});
+	}
+
 	function connectHelper(view, selector, options) {
 		var node = view.find(selector);
 
@@ -852,12 +861,27 @@
 
 	//region ====================== Each Helper ===================================
 
+	/**
+	 * @param {DeclarativeView} view
+	 * @param {string} selector
+	 * @param {{
+	 * 	 prop: string|Array,
+	 * 	 view: DeclarativeView|function,
+	 * 	 node: string|boolean,
+	 * 	 dataProp?: string,
+	 * 	 template?: Object,
+	 * 	 add?: function,
+	 * 	 remove?: function,
+	 * 	 move?: function,
+	 * 	 sort?: function
+	 * }} options
+	 */
 	function eachHelper(view, selector, options) {
 		var root = view.find(selector),
 			prop = options.prop,
 			list = view.model(typeof prop === 'string' && prop.indexOf('.') > -1 ? prop.split('.') : prop),
 			views = new ViewsList([]),
-			tplSelector = options.node === false ? [] : options.node || '> *';
+			tplSelector = options.node === false ? false : options.node || '> *';
 
 		if (_DEV_) {
 			if (!list) {
@@ -865,8 +889,8 @@
 			}
 		}
 
-		var tpl = typeof tplSelector === 'string' && tplSelector.charAt(0) !== '<' ? root.find(tplSelector) : $(tplSelector);
-		tpl.detach();
+		var tpl = tplSelector === false ? null : typeof tplSelector === 'string' && tplSelector.charAt(0) !== '<' ? root.find(tplSelector) : $(tplSelector);
+		if (tpl) tpl.detach();
 
 		list.views = list.views || views;
 		view.views = view.views || {};
@@ -886,7 +910,7 @@
 				ViewClass = options.view;
 			}
 			else if (options.view) {
-				var res = options.view.call(view, item, tpl.clone());
+				var res = options.view.call(view, item, tpl && tpl.clone());
 
 				if (isClass(res)) {
 					ViewClass = res;
@@ -903,8 +927,8 @@
 				var data = {},
 					wrappers = null;
 
-				if (options.viewProp) {
-					data[options.viewProp] = item;
+				if (options.dataProp) {
+					data[options.dataProp] = item;
 
 					if (typeof item === 'object' && item !== null) {
 						wrappers = {
@@ -921,7 +945,7 @@
 				}
 
 				itemView = new ViewClass({
-					node: tpl.clone(),
+					node: tpl && tpl.clone(),
 					parent: view,
 					data: data,
 					wrappers: wrappers,
@@ -1031,7 +1055,7 @@
 			break;
 
 		default:
-			throw new Error('Unknown options type');
+			throw new Error('Unknown options type ' + (typeof options) + ' in view class ' + view.constructor.name);
 		}
 
 		function addListener(events, func) {
@@ -1615,7 +1639,7 @@
 
 		if (_DEV_) {
 			if (typeof selector === 'undefined') {
-				throw new Error('Undefined ui alias "' + name + '" in view ' + this.constructor.name);
+				throw new Error('Undefined ui alias "' + name + '" in view ' + view.constructor.name);
 			}
 		}
 

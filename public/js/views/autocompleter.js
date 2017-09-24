@@ -228,7 +228,7 @@ define('views/autocompleter', [
 				each: {
 					prop: 'list',
 					view: Item,
-					viewProp: 'item'
+					dataProp: 'item'
 				}
 			},
 
