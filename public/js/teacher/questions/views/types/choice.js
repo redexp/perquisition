@@ -26,10 +26,6 @@ define('views/types/choice', [
 		node: Base.detachHTML(Choice.id),
 
 		template: {
-			'[data-title]': {
-				text: '@question.title'
-			},
-
 			'[data-options]': {
 				each: {
 					prop: 'question.data.options',

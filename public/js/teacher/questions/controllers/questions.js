@@ -1,9 +1,11 @@
 define('controllers/questions', [
 	'views/questions-list',
+	'views/questions-forms',
 	'serverData',
 	'jquery'
 ], function (
 	QuestionsList,
+	QuestionsForms,
 	serverData,
 	$
 ) {
@@ -15,12 +17,23 @@ define('controllers/questions', [
 		}
 	});
 
+	var forms = new QuestionsForms({
+		node: '#questions-forms'
+	});
+
 	questions.callbacks.addQuestion = function (type, parent) {
 		parent.model(parent.data.componentsProp).add(type.data());
 	};
 
 	questions.callbacks.editQuestion = function (question) {
+		var form = forms.get(question.data.question.type);
 
+		form.open({
+			question: question.data.question,
+			save: function (data) {
+				question.model('question').assign(data);
+			}
+		});
 	};
 
 	questions.callbacks.cloneQuestion = function (question) {

@@ -1,8 +1,10 @@
 define('views/types/base', [
 	'composer',
+	'markdown',
 	'jquery'
 ], function (
 	Composer,
+	markdown,
 	$
 ) {
 
@@ -50,15 +52,15 @@ define('views/types/base', [
 			this.set('collapsed', false);
 		},
 
-		edit: function () {
+		editQuestion: function () {
 			this.composer.callbacks.editQuestion(this);
 		},
 
-		clone: function () {
+		cloneQuestion: function () {
 			this.composer.callbacks.cloneQuestion(this);
 		},
 
-		delete: function () {
+		deleteQuestion: function () {
 			this.composer.callbacks.deleteQuestion(this);
 		},
 
@@ -83,15 +85,23 @@ define('views/types/base', [
 					},
 
 					'[data-edit]': {
-						click: '!edit'
+						click: '!editQuestion'
 					},
 
 					'[data-clone]': {
-						click: '!clone'
+						click: '!cloneQuestion'
 					},
 
 					'[data-delete]': {
-						click: '!delete'
+						click: '!deleteQuestion'
+					}
+				}
+			},
+
+			'[data-title]': {
+				html: {
+					'@question.title': function (title) {
+						return markdown(title);
 					}
 				}
 			}
