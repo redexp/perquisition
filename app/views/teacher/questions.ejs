@@ -1,7 +1,8 @@
 <% layout('layout') %>
 
 <% appendStyles([
-    'teacher/questions.css'
+    'teacher/questions.css',
+    'highlight/github-gist.css'
 ]) %>
 
 <% appendScripts([
@@ -9,9 +10,11 @@
     'lib/bootstrap/transition.js',
     'lib/bootstrap/dropdown.js',
     'lib/bootstrap/modal.js',
+    'lib/clone/clone.js',
+    ['lib/marked/marked.min.js', 'markdown'],
+    ['lib/highlight/highlight.pack.js', 'highlight'],
     'views/form.js',
     'views/modal-form.js',
-    'views/autocompleter.js',
     'teacher/questions/**/*.js'
 ]) %>
 
@@ -143,6 +146,118 @@
             <ul class="dropdown-menu" data-types>
                 <li><a data-title href="#"></a></li>
             </ul>
+        </div>
+    </div>
+</div>
+
+<div id="questions-forms">
+    <div data-question-form="row" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title"><%= __('questions.row') %></h4>
+                </div>
+                <form class="modal-body">
+                    <div class="form-group">
+                        <label><%= __('questions.title') %></label>
+                        <input name="title" type="text" class="form-control"/>
+                    </div>
+
+                    <button data-submit type="submit" class="btn btn-primary">
+                        <span class="submit-default"><%= __('save') %></span>
+                        <span class="submit-error"><%= __('error') %></span>
+                        <i class="submit-loading fa fa-circle-o-notch fa-spin"></i>
+                    </button>
+                    <button data-cancel type="button" class="btn btn-default"><%= __('cancel') %></button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div data-question-form="section" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title"><%= __('questions.section') %></h4>
+                </div>
+                <form class="modal-body">
+                    <div class="form-group">
+                        <label><%= __('questions.title') %></label>
+                        <input name="title" type="text" class="form-control"/>
+                    </div>
+
+                    <button data-submit type="submit" class="btn btn-primary">
+                        <span class="submit-default"><%= __('save') %></span>
+                        <span class="submit-error"><%= __('error') %></span>
+                        <i class="submit-loading fa fa-circle-o-notch fa-spin"></i>
+                    </button>
+                    <button data-cancel type="button" class="btn btn-default"><%= __('cancel') %></button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div data-question-form="choice" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title"><%= __('questions.choice') %></h4>
+                </div>
+                <form class="modal-body">
+                    <div class="form-group">
+                        <label><%= __('questions.title') %></label>
+                        <div data-title contenteditable="true" class="form-control"></div>
+
+                        <p data-title_required class="error help-block text-danger">
+                            <%= __('required') %>
+                        </p>
+                    </div>
+
+                    <div class="form-group">
+                        <label><%= __('questions.multiple') %></label>
+                        <label class="switch">
+                            <input name="data[multiple]" class="switch-input" type="checkbox" checked/>
+                            <span class="switch-body">&nbsp;</span>
+                            <span class="switch-handle"></span>
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label><%= __('questions.options') %></label>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th class="text-center"><%= __('questions.option_answer') %></th>
+                                <th><%= __('questions.option_title') %></th>
+                                <th>&nbsp;</th>
+                            </tr>
+                            </thead>
+                            <tbody data-options>
+                            <tr>
+                                <td class="text-center">
+                                    <input data-option-answer type="checkbox"/>
+                                </td>
+                                <td>
+                                    <textarea data-option-title rows="1" class="form-control"></textarea>
+                                </td>
+                                <td class="text-right">
+                                    <button data-delete-option class="btn btn-sm btn-default" type="button"><%= __('main.delete') %></button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                        <button data-add-option type="button" class="btn btn-success btn-sm"><%= __('main.add') %></button>
+                    </div>
+
+                    <button data-submit type="submit" class="btn btn-primary">
+                        <span class="submit-default"><%= __('save') %></span>
+                        <span class="submit-error"><%= __('error') %></span>
+                        <i class="submit-loading fa fa-circle-o-notch fa-spin"></i>
+                    </button>
+                    <button data-cancel type="button" class="btn btn-default"><%= __('cancel') %></button>
+                </form>
+            </div>
         </div>
     </div>
 </div>

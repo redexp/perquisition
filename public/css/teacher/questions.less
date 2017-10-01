@@ -55,6 +55,17 @@
 
         > .question-content {
             min-height: 100px;
+
+            pre {
+                padding: 0;
+                border-color: #e7e7e7;
+
+                > code {
+                    display: block;
+                    padding: 0.5em;
+                    overflow-x: auto;
+                }
+            }
         }
 
         &.collapsed > .question-content {
@@ -84,4 +95,18 @@
     padding: 10px 15px;
     border-radius: 3px;
     cursor: move;
+}
+
+[data-question-form] {
+    [contenteditable][data-title] {
+        min-height: 30px;
+        max-height: 196px;
+        height: auto;
+        overflow: auto;
+
+        p {
+            margin: 0;
+            min-height: 20px;
+        }
+    }
 }

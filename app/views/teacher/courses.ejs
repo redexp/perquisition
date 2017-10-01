@@ -48,10 +48,10 @@
         <tr>
             <td data-title></td>
             <td class="text-right">
-                <button data-edit class="btn btn-xs btn-default" type="button"><%= __('edit') %></button>
-                <a data-edit_questions href="/teacher/courses/:id/questions" class="btn btn-xs btn-default"><%= __('edit_questions') %></a>
-                <a data-reports href="/teacher/courses/:id/reports" class="btn btn-xs btn-default"><%= __('reports') %></a>
-                <button data-delete class="btn btn-xs btn-default" type="button"><%= __('delete') %></button>
+                <button data-edit class="btn btn-xs btn-default" type="button"><%= __('main.edit') %></button>
+                <a data-edit_questions href="/teacher/courses/:id/questions" class="btn btn-xs btn-default"><%= __('course.edit_questions') %></a>
+                <a data-reports href="/teacher/courses/:id/reports" class="btn btn-xs btn-default"><%= __('course.reports') %></a>
+                <button data-delete class="btn btn-xs btn-default" type="button"><%= __('main.delete') %></button>
             </td>
         </tr>
         </tbody>
@@ -66,11 +66,11 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title"><%= __('course') %></h4>
+                <h4 class="modal-title"><%= __('course.course') %></h4>
             </div>
             <form class="modal-body">
                 <div class="form-group">
-                    <label><%= __('course_title') %></label>
+                    <label><%= __('course.title') %></label>
                     <input name="title" type="text" class="form-control"/>
 
                     <p data-course_title_required class="error help-block text-danger">
@@ -79,7 +79,7 @@
                 </div>
 
                 <div data-users class="form-group">
-                    <label><%= __('users_permissions') %></label>
+                    <label><%= __('course.users_permissions') %></label>
                     <table class="table">
                         <thead>
                         <tr>

@@ -15,4 +15,20 @@ module.exports = {
 		'Actions',
 		'Действия'
 	],
+	'main.add': [
+		'Add',
+		'Добавить'
+	],
+	'main.save': [
+		'Save',
+		'Сохранить'
+	],
+	'main.error': [
+		'Error',
+		'Ошибка'
+	],
+	'main.cancel': [
+		'Cancel',
+		'Отмена'
+	],
 };

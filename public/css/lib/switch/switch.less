@@ -1,0 +1,50 @@
+.switch {
+    position: relative;
+    display: inline-block;
+    vertical-align: top;
+    cursor: pointer;
+
+    .switch-input {
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 0;
+    }
+    .switch-body {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 26px;
+        background: #cbcbcb;
+        border-radius: 18px;
+        vertical-align: middle;
+    }
+    .switch-handle {
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 22px;
+        height: 22px;
+        border-radius: 100%;
+        background-color: #fff;
+    }
+    .switch-label {
+        display: inline-block;
+        padding: 3px;
+        height: 26px;
+        vertical-align: middle;
+    }
+    .switch-input:checked ~ .switch-body {
+        background: #39ade2;
+    }
+    .switch-input:disabled ~ .switch-body {
+        opacity: 0.4;
+    }
+
+    .switch-input:checked ~ .switch-handle {
+        left: 26px;
+    }
+    .switch-body, .switch-handle {
+        transition: All 0.3s ease;
+    }
+}

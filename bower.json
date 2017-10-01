@@ -23,6 +23,7 @@
     "jquery": "3.*",
     "declarative-view": "1.*",
     "component-composer": "1.*",
-    "noty": "3.*"
+    "noty": "3.*",
+    "marked": "^0.3.6"
   }
 }

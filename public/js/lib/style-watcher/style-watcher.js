@@ -1,6 +1,7 @@
 ;(function ($) {
 
 	var v = 1;
+	var timer;
 
 	var client = new WebSocket('ws://' + location.hostname + ':8100');
 
@@ -21,9 +22,13 @@
 	};
 
 	client.onopen = function () {
-		setInterval(function () {
+		timer = setInterval(function () {
 			client.send('ping');
-		}, 10);
+		}, 1000);
+	};
+
+	client.onclose = function () {
+		clearInterval(timer);
 	};
 
 })(jQuery);

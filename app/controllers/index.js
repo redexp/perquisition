@@ -1,5 +1,15 @@
 var app = require('app');
 
+if (app.IS_DEV) {
+	var removeCache = require('decache');
+
+	app.use(function (req, res, next) {
+		removeCache('app/locals');
+
+		next();
+	});
+}
+
 app.use(require('./login'));
 
 app.use(function (req, res, next) {

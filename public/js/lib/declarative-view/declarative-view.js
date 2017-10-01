@@ -528,6 +528,10 @@
 			return this;
 		},
 
+		has: function (prop) {
+			return this.data.hasOwnProperty(prop);
+		},
+
 		model: function (prop) {
 			if (prop instanceof Array) {
 				var model = this;
@@ -557,14 +561,17 @@
 			return this.wrappers.targets[index];
 		},
 
-		assign: function (props) {
+		assign: function (props, mode) {
 			for (var prop in props) {
 				if (!props.hasOwnProperty(prop)) continue;
 
 				var value = props[prop];
+				var hasProp = this.has(prop);
 
-				if (value && typeof value === 'object') {
-					this.model(prop).assign(value);
+				if (!hasProp && mode === 'defaults') continue;
+
+				if (hasProp && value && typeof value === 'object') {
+					this.model(prop).assign(value, mode);
 				}
 				else {
 					this.set(prop, value);
@@ -1216,6 +1223,10 @@
 			this.trigger('set/' + prop, value, oldValue);
 			this.trigger('set', prop, value, oldValue);
 			return this;
+		},
+
+		has: function (prop) {
+			return this.context.hasOwnProperty(prop);
 		}
 	});
 

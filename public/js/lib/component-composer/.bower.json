@@ -37,7 +37,6 @@
     "commit": "87706be4a7b080841b4c82d7e73c66a338d88ccc"
   },
   "_source": "https://github.com/redexp/component-composer.git",
-  "_target": "^1.4.1",
-  "_originalSource": "component-composer",
-  "_direct": true
+  "_target": "1.*",
+  "_originalSource": "component-composer"
 }
