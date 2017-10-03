@@ -2,7 +2,6 @@ var app = module.exports = require('express')();
 var path = require('path');
 var translateError = require('app/lib/translateError');
 
-app.config = require('app/config');
 app.IS_DEV = app.get('env') === 'development';
 app.IS_PROD = app.get('env') === 'production';
 app.ROOT_DIR = path.join(__dirname, '..');

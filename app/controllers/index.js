@@ -34,3 +34,4 @@ app.get('/', function (req, res) {
 
 app.use('/teacher', require('./teacher'));
 app.use('/admin', require('./admin'));
+app.use('/student', require('./student'));

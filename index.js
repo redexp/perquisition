@@ -1,5 +1,5 @@
 var app = require('app');
-var config = app.config;
+var config = require('app/config');
 
 app.engine('ejs', require('ejs-mate'));
 app.set('views', 'app/views');
@@ -60,7 +60,11 @@ else {
 }
 
 if (app.IS_DEV) {
-	var socket = new (require('ws').Server)({port: 8100});
+	var styleServer = require('https')
+		.createServer(config.ssl, app)
+		.listen(8100)
+	;
+	var socket = new (require('ws').Server)({server: styleServer});
 	socket.on('connection', function (item) {
 		item.on('message', function (data) {
 			socket.clients.forEach(function (client) {
@@ -71,3 +75,9 @@ if (app.IS_DEV) {
 		});
 	});
 }
+
+var videoServer = require('https')
+	.createServer(config.ssl, app)
+	.listen(8200)
+;
+require('spreadcast').serve({server: videoServer});

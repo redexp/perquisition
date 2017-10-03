@@ -3,7 +3,7 @@
 	var v = 1;
 	var timer;
 
-	var client = new WebSocket('ws://' + location.hostname + ':8100');
+	var client = new WebSocket('wss://' + location.hostname + ':8100');
 
 	client.onmessage = function (e) {
 		var path = e.data;

@@ -1,0 +1,33 @@
+<% layout('layout') %>
+
+<% appendStyles([
+	'main.css'
+]) %>
+
+<% appendScripts([
+	['lib/spreadcast/spreadcast.js', 'spreadcast'],
+	'student/stream/*/*.js',
+	'student/stream/*.js'
+]) %>
+
+<div id="rooms-list" class="p">
+	<div data-list>
+		<div>
+			<h1 data-room-title></h1>
+
+			<div data-stream-video class="m-b-sm"></div>
+
+			<button data-start-stream class="btn btn-primary m-b-sm" type="button">Turn on your camera</button>
+
+			<div data-channels class="m-b-sm">
+				<div class="m-b-sm">
+					<div data-video></div>
+				</div>
+			</div>
+
+			<div data-empty class="m-b-sm well">
+				All other camera's are turned off
+			</div>
+		</div>
+	</div>
+</div>
