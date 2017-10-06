@@ -32,7 +32,7 @@ define('views/toolbar', [
 
 		data: {
 			title: '',
-			canStartVideo: true,
+			canStartVideo: false,
 			mode: 'checkbox',
 			videos: true,
 			chat: true,
@@ -54,13 +54,17 @@ define('views/toolbar', [
 				click: function () {
 					this.callbacks.startCamera();
 				},
-				visible: '@canStartVideo'
+				toggleClass: {
+					'hidden': '!@canStartVideo'
+				}
 			},
 			'[data-start-screen]': {
 				click: function () {
 					this.callbacks.startScreen();
 				},
-				visible: '@canStartVideo'
+				toggleClass: {
+					'hidden': '!@canStartVideo'
+				}
 			},
 
 			'[data-view]': {
