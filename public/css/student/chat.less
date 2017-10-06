@@ -15,44 +15,62 @@ html, body {
     }
 }
 
-.videos-toolbar {
-    padding-top: 8px;
-}
+.chat-toolbar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 
-.chat-view-switcher {
-    margin-top: 10px;
+    padding: 8px;
+    background-color: #f7f7f7;
+    border-bottom: 4px solid #e7e7e7;
 
-    > li {
-        margin: 0 !important;
+    .chat-title {
+        flex-grow: 1;
+        text-align: center;
+        font-size: 16px;
+        font-weight: 600;
+    }
 
-        a {
+    > div {
+        margin: 0 10px;
+
+        &:first-child {
+            margin-left: 0;
+        }
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+
+    .chat-view-switcher {
+        display: flex;
+        flex-direction: row;
+
+        > div {
             border-radius: 0;
             padding: 5px 10px;
             background-color: #ececec;
             color: #555;
+            cursor: pointer;
 
-            &:active, &:focus, &:hover {
-                background-color: #ececec;
-                color: #555;
+            &:first-child {
+                border-radius: 3px 0 0 3px;
             }
-        }
 
-        &:first-child a {
-            border-radius: 3px 0 0 3px;
-        }
+            &:last-child {
+                border-radius: 0 3px 3px 0;
+            }
 
-        &:last-child a {
-            border-radius: 0 3px 3px 0;
-        }
-
-        &.active a  {
-            background-color: #ddd;
-            color: #555;
-
-            &:active, &:focus, &:hover {
+            &.active {
                 background-color: #ddd;
                 color: #555;
             }
+        }
+    }
+
+    @media (max-width: 600px) {
+        [data-start-camera], [data-start-screen] {
+            display: none;
         }
     }
 }
@@ -171,12 +189,54 @@ html, body {
         }
     }
 
+    .chat-messages {
+        > div {
+            padding: 5px 10px;
+        }
+
+        .message-user {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+
+            > div:first-child {
+                font-size: 16px;
+                font-weight: 600;
+            }
+
+            > div:last-child {
+                color: #ccc;
+            }
+        }
+    }
+
     .chat-textarea {
-        height: auto;
-        min-height: 38px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        > div {
+            flex-grow: 1;
+            height: auto;
+            min-height: 38px;
+            max-height: 200px;
+            overflow: auto;
+            margin-right: 5px;
+        }
     }
 }
 
 .users {
     border-left: 1px solid #ccc;
+}
+
+pre {
+    padding: 0;
+    border-color: #e7e7e7;
+
+    > code {
+        display: block;
+        padding: 0.5em;
+        overflow-x: auto;
+    }
 }

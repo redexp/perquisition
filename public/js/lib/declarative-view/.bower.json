@@ -38,7 +38,6 @@
     "commit": "2d66aa0e6984a4bf2411f8cda3b4e0ce4a0eba7d"
   },
   "_source": "https://github.com/redexp/declarative-view.git",
-  "_target": "^1.21.0",
-  "_originalSource": "declarative-view",
-  "_direct": true
+  "_target": "1.*",
+  "_originalSource": "declarative-view"
 }

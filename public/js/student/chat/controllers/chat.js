@@ -3,16 +3,23 @@ define('controllers/chat', [
 	'views/chat',
 	'spreadcast',
 	'webrtc',
-	'store'
+	'fayeClient',
+	'store',
+	'uuid',
+	'moment'
 ], function (
 	Toolbar,
 	Chat,
 	spreadcast,
 	webrtc,
-	store
+	fayeClient,
+	store,
+	uuid,
+	moment
 ) {
 
 	var course = store.course;
+	var user = store.user;
 
 	var room = new spreadcast.Room({
 		name: course.chat.id,
@@ -20,7 +27,13 @@ define('controllers/chat', [
 	});
 
 	var toolbar = new Toolbar({
-		node: '#toolbar'
+		node: '#toolbar',
+		data: {
+			title: course.title,
+			canStartVideo: user.is_admin,
+			mode: store.IS_MOBILE ? 'radio' : 'checkbox',
+			chat: !store.IS_MOBILE
+		}
 	});
 
 	toolbar.callbacks.startCamera = function () {
@@ -53,10 +66,14 @@ define('controllers/chat', [
 	};
 
 	var chat = new Chat({
-		node: '#chat'
+		node: '#chat',
+		data: {
+			chatVisible: !store.IS_MOBILE
+		}
 	});
 
 	var videos = chat.model('videos');
+	var messages = chat.model('messages');
 
 	room.onAddStream = function (video, id) {
 		videos.add({
@@ -78,8 +95,26 @@ define('controllers/chat', [
 		chat.model('videos').remove(video);
 	};
 
-	videos.add([
-		{id: 1, videoNode: jQuery('<video>')},
-		{id: 2, videoNode: jQuery('<video>')}
-	]);
+	chat.callbacks.addMessage = function (text) {
+		var message = {
+			uuid: uuid(),
+			user_name: user.name,
+			time: now(),
+			text: text
+		};
+
+		messages.add(message);
+
+		fayeClient.publish('/course/chat/' + course.id, message);
+	};
+
+	fayeClient.subscribe('/course/chat/' + course.id, function (message) {
+		if (messages.findWhere({uuid: message.uuid})) return;
+
+		messages.add(message);
+	});
+
+	function now() {
+		return moment.utc().format('YYYY-MM-DD HH:mm:ss');
+	}
 });

@@ -1,10 +1,14 @@
 define('views/chat', [
 	'view',
 	'views/video',
+	'views/message',
+	'htmlToText',
 	'jquery'
 ], function (
 	View,
 	Video,
+	Message,
+	htmlToText,
 	$
 ) {
 
@@ -39,16 +43,8 @@ define('views/chat', [
 				resizing: false,
 				videosVisible: true,
 				chatVisible: true,
-				usersVisible: true
+				usersVisible: false
 			};
-		},
-
-		startCamera: function () {
-			this.callbacks.startCamera();
-		},
-
-		startScreen: function () {
-			this.callbacks.startScreen();
 		},
 
 		startResizing: function (e) {
@@ -67,6 +63,12 @@ define('views/chat', [
 			this.stopListening(this.body, 'mousemove.resizing');
 			this.stopListening(this.body, 'mouseup.resizing');
 			this.set('resizing', false);
+		},
+
+		addMessage: function () {
+			var text = htmlToText(this.ui.textarea);
+			this.callbacks.addMessage(text);
+			this.ui.textarea.empty();
 		},
 
 		template: {
@@ -119,10 +121,28 @@ define('views/chat', [
 				}
 			},
 
-			'[data-messages-block]': {
-				style: {
-					'height': '@messagesHeight'
+			'[data-messages]': {
+				each: {
+					prop: 'messages',
+					view: Message,
+					dataProp: 'message'
 				}
+			},
+
+			'[data-textarea]': {
+				on: {
+					'keydown': function (e) {
+						if (e.keyCode === 13 && (e.ctrlKey || e.shiftKey)) {
+							e.preventDefault();
+
+							this.addMessage();
+						}
+					}
+				}
+			},
+
+			'[data-add-message]': {
+				click: 'addMessage'
 			}
 		}
 	});

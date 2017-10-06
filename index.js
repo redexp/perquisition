@@ -33,38 +33,27 @@ app.use(require('app/views/helpers'));
 
 require('app/controllers');
 
-if (config.ssl && config.portSSL) {
-	var fs = require('fs');
+require('https').createServer(config.ssl, app).listen(config.portSSL);
 
-	require('https')
-		.createServer(config.ssl, app)
-		.listen(config.portSSL)
-	;
+require('http').createServer(function (req, res) {
+	if (!req.headers['host']) {
+		res.writeHead(404);
+		res.end();
+		return;
+	}
 
-	require('http')
-		.createServer(function (req, res) {
-			if (!req.headers['host']) {
-				res.writeHead(404);
-				res.end();
-				return;
-			}
+	res.writeHead(301, {"Location": "https://" + req.headers['host'].replace(/:\d+$/, '') + req.url});
+	res.end();
+}).listen(config.portWEB);
 
-			res.writeHead(301, {"Location": "https://" + req.headers['host'].replace(/:\d+$/, '') + req.url});
-			res.end();
-		})
-		.listen(config.portWEB)
-	;
-}
-else {
-	app.listen(config.portWEB);
-}
+require('spreadcast').serve({
+	server: require('https').createServer(config.ssl).listen(8200)
+});
 
 if (app.IS_DEV) {
-	var styleServer = require('https')
-		.createServer(config.ssl, app)
-		.listen(8100)
-	;
-	var socket = new (require('ws').Server)({server: styleServer});
+	var socket = new (require('ws').Server)({
+		server: require('https').createServer(config.ssl).listen(8100)
+	});
 	socket.on('connection', function (item) {
 		item.on('message', function (data) {
 			socket.clients.forEach(function (client) {
@@ -75,9 +64,3 @@ if (app.IS_DEV) {
 		});
 	});
 }
-
-var videoServer = require('https')
-	.createServer(config.ssl, app)
-	.listen(8200)
-;
-require('spreadcast').serve({server: videoServer});

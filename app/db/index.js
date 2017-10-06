@@ -1,14 +1,14 @@
 var Sequelize = require('sequelize');
 var s = require('squel');
-var config = require('./config').development;
+var config = require('app/config').db;
 
 /**
  * @type {Sequelize}
  */
 var db = new Sequelize(config.database, config.username, config.password, {
-	dialect: 'postgres',
 	host: config.host,
 	port: config.port,
+	dialect: config.dialect,
 	logging: config.logging || (!!process.env.DB_LOG && console.log.bind(console)),
 	pool: {
 		max: 5,

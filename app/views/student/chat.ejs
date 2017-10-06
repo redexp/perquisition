@@ -1,12 +1,19 @@
 <% layout('layout') %>
 
 <% appendStyles([
-	'student/chat.css'
+	'student/chat.css',
+    'highlight/github-gist.css'
 ]) %>
 
 <% appendScripts([
     ['lib/spreadcast/spreadcast.js', 'spreadcast'],
     'lib/webrtc/webrtc.js',
+    'lib/htmlToText/htmlToText.js',
+    ['lib/marked/marked.min.js', 'markdown'],
+    ['lib/highlight/highlight.pack.js', 'highlight'],
+    ['lib/moment/min/moment.min.js', 'moment'],
+    'lib/faye/faye-browser-min.js',
+    'lib/uuid/uuid.js',
     'student/chat/*/*.js',
     'student/chat/*.js'
 ]) %>
@@ -14,27 +21,22 @@
 <%- renderTranslationsFor('student/chat') %>
 
 <div class="chat-wrapper">
-    <nav id="toolbar" class="navbar navbar-default m-none">
-        <div class="collapse navbar-collapse">
-            <ul class="nav navbar-nav">
-                <li class="videos-toolbar">
-                    <button data-start-camera class="btn btn-sm btn-primary" type="button"><%= __('chat.start_camera') %></button>
-                    <button data-start-screen class="btn btn-sm btn-primary" type="button"><%= __('chat.start_screen') %></button>
-                </li>
-            </ul>
-
-            <ul class="nav navbar-nav navbar-right">
-                <li>
-                    <ul class="nav nav-pills chat-view-switcher">
-                        <li data-view="videos"><a href="#"><%= __('chat.videos') %></a></li>
-                        <li data-view="chat"><a href="#"><%= __('chat.chat') %></a></li>
-                        <li data-view="users"><a href="#"><%= __('chat.users') %></a></li>
-                    </ul>
-                </li>
-                <li><a href="/logout"><%= __('main.logout') %></a></li>
-            </ul>
+    <div id="toolbar" class="chat-toolbar">
+        <div>
+            <button data-start-camera class="btn btn-sm btn-primary" type="button"><%= __('chat.start_camera') %></button>
+            <button data-start-screen class="btn btn-sm btn-primary" type="button"><%= __('chat.start_screen') %></button>
         </div>
-    </nav>
+
+        <div data-title class="chat-title"></div>
+
+        <div class="chat-view-switcher">
+            <div data-view="videos"><%= __('chat.videos') %></div>
+            <div data-view="chat"><%= __('chat.chat') %></div>
+            <div data-view="users"><%= __('chat.users') %></div>
+        </div>
+
+        <a href="/logout"><%= __('main.logout') %></a>
+    </div>
 
     <div id="chat" class="chat-page">
         <div data-block="videos" class="videos">
@@ -44,7 +46,7 @@
                         <button data-stop-video class="btn btn-xs btn-default" type="button"><%= __('chat.stop_video') %></button>
                     </div>
                     <div data-video></div>
-                    <div class="video-toolbar bottom">
+                    <div class="video-toolbar bottom hidden">
                         <button data-full-screen class="btn btn-xs btn-default" type="button"><%= __('chat.full_screen') %></button>
                     </div>
                 </div>
@@ -58,30 +60,19 @@
                 <div data-messages-block>
                     <div class="chat-expander"></div>
                     <div data-messages class="chat-messages">
-                        <div>1</div>
-                        <div>1</div>
-                        <div>1</div>
-                        <div>1</div>
-                        <div>1</div>
-                        <div>1</div>
-                        <div>1</div>
-                        <div>1</div>
-                        <div>1</div>
-                        <div>1</div>
-                        <div>1</div>
-                        <div>1</div>
-                        <div>1</div>
-                        <div>1</div>
-                        <div>1</div>
-                        <div>1</div>
-                        <div>1</div>
-                        <div>1</div>
-                        <div>1</div>
+                        <div>
+                            <div data-user-info class="message-user">
+                                <div data-user-name>Name</div>
+                                <div data-time>10:00</div>
+                            </div>
+                            <div data-text class="message-text">text</div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div data-textarea contenteditable="true" class="form-control chat-textarea">
-
+            <div class="chat-textarea">
+                <div data-textarea contenteditable="true" class="form-control"></div>
+                <button data-add-message class="btn btn-sm btn-primary" type="button"><i class="fa fa-send"></i></button>
             </div>
         </div>
 

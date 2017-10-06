@@ -23,7 +23,10 @@ define('views/video', [
 
 		template: {
 			'[data-stop-video]': {
-				click: 'stopVideo'
+				click: 'stopVideo',
+				visible: function () {
+					return this.data.video.id === 'camera' || this.data.video.id === 'screen';
+				}
 			}
 		}
 	});
