@@ -1,5 +1,5 @@
 module.exports = function (req, res) {
-	res.locals.serverData = {};
+	res.serverData = res.locals.serverData = {};
 
 	/**
 	 * @function

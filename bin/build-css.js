@@ -62,7 +62,7 @@ function convert(lessPath) {
 function initClient() {
 	var Client = require('ws');
 
-	var client = new Client(`ws://localhost:8100`);
+	var client = new Client(`wss://localhost:8100`, [], {rejectUnauthorized: false});
 
 	return new Promise(function (done, fail) {
 		client.on('open', function () {
@@ -83,6 +83,8 @@ function sendFiles(files) {
 				});
 			});
 		}));
+	}).catch(function (err) {
+		console.error(err);
 	});
 }
 

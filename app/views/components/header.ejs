@@ -8,19 +8,19 @@ function link(url, title) {
     <div class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
             <% if (user.hasRole('admin')) { %>
-            <%- link('/admin/users', 'users') %>
-            <%- link('/admin/teams', 'teams') %>
+            <%- link('/admin/users', 'admin.users') %>
+            <%- link('/admin/teams', 'admin.teams') %>
             <% } %>
             <% if (user.hasRole('teacher')) { %>
-            <%- link('/teacher/courses', 'courses') %>
+            <%- link('/teacher/courses', 'teacher.courses') %>
             <% } %>
             <% if (user.hasRole('student')) { %>
-            <%- link('/student/courses', 'student_courses') %>
+            <%- link('/student/courses', 'student.courses') %>
             <% } %>
         </ul>
 
         <ul class="nav navbar-nav navbar-right">
-            <li><a href="/logout"><%= __('logout') %></a></li>
+            <li><a href="/logout"><%= __('main.logout') %></a></li>
         </ul>
     </div>
 </nav>

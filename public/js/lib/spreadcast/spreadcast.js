@@ -3686,6 +3686,8 @@ var Broadcast = function(options) {
       break;
   }
 
+  self.name = broadcastName;
+
   var stream;
   var video;
   var senderPeer;
@@ -4118,10 +4120,10 @@ var Room = function(options) {
   self.name = roomName;
   self.url = url;
 
-  var publisher;
-  var receivers = {};
+  self.publishers = {};
+  self.receivers = {};
 
-  var socket = new Socket({url: url});
+  var socket = this.socket = new Socket({url: url});
 
   socket.onerror = function(error) {
     console.log('WebSocket Error', error);
@@ -4160,46 +4162,81 @@ var Room = function(options) {
         self.onRemoveStream && self.onRemoveStream(video, streamId);
       };
     });
-    receivers[streamId] = receiver;
+    self.receivers[streamId] = receiver;
   };
 
-  self.publish = function(constraints, userName) {
-    return new Promise(function(ok, fail) {
-      if(publisher) return fail('Publishing already');
-      publisher = new Broadcast({
-        name: userName || _.uuid(),
-        roomName: roomName,
-        url: url
-      });
-      publisher.publish(constraints, function(error, video) {
-        if(error) return fail(error);
-        ok(video);
-      });
-    });
-  };
+  self;
 
-  self.unpublish = function() {
-    if(publisher) publisher.stop();
-    publisher = null;
-  };
+  self;
 
   self.record = function(cb) {
-    if(!publisher) throw 'Not publishing';
-    return publisher.record(cb);
+    //publisher.record(cb);
   };
 
   self.snapshot = function() {
-    return publisher && publisher.snapshot();
+    //return publisher && publisher.snapshot();
   };
 
-  self.stop = function() {
-    self.unpublish();
-    _.each(receivers, function(receiver) {
-      receiver.stop();
+  self;
+};
+
+Room.prototype.publish = function(constraints, userName) {
+  var room = this;
+  return new Promise(function(ok, fail) {
+    var publisher = new Broadcast({
+      name: userName || _.uuid(),
+      roomName: room.name,
+      url: room.url
     });
-    receivers = {};
-    socket.close();
-  };
+    room.publishers[publisher.name] = publisher;
+    publisher.publish(constraints, function(error, video) {
+        if(error) return fail(error);
+        ok(video);
+    });
+  });
+};
+
+Room.prototype.unpublish = function(name) {
+  if (name) {
+    this.publishers[name].stop();
+    delete this.publishers[name];
+    return;
+  }
+
+  _.each(this.publishers, function (item) {
+    item.stop();
+  });
+
+  this.publishers = {};
+};
+
+Room.prototype.unreceive = function (name) {
+  if (name) {
+    this.receivers[name].stop();
+    delete this.receivers[name];
+    return;
+  }
+
+  _.each(this.receivers, function(receiver) {
+    receiver.stop();
+  });
+
+  this.receivers = {};
+};
+
+Room.prototype.stopStream = function (name) {
+  if (this.publishers[name]) {
+    this.unpublish(name);
+  }
+  else if (this.receivers[name]) {
+    this.unreceive(name);
+  }
+};
+
+Room.prototype.stop = function() {
+  this.unpublish();
+  this.unreceive();
+  this.socket.close();
 };
 
 module.exports = Room;

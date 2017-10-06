@@ -2,7 +2,7 @@ var queue = require('app/db/lib/queue');
 
 module.exports = {
 	up: function (db) {
-		return queue(db.sequelize, 'queue', [
+		return queue(db.sequelize, 'query', [
 			`CREATE TABLE public.question
 			(
 				id SERIAL PRIMARY KEY,

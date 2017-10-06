@@ -24,11 +24,17 @@ app.use(function (req, res, next) {
 app.get('/', function (req, res) {
 	var user = req.user;
 
-	if (user.hasRole('teacher')) {
+	if (user.hasRole('admin')) {
+		res.redirect('/admin');
+	}
+	else if (user.hasRole('teacher')) {
 		res.redirect('/teacher');
 	}
 	else if (user.hasRole('student')) {
 		res.redirect('/student');
+	}
+	else {
+		res.status(403).send();
 	}
 });
 

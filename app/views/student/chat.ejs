@@ -1,0 +1,95 @@
+<% layout('layout') %>
+
+<% appendStyles([
+	'student/chat.css'
+]) %>
+
+<% appendScripts([
+    ['lib/spreadcast/spreadcast.js', 'spreadcast'],
+    'lib/webrtc/webrtc.js',
+    'student/chat/*/*.js',
+    'student/chat/*.js'
+]) %>
+
+<%- renderTranslationsFor('student/chat') %>
+
+<div class="chat-wrapper">
+    <nav id="toolbar" class="navbar navbar-default m-none">
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li class="videos-toolbar">
+                    <button data-start-camera class="btn btn-sm btn-primary" type="button"><%= __('chat.start_camera') %></button>
+                    <button data-start-screen class="btn btn-sm btn-primary" type="button"><%= __('chat.start_screen') %></button>
+                </li>
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <ul class="nav nav-pills chat-view-switcher">
+                        <li data-view="videos"><a href="#"><%= __('chat.videos') %></a></li>
+                        <li data-view="chat"><a href="#"><%= __('chat.chat') %></a></li>
+                        <li data-view="users"><a href="#"><%= __('chat.users') %></a></li>
+                    </ul>
+                </li>
+                <li><a href="/logout"><%= __('main.logout') %></a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div id="chat" class="chat-page">
+        <div data-block="videos" class="videos">
+            <div data-videos>
+                <div class="video">
+                    <div class="video-toolbar top">
+                        <button data-stop-video class="btn btn-xs btn-default" type="button"><%= __('chat.stop_video') %></button>
+                    </div>
+                    <div data-video></div>
+                    <div class="video-toolbar bottom">
+                        <button data-full-screen class="btn btn-xs btn-default" type="button"><%= __('chat.full_screen') %></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div data-divider class="divider handle"><div></div></div>
+
+        <div data-block="chat" class="chat">
+            <div class="chat-messages-wrapper">
+                <div data-messages-block>
+                    <div class="chat-expander"></div>
+                    <div data-messages class="chat-messages">
+                        <div>1</div>
+                        <div>1</div>
+                        <div>1</div>
+                        <div>1</div>
+                        <div>1</div>
+                        <div>1</div>
+                        <div>1</div>
+                        <div>1</div>
+                        <div>1</div>
+                        <div>1</div>
+                        <div>1</div>
+                        <div>1</div>
+                        <div>1</div>
+                        <div>1</div>
+                        <div>1</div>
+                        <div>1</div>
+                        <div>1</div>
+                        <div>1</div>
+                        <div>1</div>
+                    </div>
+                </div>
+            </div>
+            <div data-textarea contenteditable="true" class="form-control chat-textarea">
+
+            </div>
+        </div>
+
+        <div data-block="users" class="users">
+            <div>
+                <img data-photo src="" alt="Photo"/>
+                <div data-name></div>
+            </div>
+        </div>
+    </div>
+</div>

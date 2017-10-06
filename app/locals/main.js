@@ -31,4 +31,8 @@ module.exports = {
 		'Cancel',
 		'Отмена'
 	],
+	'main.logout': [
+		'Logout',
+		'Выход'
+	],
 };

@@ -117,7 +117,7 @@ Course.prototype.getTeams = function () {
 		where: {
 			id: {$in: Object.keys(this.teams_permissions)}
 		}
-	})
+	});
 };
 
 Course.prototype.getPermissions = function (user, teams) {

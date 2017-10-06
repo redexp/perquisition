@@ -1,0 +1,33 @@
+<% layout('layout') %>
+
+<% appendScripts([
+    'student/courses/*/*.js',
+    'student/courses/*.js'
+]) %>
+
+<%- renderTranslationsFor('student/courses') %>
+
+<%- partial('components/header') %>
+
+<div class="p">
+    <table id="courses-list" class="table table-striped">
+        <thead>
+        <tr>
+            <td><%= __('student.course_title') %></td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        </thead>
+        <tbody data-list>
+        <tr>
+            <td data-title></td>
+            <td>
+                <span data-status="online"><%= __('student.course_status-online') %></span>
+            </td>
+            <td class="text-right">
+                <a data-link href="/student/courses/:id/chat" class="btn btn-sm btn-default"><%= __('student.course_chat') %></a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>

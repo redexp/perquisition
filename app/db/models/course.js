@@ -12,6 +12,9 @@ var Course = db.define('course', {
 	teams_permissions: {
 		type: TYPES.JSONB,
 		defaultValue: {}
+	},
+	status: {
+		type: TYPES.STRING
 	}
 });
 

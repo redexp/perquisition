@@ -17,18 +17,18 @@
 	 */
 	var _DEV_ = true;
 
-	//region ====================== EventsHandler =================================
+	//region ====================== EventEmitter ==================================
 
-	function EventsHandler() {
+	function EventEmitter() {
 		this.events = {};
 		this.listeners = [];
 	}
 
-	extend(EventsHandler, {
+	extend(EventEmitter, {
 		extend: extendClass
 	});
 
-	extend(EventsHandler.prototype, {
+	extend(EventEmitter.prototype, {
 		/**
 		 * @param {string|Array} events
 		 * @param {Function} callback
@@ -471,7 +471,7 @@
 		}
 	});
 
-	extendClass(DeclarativeView, EventsHandler, {
+	extendClass(DeclarativeView, EventEmitter, {
 		ui: {
 			root: ''
 		},
@@ -876,6 +876,7 @@
 	 * 	 view: DeclarativeView|function,
 	 * 	 node: string|boolean,
 	 * 	 dataProp?: string,
+	 * 	 dataIndexProp?: string,
 	 * 	 template?: Object,
 	 * 	 add?: function,
 	 * 	 remove?: function,
@@ -951,6 +952,10 @@
 					data.value = item;
 				}
 
+				if (options.dataIndexProp) {
+					data[options.dataIndexProp] = index;
+				}
+
 				itemView = new ViewClass({
 					node: tpl && tpl.clone(),
 					parent: view,
@@ -967,19 +972,23 @@
 
 			if (options.add) {
 				options.add.call(view, root, itemView, index);
-				return;
-			}
-
-			if (index === 0) {
-				if (views.length() === 1) {
-					root.append(itemView.node);
-				}
-				else {
-					itemView.node.insertBefore(views.get(1).node);
-				}
 			}
 			else {
-				itemView.node.insertAfter(views.get(index - 1).node);
+				if (index === 0) {
+					if (views.length() === 1) {
+						root.append(itemView.node);
+					}
+					else {
+						itemView.node.insertBefore(views.get(1).node);
+					}
+				}
+				else {
+					itemView.node.insertAfter(views.get(index - 1).node);
+				}
+			}
+
+			if (options.dataIndexProp) {
+				updateDataIndexProp();
 			}
 		}
 
@@ -992,6 +1001,10 @@
 			}
 
 			views.removeAt(index);
+
+			if (options.dataIndexProp) {
+				updateDataIndexProp();
+			}
 		}
 
 		function move(item, index, oldIndex) {
@@ -999,34 +1012,48 @@
 
 			if (options.move) {
 				options.move.call(view, root, views.get(index), index, oldIndex);
-				return;
-			}
-
-			var node = views.get(index).node;
-
-			if (index === 0) {
-				if (views.length() === 1) {
-					node.appendTo(root);
-				}
-				else {
-					node.insertBefore(views.get(1).node);
-				}
 			}
 			else {
-				node.insertAfter(views.get(index - 1).node);
+				var node = views.get(index).node;
+
+				if (index === 0) {
+					if (views.length() === 1) {
+						node.appendTo(root);
+					}
+					else {
+						node.insertBefore(views.get(1).node);
+					}
+				}
+				else {
+					node.insertAfter(views.get(index - 1).node);
+				}
+			}
+
+			if (options.dataIndexProp) {
+				updateDataIndexProp();
 			}
 		}
 
 		function sort() {
 			if (options.sort) {
 				options.sort.call(view, root, views);
-				return;
+			}
+			else {
+				list.forEach(function (item, index) {
+					var oldIndex = views.indexByContext(item);
+					if (index === oldIndex) return;
+					move(item, index, oldIndex);
+				});
 			}
 
-			list.forEach(function (item, index) {
-				var oldIndex = views.indexByContext(item);
-				if (index === oldIndex) return;
-				move(item, index, oldIndex);
+			if (options.dataIndexProp) {
+				updateDataIndexProp();
+			}
+		}
+
+		function updateDataIndexProp() {
+			views.forEach(function (view, index) {
+				view.set(options.dataIndexProp, index);
 			});
 		}
 	}
@@ -1189,12 +1216,12 @@
 	//region ====================== ObjectWrapper =================================
 
 	function ObjectWrapper(context) {
-		EventsHandler.call(this);
+		EventEmitter.call(this);
 
 		this.context = context;
 	}
 
-	extendClass(ObjectWrapper, EventsHandler, {
+	extendClass(ObjectWrapper, EventEmitter, {
 		get: function (prop) {
 			if (arguments.length === 0) {
 				return this.context;
@@ -1421,6 +1448,30 @@
 			this.removeAll();
 			this.add(items);
 			return this;
+		},
+
+		filterWhere: function (props) {
+			return this.filter(function (item) {
+				for (var prop in props) {
+					if (!props.hasOwnProperty(prop)) continue;
+
+					if (item[prop] !== props[prop]) return false;
+				}
+
+				return true;
+			});
+		},
+
+		findWhere: function (props) {
+			return this.find(function (item) {
+				for (var prop in props) {
+					if (!props.hasOwnProperty(prop)) continue;
+
+					if (item[prop] !== props[prop]) return false;
+				}
+
+				return true;
+			});
 		}
 	});
 
@@ -1698,6 +1749,10 @@
 	}
 
 	//endregion
+
+	DeclarativeView.EventEmitter = EventEmitter;
+	DeclarativeView.ObjectWrapper = ObjectWrapper;
+	DeclarativeView.ArrayWrapper = ArrayWrapper;
 
 	return DeclarativeView;
 });

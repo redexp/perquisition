@@ -3,5 +3,6 @@ module.exports = Object.assign({},
 	require('./error'),
 	require('./column'),
 	require('./course'),
-	require('./questions')
+	require('./questions'),
+	require('./chat')
 );
