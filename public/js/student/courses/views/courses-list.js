@@ -17,7 +17,8 @@ define('views/courses-list', [
 				each: {
 					prop: 'list',
 					view: Course,
-					dataProp: 'course'
+					dataProp: 'course',
+					removeClass: 'hidden'
 				}
 			}
 		}
@@ -31,18 +32,15 @@ define('views/courses-list', [
 		constructor: Course,
 
 		template: {
-			'[data-title]': {
-				text: '=course.title'
+			'[data-online]': {
+				visible: '@course.online'
+			},
+			'[data-offline]': {
+				visible: '!@course.online'
 			},
 
-			'[data-status]': {
-				visible: {
-					'@course.status': function (status) {
-						return function (node) {
-							return node.attr('data-status') === status;
-						};
-					}
-				}
+			'[data-title]': {
+				text: '=course.title'
 			},
 
 			'[data-link]': {

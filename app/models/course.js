@@ -100,6 +100,22 @@ Course.findUserCourse = function (id, user, perms) {
 	});
 };
 
+Course.findByTeams = function (teams) {
+	return Promise.resolve(teams).then(function (teams) {
+		if (teams.length === 0) return [];
+
+		return Course.findAll({
+			where: {
+				teams_permissions: {
+					$or: teams.map(function (team) {
+						return {[team.id + ',read']: 'true'};
+					})
+				}
+			}
+		});
+	});
+};
+
 Course.prototype.toJSON = function () {
 	return this.get();
 };

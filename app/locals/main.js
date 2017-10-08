@@ -1,4 +1,8 @@
 module.exports = {
+	'main.appName': [
+		'Perquisition',
+		'Допрос'
+	],
 	'main.edit': [
 		'Edit',
 		'Редактировать'
@@ -23,6 +27,10 @@ module.exports = {
 		'Save',
 		'Сохранить'
 	],
+	'main.saved': [
+		'Saved',
+		'Сохранино'
+	],
 	'main.error': [
 		'Error',
 		'Ошибка'
@@ -34,5 +42,13 @@ module.exports = {
 	'main.logout': [
 		'Logout',
 		'Выход'
+	],
+	'main.required': [
+		'Required',
+		'Обязательное'
+	],
+	'main.invalid': [
+		'Invalid',
+		'Недопустимое значение'
 	],
 };

@@ -12,7 +12,7 @@ if (app.IS_DEV) {
 
 app.use(require('./login'));
 
-app.use('/test', require('./test'))
+app.use('/test', require('./test'));
 
 app.use(function (req, res, next) {
 	if (!req.user) {

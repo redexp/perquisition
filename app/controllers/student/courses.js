@@ -5,10 +5,18 @@ var faye = require('app/lib/faye');
 module.exports = courses;
 
 courses.get('/', function (req, res) {
-	Course.findByUser(req.user).then(function (courses) {
-		res.serverData.courses = courses;
-		res.render('student/courses');
-	});
+	Promise
+		.all([
+			Course.findByUser(req.user),
+			Course.findByTeams(req.user.getTeams())
+		])
+		.then(function (list) {
+			return list[0].concat(list[1]);
+		})
+		.then(function (courses) {
+			res.serverData.courses = courses;
+			res.render('student/courses');
+		});
 });
 
 courses.get('/:id', function (req, res) {

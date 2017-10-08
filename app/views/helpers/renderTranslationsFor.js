@@ -41,6 +41,6 @@ module.exports = function (req, res) {
 
 		fs.writeFileSync(cachePath, keys);
 
-		return `<script type="application/json" id="${id || 'translations'}">${keys}</script>`;
+		return `<script type="application/json" id="${id || 'translations'}-json">${keys}</script>`;
 	};
 };

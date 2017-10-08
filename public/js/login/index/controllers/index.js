@@ -15,9 +15,16 @@ define('controllers/index', [
 	});
 
 	form.callbacks.save = function (data) {
-		ajax('/login', data, function () {
-			location.reload();
-		});
+		data.username = data.username.toLowerCase();
+
+		return ajax('/login', data)
+			.then(function () {
+				location.reload();
+			})
+			.catch(function () {
+				notify.error(__('auth.login_error'));
+			})
+		;
 	};
 
 });

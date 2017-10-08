@@ -1,8 +1,11 @@
 <% layout('layout') %>
 
+<% appendStyles([
+	'student/courses.css'
+]) %>
+
 <% appendScripts([
-    'student/courses/*/*.js',
-    'student/courses/*.js'
+    'student/courses/**/*.js'
 ]) %>
 
 <%- renderTranslationsFor('student/courses') %>
@@ -10,22 +13,25 @@
 <%- partial('components/header') %>
 
 <div class="p">
-    <table id="courses-list" class="table table-striped">
+    <table id="courses-list" class="courses table table-striped">
         <thead>
         <tr>
-            <td><%= __('student.course_title') %></td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
+            <th>&nbsp;</th>
+            <th><%= __('student.course') %></th>
+            <th>&nbsp;</th>
         </tr>
         </thead>
         <tbody data-list>
-        <tr>
-            <td data-title></td>
+        <tr class="course hidden">
             <td>
-                <span data-status="online"><%= __('student.course_status-online') %></span>
+                <i data-online class="fa fa-circle"></i>
+                <i data-offline class="fa fa-circle-o"></i>
             </td>
+            <td data-title></td>
             <td class="text-right">
-                <a data-link href="/student/courses/:id/chat" class="btn btn-sm btn-default"><%= __('student.course_chat') %></a>
+                <a data-link href="/student/courses/:id/chat" class="btn btn-xs btn-default"><%= __('student.chat') %></a>
+                <a data-link href="/student/courses/:id/homework" class="btn btn-xs btn-default"><%= __('student.homework') %></a>
+                <a data-link href="/student/courses/:id/perquisition" class="btn btn-xs btn-default"><%= __('student.perquisition') %></a>
             </td>
         </tr>
         </tbody>

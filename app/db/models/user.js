@@ -15,6 +15,9 @@ var User = db.define('user', {
 	roles: {
 		type: TYPES.JSONB,
 		defaultValue: []
+	},
+	photo: {
+		type: TYPES.STRING
 	}
 });
 

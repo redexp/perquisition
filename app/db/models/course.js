@@ -15,6 +15,14 @@ var Course = db.define('course', {
 	},
 	status: {
 		type: TYPES.STRING
+	},
+	online: {
+		type: TYPES.BOOLEAN,
+		defaultValue: false
+	},
+	note: {
+		type: TYPES.STRING,
+		defaultValue: ''
 	}
 });
 

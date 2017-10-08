@@ -4,5 +4,7 @@ module.exports = Object.assign({},
 	require('./column'),
 	require('./course'),
 	require('./questions'),
-	require('./chat')
+	require('./chat'),
+	require('./auth'),
+	require('./student')
 );

@@ -1,3 +1,4 @@
+var app = require('app');
 var auth = require('express').Router();
 var passport = require('app/lib/passport');
 
@@ -10,4 +11,78 @@ auth.post('/login', passport.authenticate('local'), function (req, res) {
 auth.get('/logout', function (req, res) {
 	req.logout();
 	res.redirect('/');
+});
+
+auth.get('/registration', function (req, res) {
+	res.render('login/registration');
+});
+
+var User = require('app/models/user');
+var fs = require('fs');
+
+var PHOTOS_DIR = app.UPLOADS_DIR + '/photos';
+
+var uploader = require('multer')({
+	storage: require('multer').diskStorage({
+		destination: PHOTOS_DIR
+	})
+});
+
+auth.post('/registration', uploader.single('photo'), function (req, res) {
+	var data = req.body;
+	var file = req.file;
+	var errors = [];
+
+	if (!/^.+@.+\..+$/.test(data.username)) {
+		errors.push('Email not valid');
+	}
+	if (!data.password.trim()) {
+		errors.push('Password required');
+	}
+	if (!data.name.trim()) {
+		errors.push('Name required');
+	}
+	if (!file) {
+		errors.push('Photo required');
+	}
+	if (errors.length > 0) {
+		if (file) {
+			fs.unlinkSync(file.path);
+		}
+
+		res.status(500).json({message: errors.join('<br/>')});
+		return;
+	}
+
+	fs.renameSync(file.path, file.path + '.png');
+
+	var user = User.build(data);
+	user.roles = ['student'];
+	user.username = user.username.toLowerCase();
+	user.password = user.generatePassword(data.password);
+	user.photo = file.filename + '.png';
+
+	user
+		.save()
+		.then(function () {
+			var teams = JSON.parse(fs.readFileSync(app.UPLOADS_DIR + '/teams.json').toString());
+			var ids = [];
+
+			for (var id in teams) {
+				var users = teams[id];
+
+				if (users.indexOf(user.username) > -1) {
+					ids.push(id);
+				}
+			}
+
+			if (ids.length) {
+				return user.setTeams(ids);
+			}
+		})
+		.then(function () {
+			return user;
+		})
+		.then(res.json, res.catch)
+	;
 });
