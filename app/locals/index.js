@@ -6,5 +6,7 @@ module.exports = Object.assign({},
 	require('./questions'),
 	require('./chat'),
 	require('./auth'),
+	require('./admin'),
+	require('./teacher'),
 	require('./student')
 );

@@ -58,7 +58,7 @@ Team.setUsersCount = function (teams) {
 		.group('team_id')
 	).then(function (res) {
 		var hash = {};
-		res[0].forEach(function (item) {
+		res.forEach(function (item) {
 			hash[item.id] = Number(item.count);
 		});
 
