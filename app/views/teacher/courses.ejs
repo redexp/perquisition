@@ -48,10 +48,18 @@
         <tr>
             <td data-title></td>
             <td class="text-right">
-                <button data-edit class="btn btn-xs btn-default" type="button"><%= __('main.edit') %></button>
-                <a data-edit_questions href="/teacher/courses/:id/questions" class="btn btn-xs btn-default"><%= __('course.edit_questions') %></a>
-                <a data-reports href="/teacher/courses/:id/reports" class="btn btn-xs btn-default"><%= __('course.reports') %></a>
-                <button data-delete class="btn btn-xs btn-default" type="button"><%= __('main.delete') %></button>
+                <div class="btn-group">
+                    <button class="btn btn-xs btn-default" type="button" data-toggle="dropdown"><%= __('main.actions') %> <span class="caret"></span></button>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <li data-edit><a href="#"><%= __('main.edit') %></a></li>
+                        <li><a data-link href="/student/courses/:id/chat"><%= __('course.chat') %></a></li>
+                        <li><a data-link href="/teacher/courses/:id/homework"><%= __('course.homework') %></a></li>
+                        <li><a data-link href="/teacher/courses/:id/questions"><%= __('course.edit_questions') %></a></li>
+                        <li><a data-link href="/teacher/courses/:id/reports"><%= __('course.reports') %></a></li>
+                        <li class="divider"></li>
+                        <li><a data-delete href="#"><%= __('main.delete') %></a></li>
+                    </ul>
+                </div>
             </td>
         </tr>
         </tbody>

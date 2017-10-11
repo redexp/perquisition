@@ -19,6 +19,8 @@ auth.get('/registration', function (req, res) {
 
 var User = require('app/models/user');
 var fs = require('fs');
+var uuid = require('uuid').v4;
+var gmail = require('app/lib/gmail');
 
 var PHOTOS_DIR = app.UPLOADS_DIR + '/photos';
 
@@ -61,6 +63,8 @@ auth.post('/registration', uploader.single('photo'), function (req, res) {
 	user.username = user.username.toLowerCase();
 	user.password = user.generatePassword(data.password);
 	user.photo = file.filename + '.png';
+	user.verification_code = uuid();
+	user.verified = false;
 
 	user
 		.save()
@@ -81,8 +85,37 @@ auth.post('/registration', uploader.single('photo'), function (req, res) {
 			}
 		})
 		.then(function () {
+			var url = `https://online.geekhub.ck.ua/registration/` + user.verification_code;
+			return gmail({
+				from: 'GeekHub Online',
+				to: user.username,
+				subject: 'Verify you email on GeekHub Online',
+				text: `Link to verify your email ${url}`,
+				html: `Click on link to verify your email <a href="${url}">${url}</a>`
+			});
+		})
+		.then(function () {
 			return user;
 		})
-		.then(res.json, res.catch)
+		.then(res.json)
+		.catch(function (err) {
+			res.status(500).json({message: err.message});
+		})
+	;
+});
+
+auth.get('/registration/:uuid', function (req, res) {
+	User.findOne({where: {verification_code: req.params.uuid}})
+		.then(function (user) {
+			if (!user) throw new Error('User not found');
+			user.verified = true;
+			return user.save();
+		})
+		.then(function () {
+			res.redirect('/?verified');
+		})
+		.catch(function () {
+			res.redirect('/?rejected');
+		})
 	;
 });

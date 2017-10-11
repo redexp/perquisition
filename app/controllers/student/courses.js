@@ -1,6 +1,6 @@
 var courses = require('express').Router();
 var Course = require('app/models/course');
-var faye = require('app/lib/faye');
+
 
 module.exports = courses;
 
@@ -19,29 +19,27 @@ courses.get('/', function (req, res) {
 		});
 });
 
-courses.get('/:id', function (req, res) {
-	Course.findUserCourse(req.params.id, req.user, {read: true})
-		.then(function (course) {
-			res.serverData.course = course;
-			res.render('student/course');
-		})
-		.catch(res.catch)
-	;
+courses.get('/:id', getCourse({read: true}), function (req, res) {
+	res.serverData.course = req.course;
+	res.render('student/course');
 });
 
-courses.get('/:id/chat', function (req, res) {
-	var user = req.user;
+courses.get('/:id/chat', getCourse({read: true}));
+courses.use('/:id/chat', require('./chat'));
 
-	res.serverData.user = {
-		id: user.id,
-		name: user.name
+courses.get('/:id/homework', getCourse({read: true}), function (req, res) {
+	res.serverData.course = req.course;
+	res.render('student/homework');
+});
+
+function getCourse(perms) {
+	return function (req, res, next) {
+		Course.findUserCourse(req.params.id, req.user, perms)
+			.then(function (course) {
+				req.course = course;
+				next();
+			})
+			.catch(res.catch)
+		;
 	};
-
-	Course.findUserCourse(req.params.id, req.user, {read: true})
-		.then(function (course) {
-			res.serverData.course = course;
-			res.render('student/chat');
-		})
-		.catch(res.catch)
-	;
-});
+}

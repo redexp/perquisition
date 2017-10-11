@@ -240,12 +240,8 @@
                     <button data-add_team type="button" class="btn btn-sm btn-success"><%= __('add') %></button>
                 </div>
 
-                <button data-submit type="submit" class="btn btn-primary">
-                    <span class="submit-default"><%= __('save') %></span>
-                    <span class="submit-error"><%= __('error') %></span>
-                    <i class="submit-loading fa fa-circle-o-notch fa-spin"></i>
-                </button>
-                <button data-cancel type="button" class="btn btn-default"><%= __('cancel') %></button>
+                <%- partial('components/submit') %>
+                <%- partial('components/cancel') %>
             </form>
         </div>
     </div>

@@ -2,12 +2,14 @@ define('views/chat', [
 	'view',
 	'views/video',
 	'views/message',
+	'views/user',
 	'htmlToText',
 	'jquery'
 ], function (
 	View,
 	Video,
 	Message,
+	User,
 	htmlToText,
 	$
 ) {
@@ -18,10 +20,19 @@ define('views/chat', [
 
 		this.body = $(document.body);
 
-		var usersWidth = this.ui.users.width();
+		var usersWidth = 300;
+
 		this.on('set/usersVisible', function (visible) {
 			this.set('videosWidth', this.data.videosWidth + (visible ? -1 : 1) * usersWidth);
 		});
+
+		var videosWidth = this.body.width() - 400;
+
+		if (videosWidth < 600) {
+			videosWidth = 600;
+		}
+
+		this.set('videosWidth', videosWidth);
 	}
 
 	View.extend({
@@ -125,7 +136,8 @@ define('views/chat', [
 				each: {
 					prop: 'messages',
 					view: Message,
-					dataProp: 'message'
+					dataProp: 'message',
+					dataIndexProp: 'index'
 				}
 			},
 
@@ -143,6 +155,14 @@ define('views/chat', [
 
 			'[data-add-message]': {
 				click: 'addMessage'
+			},
+
+			'[data-users]': {
+				each: {
+					prop: 'users',
+					view: User,
+					dataProp: 'user'
+				}
 			}
 		}
 	});

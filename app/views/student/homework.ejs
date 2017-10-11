@@ -1,0 +1,70 @@
+<% layout('layout') %>
+
+<% appendStyles([
+//    'student/courses.css'
+]) %>
+
+<% appendScripts([
+    ['lib/component-composer/component-composer.js', 'composer'],
+    ['lib/marked/marked.min.js', 'markdown'],
+    ['lib/highlight/highlight.pack.js', 'highlight'],
+	'lib/compose/compose.js',
+	'lib/detachHTML/detachHTML.js',
+    'student/homework/**/*.js'
+]) %>
+
+<%- renderTranslationsFor('student/homework') %>
+
+<%- partial('student/header') %>
+
+<div class="p">
+    <table id="homework-list" class="table table-striped">
+        <thead>
+        <tr>
+            <th><%= __('student.title') %></th>
+            <th>&nbsp;</th>
+        </tr>
+        </thead>
+        <tbody data-list>
+        <tr class="hidden">
+            <td data-title></td>
+            <td class="text-right">
+                <button data-open class="btn btn-xs btn-default" type="button"><%= __('student.open') %></button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div id="homework-form" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form class="modal-body">
+                <div data-title></div>
+
+                <div data-questions>
+                    <div id="text">
+                        <div data-description></div>
+                        <textarea data-text rows="4" class="form-control"></textarea>
+                    </div>
+
+                    <div id="code">
+                        <div data-description></div>
+                        <div data-code></div>
+                    </div>
+
+                    <div id="row">
+                        <div data-questions></div>
+                    </div>
+
+                    <div id="section">
+                        <div data-questions></div>
+                    </div>
+                </div>
+
+                <%- partial('components/submit') %>
+                <%- partial('components/cancel') %>
+            </form>
+        </div>
+    </div>
+</div>

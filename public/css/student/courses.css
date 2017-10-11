@@ -1,0 +1,1 @@
+.courses td:first-child,.courses th:first-child{width:30px}.courses .course [data-online]{color:green}.courses .course [data-offline]{color:grey}

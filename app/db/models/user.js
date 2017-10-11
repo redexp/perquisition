@@ -18,6 +18,13 @@ var User = db.define('user', {
 	},
 	photo: {
 		type: TYPES.STRING
+	},
+	verification_code: {
+		type: TYPES.STRING
+	},
+	verified: {
+		type: TYPES.BOOLEAN,
+		defaultValue: false
 	}
 });
 

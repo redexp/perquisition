@@ -33,6 +33,15 @@ client.setJSON = function (key, value) {
 	return client.set(key, JSON.stringify(value));
 };
 
+client.setExJSON = function (key, timeout, value) {
+	return new Promise(function (done, fail) {
+		Redis.prototype.setex.call(client, key, timeout, JSON.stringify(value), function (err, data) {
+			if (err) fail(err);
+			else done(data);
+		});
+	});
+};
+
 client.getJSON = function (key) {
 	return client.get(key).then(function (value) {
 		if (!value) return value;

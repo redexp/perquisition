@@ -1,22 +1,7 @@
 require(['store', 'serverData'], function (store, serverData) {
 	store.course = serverData('course');
-	store.course.chat = {
-		id: 'name1',
-		active: true
-	};
-
-	var user = localStorage.getItem('user');
-
-	if (user) {
-		user = JSON.parse(user);
-	}
-	else {
-		user = serverData('user');
-		localStorage.setItem('user', JSON.stringify(user));
-	}
-
-	store.user = user;
-
+	store.user = serverData('user');
+	store.users = serverData('users');
 	store.IS_MOBILE = isMobile();
 
 	function isMobile() {

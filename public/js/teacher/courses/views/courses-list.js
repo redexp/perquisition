@@ -99,7 +99,7 @@ define('views/courses-list', [
 				hidden: '!=course.permissions.write'
 			},
 
-			'a[href^="/teacher/"]': {
+			'[data-link]': {
 				attr: {
 					'href': function () {
 						return function (node) {

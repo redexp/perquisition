@@ -8,7 +8,8 @@ User.login = function (username, password) {
 	return User
 		.findOne({
 			where: {
-				username: username
+				username: username,
+				verified: true
 			}
 		})
 		.then(function (user) {
@@ -24,7 +25,7 @@ User.login = function (username, password) {
 User.getById = User.findById;
 
 User.setToCache = function (user) {
-	return redis.setJSON('user-' + user.id, user).then(function () {
+	return redis.setExJSON('user-' + user.id, 10, user).then(function () {
 		return user;
 	});
 };
@@ -137,7 +138,7 @@ User.prototype.generatePassword = function (password) {
 };
 
 User.prototype.toJSON = function () {
-	return omit(this.get(), ['password']);
+	return omit(this.get(), ['password', 'verification_code', 'verified']);
 };
 
 module.exports = User;

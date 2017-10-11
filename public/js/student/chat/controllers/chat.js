@@ -6,7 +6,8 @@ define('controllers/chat', [
 	'fayeClient',
 	'store',
 	'uuid',
-	'moment'
+	'moment',
+	'serverData'
 ], function (
 	Toolbar,
 	Chat,
@@ -15,14 +16,15 @@ define('controllers/chat', [
 	fayeClient,
 	store,
 	uuid,
-	moment
+	moment,
+	serverData
 ) {
 
 	var course = store.course;
 	var user = store.user;
 
 	var room = new spreadcast.Room({
-		name: course.chat.id,
+		name: course.id,
 		url: 'wss://' + location.hostname + ':8200'
 	});
 
@@ -30,7 +32,7 @@ define('controllers/chat', [
 		node: '#toolbar',
 		data: {
 			title: course.title,
-			canStartVideo: user.is_admin,
+			canStartVideo: user.is_teacher,
 			mode: store.IS_MOBILE ? 'radio' : 'checkbox',
 			chat: !store.IS_MOBILE
 		}
@@ -68,12 +70,14 @@ define('controllers/chat', [
 	var chat = new Chat({
 		node: '#chat',
 		data: {
-			chatVisible: !store.IS_MOBILE
+			chatVisible: !store.IS_MOBILE,
+			users: store.users
 		}
 	});
 
 	var videos = chat.model('videos');
-	var messages = chat.model('messages');
+	var messages = chat.model('messages').reset(serverData('messages'));
+	var users = chat.model('users');
 
 	room.onAddStream = function (video, id) {
 		videos.add({
@@ -105,16 +109,40 @@ define('controllers/chat', [
 
 		messages.add(message);
 
-		fayeClient.publish('/course/chat/' + course.id, message);
+		fayeClient.publish('/course/chat/message/' + course.id, message);
 	};
 
-	fayeClient.subscribe('/course/chat/' + course.id, function (message) {
-		if (messages.findWhere({uuid: message.uuid})) return;
-
-		messages.add(message);
+	fayeClient.subscribe('/course/chat/user/' + course.id, function (e) {
+		switch (e.type) {
+		case 'message':
+			if (!messages.findWhere({uuid: e.message.uuid})) {
+				messages.add(e.message);
+			}
+			break;
+		case 'add-user':
+			if (!users.findWhere({id: e.user.id})) {
+				users.add(e.user);
+			}
+			break;
+		case 'remove-user':
+			users.remove(users.findWhere({id: e.user_id}));
+			break;
+		}
 	});
+
+	fayeClient.subscribe('/course/chat/message/' + course.id, function (message) {
+		if (!messages.findWhere({uuid: message.uuid})) {
+			messages.add(message);
+		}
+	});
+
+	setInterval(ping, 5000);
 
 	function now() {
 		return moment.utc().format('YYYY-MM-DD HH:mm:ss');
+	}
+
+	function ping() {
+		fayeClient.publish('/course/chat/ping', {});
 	}
 });

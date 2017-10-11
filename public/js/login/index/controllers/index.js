@@ -10,6 +10,13 @@ define('controllers/index', [
 	__
 ) {
 
+	if (location.href.indexOf('verified') > -1) {
+		notify.success(__('auth.verified'));
+	}
+	else if (location.href.indexOf('rejected') > -1) {
+		notify.error(__('auth.rejected'));
+	}
+
 	var form = new LoginForm({
 		node: '#login-form'
 	});

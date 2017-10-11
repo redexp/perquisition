@@ -38,5 +38,13 @@ module.exports = {
 	'auth.login_error': [
 		'Wrong email or password',
 		'Неверный email или пароль'
+	],
+	'auth.verified': [
+		'Your email is verified, now you can login',
+		'Ваш email потверждён, теперь Вы можете войти в систему'
+	],
+	'auth.rejected': [
+		'Your email verification is failed',
+		'Ваш email не потверждён'
 	]
 };

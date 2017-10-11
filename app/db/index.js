@@ -23,13 +23,6 @@ var db = new Sequelize(config.database, config.username, config.password, {
 });
 
 db.execute = function (query, type) {
-	try {
-		query = query.toParam();
-	}
-	catch (e) {
-		return Promise.reject(e);
-	}
-
 	if (!type) {
 		['Select', 'Insert', 'Update', 'Delete'].some(function (name) {
 			if (query instanceof s.cls[name]) {
@@ -37,6 +30,13 @@ db.execute = function (query, type) {
 				return true;
 			}
 		});
+	}
+
+	try {
+		query = query.toParam();
+	}
+	catch (e) {
+		return Promise.reject(e);
 	}
 
     return db.query(query.text, {replacements: query.values, type: type});

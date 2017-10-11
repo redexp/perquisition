@@ -45,6 +45,7 @@ html, body {
     .chat-view-switcher {
         display: flex;
         flex-direction: row;
+        margin-right: 20px;
 
         > div {
             border-radius: 0;
@@ -214,6 +215,7 @@ html, body {
         display: flex;
         flex-direction: row;
         align-items: center;
+        padding: 0 5px 5px 0;
 
         > div {
             flex-grow: 1;
@@ -228,6 +230,20 @@ html, body {
 
 .users {
     border-left: 1px solid #ccc;
+
+    > div {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 0 6px;
+        margin: 6px 0;
+
+        img {
+            width: 40px;
+            height: 40px;
+            margin-right: 6px;
+        }
+    }
 }
 
 pre {

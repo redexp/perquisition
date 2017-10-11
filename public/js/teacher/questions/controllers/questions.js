@@ -2,18 +2,20 @@ define('controllers/questions', [
 	'views/questions-list',
 	'views/questions-forms',
 	'serverData',
+	'compose',
 	'jquery'
 ], function (
 	QuestionsList,
 	QuestionsForms,
 	serverData,
+	compose,
 	$
 ) {
 
 	var questions = new QuestionsList({
 		node: '#questions-list',
 		data: {
-			questions: composeQuestions(serverData('questions'))
+			questions: compose(serverData('questions'))
 		}
 	});
 
@@ -46,25 +48,4 @@ define('controllers/questions', [
 		parent.model(parent.data.componentsProp).remove(question.data.question);
 	};
 
-	function composeQuestions(list) {
-		var hash = list.reduce(function (hash, item) {
-			hash[item.id] = item;
-			return hash;
-		}, {});
-
-		var child = {};
-
-		list.forEach(function (item) {
-			if (item.data.questions) {
-				item.data.questions = item.data.questions.map(function (id) {
-					child[id] = true;
-					return hash[id];
-				});
-			}
-		});
-
-		return list.filter(function (item) {
-			return !child[item.id];
-		});
-	}
 });

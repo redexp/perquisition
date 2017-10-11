@@ -3,5 +3,6 @@ node_modules/
 public/js/cache/*.js
 public/js/cache/*.json
 uploads/
+app/config.js
 shipitfile.js
 server.*

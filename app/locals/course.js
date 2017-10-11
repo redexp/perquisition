@@ -7,6 +7,14 @@ module.exports = {
 		'Title',
 		'Название'
 	],
+	'course.chat': [
+		'Chat',
+		'Чат'
+	],
+	'course.homework': [
+		'Homework',
+		'Домашнее задание'
+	],
 	'course.edit_questions': [
 		'Questions',
 		'Вопросы'

@@ -23,6 +23,30 @@ define('views/message', [
 		constructor: Message,
 
 		template: {
+			'@root': {
+				toggleClass: {
+					'same-user': {
+						'@index': function (index) {
+							var prev = index > 0 && this.parent.data.messages[index - 1];
+
+							return prev && prev.user_id === this.data.message.user_id;
+						}
+					},
+					'same-time': {
+						'@index': function (index) {
+							var prev = index > 0 && this.parent.data.messages[index - 1];
+							var message = this.data.message;
+
+							return (
+								prev &&
+								prev.user_id === message.user_id &&
+								prev.time.slice(11, 16) === message.time.slice(11, 16)
+							);
+						}
+					}
+				}
+			},
+
 			'[data-user-name]': {
 				text: '=message.user_name'
 			},

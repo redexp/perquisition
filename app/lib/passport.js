@@ -11,6 +11,7 @@ passport.use(new LocalStrategy({
 	function(username, password, done) {
 		User.login(username, password)
 			.then(function (user) {
+				User.setToCache(user);
 				done(null, user || false);
 			})
 			.catch(function () {
