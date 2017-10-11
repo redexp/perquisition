@@ -19,4 +19,8 @@ module.exports = {
 		"Tests",
 		"Контрольные",
 	],
+	'student.profile': [
+		"Your profile",
+		"Настройки",
+	],
 };

@@ -1,8 +1,10 @@
 define('views/registration-form', [
 	'views/form',
+	'utils',
 	'croppie'
 ], function (
-	Form
+	Form,
+	utils
 ) {
 
 	function RegistrationForm() {
@@ -77,6 +79,8 @@ define('views/registration-form', [
 				size: {width: 100, height: 100}
 			});
 		},
+
+		save: utils.debounce(300, Form.prototype.save),
 
 		template: {
 			'[data-photo]': {

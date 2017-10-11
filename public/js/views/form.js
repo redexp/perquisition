@@ -74,9 +74,10 @@ define('views/form', [
 		},
 
 		save: function (data) {
+			this.set('state', 'saving');
+
 			data = data || this.getValues();
 
-			this.set('state', 'saving');
 			this.trigger('save', data);
 
 			var save = this.callbacks.save;

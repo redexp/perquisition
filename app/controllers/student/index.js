@@ -17,7 +17,7 @@ student.get('/', function (req, res) {
 });
 
 student.use('/courses', require('./courses'));
-student.use('/stream', require('./stream'));
+student.use('/profile', require('./profile'));
 
 var fs = require('fs');
 

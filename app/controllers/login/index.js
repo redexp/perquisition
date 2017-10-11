@@ -30,7 +30,7 @@ var uploader = require('multer')({
 	})
 });
 
-auth.post('/registration', uploader.single('photo'), function (req, res) {
+auth.post('/registration', validateEmail, uploader.single('photo'), function (req, res) {
 	var data = req.body;
 	var file = req.file;
 	var errors = [];
@@ -60,7 +60,7 @@ auth.post('/registration', uploader.single('photo'), function (req, res) {
 
 	var user = User.build(data);
 	user.roles = ['student'];
-	user.username = user.username.toLowerCase();
+	user.username = user.username.toLowerCase().trim();
 	user.password = user.generatePassword(data.password);
 	user.photo = file.filename + '.png';
 	user.verification_code = uuid();
@@ -119,3 +119,14 @@ auth.get('/registration/:uuid', function (req, res) {
 		})
 	;
 });
+
+function validateEmail(req, res, next) {
+	User.findOne({where: {username: String(req.body.username).toLowerCase().trim()}}).then(function (user) {
+		if (user) {
+			res.status(500).json({message: 'User with same email already registered'});
+		}
+		else {
+			next();
+		}
+	});
+}

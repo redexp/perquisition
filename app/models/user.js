@@ -46,7 +46,7 @@ User.getFromCache = function (id) {
 				});
 			}
 
-			return User.build(user);
+			return User.build(user, {isNewRecord: false});
 		})
 	;
 };
