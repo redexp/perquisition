@@ -83,6 +83,7 @@
     <table id="users-list" class="table table-striped">
         <thead>
         <tr>
+            <th width="40">&nbsp;</th>
             <th>&nbsp;</th>
             <th><%= __('name') %></th>
             <th><%= __('username') %></th>
@@ -92,8 +93,9 @@
         </tr>
         </thead>
         <tbody data-list>
-        <tr>
+        <tr class="hidden">
             <td><img data-photo src="" width="40"/></td>
+            <td><i data-not-verified title="Not verified" class="fa fa-exclamation-triangle text-warning"></i></td>
             <td data-name></td>
             <td data-username></td>
             <td>

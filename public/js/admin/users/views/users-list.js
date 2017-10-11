@@ -26,7 +26,8 @@ define('views/users-list', [
 				each: {
 					prop: 'list',
 					view: User,
-					dataProp: 'user'
+					dataProp: 'user',
+					removeClass: 'hidden'
 				}
 			}
 		}
@@ -55,6 +56,13 @@ define('views/users-list', [
 					}
 				}
 			},
+
+			'[data-not-verified]': {
+				visible: function () {
+					return !this.data.user.verified;
+				}
+			},
+
 			'[data-name]': {
 				text: '@user.name'
 			},

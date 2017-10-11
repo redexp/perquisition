@@ -138,7 +138,7 @@ User.prototype.generatePassword = function (password) {
 };
 
 User.prototype.toJSON = function () {
-	return omit(this.get(), ['password', 'verification_code', 'verified']);
+	return omit(this.get(), ['password', 'verification_code']);
 };
 
 module.exports = User;
