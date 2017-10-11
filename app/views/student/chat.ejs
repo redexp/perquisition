@@ -1,3 +1,9 @@
+<%
+/**
+ * @var {object} user
+ */
+%>
+
 <% layout('layout') %>
 
 <% appendStyles([
@@ -79,7 +85,13 @@
         <div data-block="users" data-users class="users" style="display: none;">
             <div>
                 <img data-photo src="" alt="Photo"/>
-                <div data-name></div>
+                <div data-name class="user-name"></div>
+                <% if (user.hasRole('teacher')) { %>
+                    <div>
+                        <button data-enable-video class="btn btn-xs btn-primary" type="button"><i class="fa fa-video-camera"></i></button>
+                        <button data-disable-video class="btn btn-xs btn-default" type="button"><i class="fa fa-times"></i></button>
+                    </div>
+                <% } %>
             </div>
         </div>
     </div>

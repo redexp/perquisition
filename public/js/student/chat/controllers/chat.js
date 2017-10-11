@@ -112,6 +112,16 @@ define('controllers/chat', [
 		fayeClient.publish('/course/chat/message/' + course.id, message);
 	};
 
+	chat.callbacks.enableUserVideo = function (user) {
+		fayeClient.publish('/course/chat/user/' + course.id, {type: 'enable-video', user_id: user.id});
+		chat.model('users').modelOf(user).set('videoEnabled', true);
+	};
+
+	chat.callbacks.disableUserVideo = function (user) {
+		fayeClient.publish('/course/chat/user/' + course.id, {type: 'disable-video', user_id: user.id});
+		chat.model('users').modelOf(user).set('videoEnabled', false);
+	};
+
 	fayeClient.subscribe('/course/chat/user/' + course.id, function (e) {
 		switch (e.type) {
 		case 'message':
@@ -126,6 +136,16 @@ define('controllers/chat', [
 			break;
 		case 'remove-user':
 			users.remove(users.findWhere({id: e.user_id}));
+			break;
+		case 'enable-video':
+			if (e.user_id === user.id) {
+				toolbar.set('canStartVideo', true);
+			}
+			break;
+		case 'disable-video':
+			if (e.user_id === user.id && !user.is_teacher) {
+				toolbar.set('canStartVideo', false);
+			}
 			break;
 		}
 	});
