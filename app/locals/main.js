@@ -51,4 +51,16 @@ module.exports = {
 		'Invalid',
 		'Недопустимое значение'
 	],
+	'main.admin': [
+		'Admin',
+		'Админ'
+	],
+	'main.teacher': [
+		'Teacher',
+		'Учитель'
+	],
+	'main.student': [
+		'Student',
+		'Студент'
+	],
 };

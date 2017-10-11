@@ -1,0 +1,17 @@
+<%
+/**
+ * @var {User} user
+ * @var {string} title
+ */
+%>
+
+<% if (user.roles.length > 1) { %>
+<div class="dropdown">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><%= __(title) %> <span class="caret"></span></a>
+    <ul class="dropdown-menu">
+        <% if (user.hasRole('admin')) { %><li><a href="/admin"><%= __('main.admin') %></a></li><% } %>
+        <% if (user.hasRole('teacher')) { %><li><a href="/teacher"><%= __('main.teacher') %></a></li><% } %>
+        <% if (user.hasRole('student')) { %><li><a href="/student"><%= __('main.student') %></a></li><% } %>
+    </ul>
+</div>
+<% } %>

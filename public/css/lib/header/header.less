@@ -1,0 +1,27 @@
+.header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: #f8f8f8;
+    border-bottom: 4px solid #e7e7e7;
+    min-height: 50px;
+    padding: 0 15px;
+
+    > * {
+        margin-right: 20px;
+
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+
+    > .expand {
+        flex-grow: 1;
+    }
+
+    > .dropdown {
+        a:hover, a:active, a:focus {
+            text-decoration: none;
+        }
+    }
+}

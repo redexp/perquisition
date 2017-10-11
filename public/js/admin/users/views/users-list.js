@@ -48,6 +48,13 @@ define('views/users-list', [
 		},
 
 		template: {
+			'[data-photo]': {
+				attr: {
+					'src': function () {
+						return this.data.user.photo ? '/student/photo/' + this.data.user.photo : '/img/user-placeholder.png';
+					}
+				}
+			},
 			'[data-name]': {
 				text: '@user.name'
 			},

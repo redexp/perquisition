@@ -2,7 +2,6 @@
 
 <% appendScripts([
     'lib/bootstrap/transition.js',
-    'lib/bootstrap/dropdown.js',
     'lib/bootstrap/modal.js',
     'views/form.js',
     'views/modal-form.js',
@@ -13,7 +12,7 @@
 
 <%- renderTranslationsFor('admin/users') %>
 
-<%- partial('components/header') %>
+<%- partial('admin/header') %>
 
 <div id="users" class="p">
     <form id="filter-form" class="box p m-b form-inline" data-form-state>
@@ -84,6 +83,7 @@
     <table id="users-list" class="table table-striped">
         <thead>
         <tr>
+            <th>&nbsp;</th>
             <th><%= __('name') %></th>
             <th><%= __('username') %></th>
             <th><%= __('role') %></th>
@@ -93,6 +93,7 @@
         </thead>
         <tbody data-list>
         <tr>
+            <td><img data-photo src="" width="40"/></td>
             <td data-name></td>
             <td data-username></td>
             <td>

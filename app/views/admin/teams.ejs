@@ -2,7 +2,6 @@
 
 <% appendScripts([
     'lib/bootstrap/transition.js',
-    'lib/bootstrap/dropdown.js',
     'lib/bootstrap/modal.js',
     'views/form.js',
     'views/modal-form.js',
@@ -14,7 +13,7 @@
 
 <%- renderTranslationsFor('admin/teams') %>
 
-<%- partial('components/header') %>
+<%- partial('admin/header') %>
 
 <div id="teams" class="p">
     <form id="filter-form" class="box p m-b form-inline">

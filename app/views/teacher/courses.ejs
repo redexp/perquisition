@@ -2,7 +2,6 @@
 
 <% appendScripts([
 	'lib/bootstrap/transition.js',
-	'lib/bootstrap/dropdown.js',
 	'lib/bootstrap/modal.js',
 	'views/form.js',
 	'views/modal-form.js',
@@ -14,7 +13,7 @@
 
 <%- renderTranslationsFor('teacher/courses') %>
 
-<%- partial('components/header') %>
+<%- partial('teacher/header') %>
 
 <div class="p">
     <form id="filter-form" class="box p m-b form-inline">
