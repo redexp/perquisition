@@ -1,11 +1,13 @@
 define('controllers/registration', [
 	'views/registration-form',
 	'ajax',
-	'notify'
+	'notify',
+	'lang'
 ], function (
 	RegistrationForm,
 	ajax,
-	notify
+	notify,
+	__
 ) {
 
 	var form = new RegistrationForm({
@@ -19,7 +21,7 @@ define('controllers/registration', [
 				return ajax('/registration', data);
 			})
 			.then(function () {
-				notify.success('main.saved');
+				notify.success(__('main.saved'));
 				setTimeout(function () {
 					location.href = '/?verify';
 				}, 2000);
