@@ -20,7 +20,9 @@ define('controllers/registration', [
 			})
 			.then(function () {
 				notify.success('main.saved');
-				location.href = '/';
+				setTimeout(function () {
+					location.href = '/?verify';
+				}, 2000);
 			})
 		;
 	};

@@ -10,7 +10,10 @@ define('controllers/index', [
 	__
 ) {
 
-	if (location.href.indexOf('verified') > -1) {
+	if (location.href.indexOf('verify') > -1) {
+		notify.success(__('auth.verify'), {timeout: 10 * 1000});
+	}
+	else if (location.href.indexOf('verified') > -1) {
 		notify.success(__('auth.verified'));
 	}
 	else if (location.href.indexOf('rejected') > -1) {
