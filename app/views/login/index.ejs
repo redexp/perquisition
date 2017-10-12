@@ -5,7 +5,10 @@
 ]) %>
 
 <% appendScripts([
+    'lib/bootstrap/transition.js',
+    'lib/bootstrap/modal.js',
 	'views/form.js',
+	'views/modal-form.js',
     'login/index/**/*.js'
 ]) %>
 
@@ -23,9 +26,34 @@
             <input class="form-control" type="password" name="password" autocomplete="off">
         </div>
 
-        <div>
+        <div class="form-group">
             <%- partial('components/submit', {btn: 'auth.login'}) %>
             <a class="btn btn-default" href="/registration"><%= __('auth.registration') %></a>
         </div>
+
+        <div class="form-group hidden">
+            <a data-forgot-password href="#"><%= __('auth.forgot_password') %></a>
+        </div>
+
+        <div class="form-group">
+            <a data-resend-email href="#"><%= __('auth.resend_email') %></a>
+        </div>
     </form>
+</div>
+
+<div id="email-form" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form class="modal-body">
+                <div class="form-group">
+                    <span data-description></span>
+                    <input name="email" placeholder="<%= __('auth.email') %>" type="text" class="form-control" autocomplete="off"/>
+                    <p data-email_required class="form-error"><%= __('required') %></p>
+                </div>
+
+                <%- partial('components/submit', {btn: 'main.send'}) %>
+                <%- partial('components/cancel') %>
+            </form>
+        </div>
+    </div>
 </div>

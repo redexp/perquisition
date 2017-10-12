@@ -10,8 +10,8 @@ sender.verify(function (err, res) {
 });
 
 module.exports = function gmail(options) {
-	if (options.from) {
-		options.from = options.from + ' <' + config.user + '>';
+	if (!options.from) {
+		options.from = config.from;
 	}
 
 	return addToQueue(options);

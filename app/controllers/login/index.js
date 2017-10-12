@@ -1,4 +1,5 @@
 var app = require('app');
+var ORIGIN = require('app/config').origin;
 var auth = require('express').Router();
 var passport = require('app/lib/passport');
 
@@ -85,9 +86,8 @@ auth.post('/registration', validateEmail, uploader.single('photo'), function (re
 			}
 		})
 		.then(function () {
-			var url = `https://online.geekhub.ck.ua/registration/` + user.verification_code;
+			var url = ORIGIN + `/registration/` + user.verification_code;
 			return gmail({
-				from: 'GeekHub Online',
 				to: user.username,
 				subject: 'Verify you email on GeekHub Online',
 				text: `Link to verify your email ${url}`,
@@ -120,6 +120,53 @@ auth.get('/registration/:uuid', function (req, res) {
 	;
 });
 
+auth.post('/forgot-password', getUserByEmail, function (req, res) {
+	var user = req.user;
+
+	user.password_code = uuid();
+
+	return user.save()
+		.then(function () {
+			var url = ORIGIN + '/restore-password/' + user.password_code;
+
+			return gmail({
+				to: user.username,
+				subject: 'Link to restore your password on GeekHub Online',
+				text: 'Link to restore your password' + url,
+				html: 'Click on link to restore your password <a href="${url}">${url}</a>'
+			});
+		})
+		.then(function () {
+			res.json({success: true});
+		})
+		.catch(res.catch)
+	;
+});
+
+auth.post('/resend-verification-email', getUserByEmail, function (req, res) {
+	var user = req.user;
+
+	if (user.verified) {
+		res.status(500).json({message: 'User with such email already verified'});
+		return;
+	}
+
+	var url = ORIGIN + `/registration/` + user.verification_code;
+	var mail = {
+		to: user.username,
+		subject: 'Verify you email on GeekHub Online',
+		text: `Link to verify your email ${url}`,
+		html: `Click on link to verify your email <a href="${url}">${url}</a>`
+	};
+
+	gmail(mail)
+		.then(function () {
+			res.json({success: true});
+		})
+		.catch(res.catch)
+	;
+});
+
 function validateEmail(req, res, next) {
 	User.findOne({where: {username: String(req.body.username).toLowerCase().trim()}}).then(function (user) {
 		if (user) {
@@ -129,4 +176,19 @@ function validateEmail(req, res, next) {
 			next();
 		}
 	});
+}
+
+function getUserByEmail(req, res, next) {
+	User.findOne({where: {username: String(req.body.email).toLowerCase().trim()}})
+		.then(function (user) {
+			if (!user) {
+				throw new Error('User with such email not found');
+			}
+
+			req.user = user;
+
+			next();
+		})
+		.catch(res.catch)
+	;
 }

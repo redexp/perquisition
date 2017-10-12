@@ -50,5 +50,21 @@ module.exports = {
 	'auth.rejected': [
 		'Your email verification is failed',
 		'Ваш email не потверждён'
+	],
+	'auth.forgot_password': [
+		'Forgot your password?',
+		'Забыли пароль?'
+	],
+	'auth.resend_email': [
+		"Didn't receive verification email?",
+		'Email не приходит?'
+	],
+	'auth.forgot_password_description': [
+		'Type your email and we will send you link to restore your password',
+		'Введите Ваш email и мы отправим Вам ссылку для востановления пароля'
+	],
+	'auth.resend_email_description': [
+		"Type your email and we will send you verification link one more time",
+		'Введите Ваш email и мы отправим Вам ссылку для подтверждения регистрации'
 	]
 };

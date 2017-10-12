@@ -63,4 +63,8 @@ module.exports = {
 		'Student',
 		'Студент'
 	],
+	'main.send': [
+		'Send',
+		'Отправить'
+	],
 };

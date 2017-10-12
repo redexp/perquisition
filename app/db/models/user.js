@@ -25,6 +25,9 @@ var User = db.define('user', {
 	verified: {
 		type: TYPES.BOOLEAN,
 		defaultValue: false
+	},
+	password_code: {
+		type: TYPES.STRING
 	}
 });
 

@@ -1,10 +1,12 @@
 define('controllers/index', [
 	'views/login-form',
+	'views/email-form',
 	'ajax',
 	'notify',
 	'lang'
 ], function (
 	LoginForm,
+	EmailForm,
 	ajax,
 	notify,
 	__
@@ -35,6 +37,28 @@ define('controllers/index', [
 				notify.error(__('auth.login_error'));
 			})
 		;
+	};
+
+	var emailForm = new EmailForm({
+		node: '#email-form'
+	});
+
+	form.callbacks.forgotPassword = function () {
+		emailForm.open({
+			description: __('auth.forgot_password_description'),
+			save: function (data) {
+				return ajax('/forgot-password', data);
+			}
+		});
+	};
+
+	form.callbacks.resendEmail = function (email) {
+		emailForm.open({
+			description: __('auth.resend_email_description'),
+			save: function (data) {
+				return ajax('/resend-verification-email', data);
+			}
+		});
 	};
 
 });

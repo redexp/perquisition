@@ -10,6 +10,23 @@ define('views/login-form', [
 
 	Form.extend({
 		constructor: LoginForm,
+
+		forgotPassword: function () {
+			this.callbacks.forgotPassword();
+		},
+
+		resendEmail: function () {
+			this.callbacks.resendEmail();
+		},
+
+		template: {
+			'[data-forgot-password]': {
+				click: '!forgotPassword'
+			},
+			'[data-resend-email]': {
+				click: '!resendEmail'
+			}
+		}
 	});
 
 	return LoginForm;
