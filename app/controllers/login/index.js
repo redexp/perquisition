@@ -92,6 +92,8 @@ auth.post('/registration', validateEmail, uploader.single('photo'), function (re
 				subject: 'Verify you email on GeekHub Online',
 				text: `Link to verify your email ${url}`,
 				html: `Click on link to verify your email <a href="${url}">${url}</a>`
+			}).catch(function (err) {
+				throw {emailError: err};
 			});
 		})
 		.then(function () {
@@ -99,7 +101,14 @@ auth.post('/registration', validateEmail, uploader.single('photo'), function (re
 		})
 		.then(res.json)
 		.catch(function (err) {
-			res.status(500).json({message: err.message});
+			if (err && err.emailError) {
+				user = user.get();
+				user.emailError = err.emailError.message || 'Verification email not sent';
+				res.json(user);
+			}
+			else {
+				res.status(500).json({message: err.message});
+			}
 		})
 	;
 });

@@ -20,11 +20,20 @@ define('controllers/registration', [
 				data.photo = blob;
 				return ajax('/registration', data);
 			})
-			.then(function () {
-				notify.success(__('main.saved'));
+			.then(function (user) {
+				var timeout = 2000;
+
+				if (user && user.emailError) {
+					notify.success(__('auth.saved_with_email_error'));
+					timeout = 15000;
+				}
+				else {
+					notify.success(__('main.saved'));
+				}
+
 				setTimeout(function () {
 					location.href = '/?verify';
-				}, 2000);
+				}, timeout);
 			})
 		;
 	};

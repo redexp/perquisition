@@ -66,5 +66,9 @@ module.exports = {
 	'auth.resend_email_description': [
 		"Type your email and we will send you verification link one more time",
 		'Введите Ваш email и мы отправим Вам ссылку для подтверждения регистрации'
+	],
+	'auth.saved_with_email_error': [
+		"Your user account was created, but verification email was not sent",
+		'Ваш акаунт создан, но email с подтверждением не был отправлен'
 	]
 };
