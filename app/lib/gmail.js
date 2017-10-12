@@ -14,10 +14,53 @@ module.exports = function gmail(options) {
 		options.from = options.from + ' <' + config.user + '>';
 	}
 
-	return new Promise(function (done, fail) {
-		sender.sendMail(options, function (err, res) {
-			if (err) fail(err);
-			else done(res);
-		});
-	});
+	return addToQueue(options);
 };
+
+var queue = [];
+
+function addToQueue(options) {
+	return new Promise(function (done, fail) {
+		queue.push({options: options, callback: function (err, res) {
+			if (err) {
+				fail(err);
+			}
+			else {
+				done(res);
+			}
+		}});
+
+		sendNext();
+	});
+}
+
+function removeFromQueue(item) {
+	var index = queue.indexOf(item);
+	if (index > -1) {
+		queue.splice(index, 1);
+	}
+}
+
+function sendNext() {
+	var sending = queue.find(function (item) {
+		return !!item.sendind;
+	});
+
+	if (sending) return;
+
+	var item = queue.find(function (item) {
+		return !item.sendind;
+	});
+
+	if (!item) return;
+
+	item.sending = true;
+
+	sender.sendMail(item.options, function (err, res) {
+		removeFromQueue(item);
+
+		item.callback(err, res);
+
+		sendNext();
+	});
+}

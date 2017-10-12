@@ -1,6 +1,7 @@
 var app = require('app');
 var profile = require('express').Router();
 var pick = require('lodash/pick');
+var User = require('app/models/user');
 
 module.exports = profile;
 
@@ -41,5 +42,8 @@ profile.post('/', uploader.single('photo'), function (req, res) {
 		user.photo = file.filename + '.png';
 	}
 
-	user.save().then(res.json, res.catch);
+	user.save()
+		.then(User.setToCache)
+		.then(res.json, res.catch)
+	;
 });
