@@ -69,6 +69,6 @@ module.exports = {
 	],
 	'auth.saved_with_email_error': [
 		"Your user account was created, but verification email was not sent",
-		'Ваш акаунт создан, но email с подтверждением не был отправлен'
+		'Ваш аккаунт создан, но email с подтверждением не был отправлен'
 	]
 };

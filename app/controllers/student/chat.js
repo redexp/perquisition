@@ -13,6 +13,7 @@ module.exports = chat;
 chat.get('/', function (req, res) {
 	var user = req.user;
 	var course = req.course;
+	var permissions = course.getPermissions(user, user.getTeams());
 	var token = getChatUserToken(course.id, user.id) || uuid();
 
 	addChatUser(course.id, token, user);

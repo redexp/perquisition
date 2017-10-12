@@ -81,9 +81,12 @@ auth.post('/registration', validateEmail, uploader.single('photo'), function (re
 				}
 			}
 
-			if (ids.length) {
-				return user.setTeams(ids);
+			if (ids.length === 0) {
+				var defaultTeamId = JSON.parse(fs.readFileSync(app.UPLOADS_DIR + '/default-team.json').toString());
+				ids = [defaultTeamId];
 			}
+
+			return user.setTeams(ids);
 		})
 		.then(function () {
 			var url = ORIGIN + `/registration/` + user.verification_code;
