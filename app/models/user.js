@@ -8,8 +8,7 @@ User.login = function (username, password) {
 	return User
 		.findOne({
 			where: {
-				username: username,
-				verified: true
+				username: username
 			}
 		})
 		.then(function (user) {
