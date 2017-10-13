@@ -2,6 +2,7 @@ var courses = require('express').Router();
 var Course = require('app/models/course');
 var User = require('app/models/user');
 var Team = require('app/models/team');
+var fayeClient = require('app/lib/faye').getClient();
 var pick = require('lodash/pick');
 
 module.exports = courses;
@@ -94,6 +95,20 @@ courses.post('/delete', function (req, res) {
 	Course.findById(req.body.id)
 		.then(function (course) {
 			return course.destroy();
+		})
+		.then(res.json, res.catch)
+	;
+});
+
+courses.post('/chat-enabled', function (req, res) {
+	Course.findUserCourse(req.body.id, req.user, {write: true})
+		.then(function (course) {
+			course.chat_enabled = !!req.body.enabled;
+			return course.save();
+		})
+		.then(function (course) {
+			fayeClient.publish('/course/chat/user/' + course.id, {type: 'chat-enabled', enabled: course.chat_enabled});
+			return pick(course, ['id', 'chat_enabled']);
 		})
 		.then(res.json, res.catch)
 	;

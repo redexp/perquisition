@@ -13,6 +13,13 @@ var Course = db.define('course', {
 		type: TYPES.JSONB,
 		defaultValue: {}
 	},
+	video_url: {
+		type: TYPES.STRING
+	},
+	chat_enabled: {
+		type: TYPES.BOOLEAN,
+		defaultValue: true
+	},
 	status: {
 		type: TYPES.STRING
 	},

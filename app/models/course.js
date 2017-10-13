@@ -81,19 +81,17 @@ Course.findByUser = function (user) {
 Course.findUserCourse = function (id, user, perms) {
 	return Course.findById(id).then(function (course) {
 		if (!course) {
-			throw new Error(__('course.not_found'));
+			throw new Error('course.not_found');
+		}
+
+		if (course.users_permissions[user.id] && comparePermission(perms, course.users_permissions[user.id])) {
+			return course;
 		}
 
 		return user.getTeams().then(function (teams) {
 			var permissions = course.getPermissions(user, teams);
 
-			for (var name in perms) {
-				if (!perms.hasOwnProperty(name)) continue;
-
-				if (permissions[name] !== perms[name]) {
-					throw new Error(__('course.not_found'));
-				}
-			}
+			if (!comparePermission(perms, permissions)) throw new Error('course.not_found');
 
 			return course;
 		});
@@ -146,6 +144,16 @@ Course.prototype.getPermissions = function (user, teams) {
 
 	return permissions;
 };
+
+function comparePermission(source, target) {
+	for (var name in source) {
+		if (target[name] !== source[name]) {
+			return false;
+		}
+	}
+
+	return true;
+}
 
 function mergePermissions(a, b) {
 	b = b || {};

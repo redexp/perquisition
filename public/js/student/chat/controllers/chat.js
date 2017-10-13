@@ -2,63 +2,55 @@ define('controllers/chat', [
 	'views/toolbar',
 	'views/chat',
 	'spreadcast',
-	'webrtc',
 	'fayeClient',
 	'store',
 	'uuid',
 	'moment',
-	'serverData'
+	'serverData',
+	'ajax'
 ], function (
 	Toolbar,
 	Chat,
 	spreadcast,
-	webrtc,
 	fayeClient,
 	store,
 	uuid,
 	moment,
-	serverData
+	serverData,
+	ajax
 ) {
 
 	var course = store.course;
 	var user = store.user;
 
-	var room = new spreadcast.Room({
-		name: course.id,
-		url: 'wss://' + location.hostname + ':8200'
-	});
-
 	var toolbar = new Toolbar({
 		node: '#toolbar',
 		data: {
 			title: course.title,
-			canStartVideo: user.is_teacher,
+			videoURL: course.video_url,
 			mode: store.IS_MOBILE ? 'radio' : 'checkbox',
-			chat: !store.IS_MOBILE
+			videos: false,
+			chat: true,
+			users: !store.IS_MOBILE,
+			videoEnabled: user.is_teacher,
+			chatEnabled: course.chat_enabled
 		}
 	});
 
+	store.users.forEach(function (item) {
+		item.videoEnabled = false;
+		item.chatEnabled = toolbar.data.chatEnabled;
+	});
+
 	toolbar.callbacks.startCamera = function () {
+		var room = createRoom();
+
 		room.publish({video: {width: 600, height: 400}}, 'camera').then(function (video) {
+			toolbar.set('videos', true);
+
 			videos.add({
 				id: 'camera',
 				videoNode: video
-			});
-		});
-	};
-
-	toolbar.callbacks.startScreen = function () {
-		webrtc.getScreenId(function (err, sourceId, params) {
-			if (err) {
-				console.error(err);
-				return;
-			}
-
-			room.publish(params, 'screen').then(function (video) {
-				videos.add({
-					id: 'screen',
-					videoNode: video
-				});
 			});
 		});
 	};
@@ -67,38 +59,37 @@ define('controllers/chat', [
 		chat.set(name + 'Visible', state);
 	};
 
+	toolbar.callbacks.disableChat = function () {
+		toolbar.set('chatEnabled', false);
+		users.forEach(function (user) {
+			users.modelOf(user).set('chatEnabled', false);
+		});
+		ajax('/teacher/courses/chat-enabled', {id: course.id, enabled: false});
+	};
+
+	toolbar.callbacks.enableChat = function () {
+		toolbar.set('chatEnabled', true);
+		users.forEach(function (user) {
+			users.modelOf(user).set('chatEnabled', true);
+		});
+		ajax('/teacher/courses/chat-enabled', {id: course.id, enabled: true});
+	};
+
 	var chat = new Chat({
 		node: '#chat',
 		data: {
-			chatVisible: !store.IS_MOBILE,
 			users: store.users,
-			messages: serverData('messages')
+			messages: serverData('messages'),
+			videosVisible: toolbar.data.videos,
+			chatVisible: toolbar.data.chat,
+			usersVisible: toolbar.data.users,
+			chatEnabled: user.is_teacher || course.chat_enabled
 		}
 	});
 
 	var videos = chat.model('videos');
 	var messages = chat.model('messages');
 	var users = chat.model('users');
-
-	room.onAddStream = function (video, id) {
-		videos.add({
-			id: id,
-			videoNode: video
-		});
-	};
-
-	room.onRemoveStream = function (video, id) {
-		var video = videos.find(function (video) {
-			return video.id === id;
-		});
-
-		videos.remove(video);
-	};
-
-	chat.callbacks.stopVideo = function (video) {
-		room.stopStream(video.id);
-		chat.model('videos').remove(video);
-	};
 
 	chat.callbacks.addMessage = function (text) {
 		var message = {
@@ -113,9 +104,20 @@ define('controllers/chat', [
 		fayeClient.publish('/course/chat/message/' + course.id, message);
 	};
 
+	chat.callbacks.enableUserChat = function (user) {
+		fayeClient.publish('/course/chat/user/' + course.id, {type: 'enable-chat', user_id: user.id});
+		chat.model('users').modelOf(user).set('chatEnabled', true);
+	};
+
+	chat.callbacks.disableUserChat = function (user) {
+		fayeClient.publish('/course/chat/user/' + course.id, {type: 'disable-chat', user_id: user.id});
+		chat.model('users').modelOf(user).set('chatEnabled', false);
+	};
+
 	chat.callbacks.enableUserVideo = function (user) {
 		fayeClient.publish('/course/chat/user/' + course.id, {type: 'enable-video', user_id: user.id});
 		chat.model('users').modelOf(user).set('videoEnabled', true);
+		createRoom();
 	};
 
 	chat.callbacks.disableUserVideo = function (user) {
@@ -132,6 +134,7 @@ define('controllers/chat', [
 			break;
 		case 'add-user':
 			if (!users.findWhere({id: e.user.id})) {
+				e.user.chatEnabled = course.chat_enabled;
 				users.add(e.user);
 			}
 			break;
@@ -140,12 +143,32 @@ define('controllers/chat', [
 			break;
 		case 'enable-video':
 			if (e.user_id === user.id) {
-				toolbar.set('canStartVideo', true);
+				toolbar.set('videoEnabled', true);
 			}
 			break;
 		case 'disable-video':
 			if (e.user_id === user.id && !user.is_teacher) {
-				toolbar.set('canStartVideo', false);
+				toolbar.set('videoEnabled', false);
+				toolbar.set('videos', false);
+				if (createRoom.room) {
+					createRoom.room.stop();
+					createRoom.room = null;
+				}
+			}
+			break;
+		case 'enable-chat':
+			if (e.user_id === user.id) {
+				chat.set('chatEnabled', true);
+			}
+			break;
+		case 'disable-chat':
+			if (e.user_id === user.id && !user.is_teacher) {
+				chat.set('chatEnabled', false);
+			}
+			break;
+		case 'chat-enabled':
+			if (!user.is_teacher) {
+				chat.set('chatEnabled', e.enabled);
 			}
 			break;
 		}
@@ -165,5 +188,31 @@ define('controllers/chat', [
 
 	function ping() {
 		fayeClient.publish('/course/chat/ping', {});
+	}
+
+	function createRoom() {
+		if (createRoom.room) return createRoom.room;
+
+		var room = createRoom.room = new spreadcast.Room({
+			name: course.id,
+			url: 'wss://' + location.hostname + ':8200'
+		});
+
+		room.onAddStream = function (videoNode, id) {
+			toolbar.set('videos', true);
+
+			videos.add({
+				id: id,
+				videoNode: videoNode
+			});
+		};
+
+		room.onRemoveStream = function (videoNode, id) {
+			var video = videos.findWhere({id: id});
+
+			videos.remove(video);
+		};
+
+		return room;
 	}
 });

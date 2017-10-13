@@ -26,7 +26,7 @@ define('views/chat', [
 			this.set('videosWidth', this.data.videosWidth + (visible ? -1 : 1) * usersWidth);
 		});
 
-		var videosWidth = this.body.width() - 400;
+		var videosWidth = this.body.width() - 800;
 
 		if (videosWidth < 600) {
 			videosWidth = 600;
@@ -35,6 +35,12 @@ define('views/chat', [
 		this.set('videosWidth', videosWidth);
 
 		this.scrollToBottom();
+
+		this.on('@chatEnabled', function (enabled) {
+			if (!enabled) {
+				this.ui.textarea.blur();
+			}
+		});
 	}
 
 	View.extend({
@@ -50,14 +56,16 @@ define('views/chat', [
 
 		data: function () {
 			return {
+				stream: '',
 				videos: [],
 				messages: [],
 				users: [],
 				videosWidth: 600,
 				resizing: false,
-				videosVisible: true,
+				videosVisible: false,
 				chatVisible: true,
-				usersVisible: false
+				usersVisible: true,
+				chatEnabled: true
 			};
 		},
 
@@ -120,6 +128,13 @@ define('views/chat', [
 				}
 			},
 
+			'[data-stream]': {
+				visible: '@stream',
+				attr: {
+					'src': '@stream'
+				}
+			},
+
 			'[data-videos]': {
 				each: {
 					prop: 'videos',
@@ -133,7 +148,7 @@ define('views/chat', [
 					'mousedown': 'startResizing'
 				},
 				visible: {
-					'set/videosVisible set/chatVisible': function () {
+					'@videosVisible set/chatVisible': function () {
 						return this.data.videosVisible && this.data.chatVisible;
 					}
 				}
@@ -159,6 +174,10 @@ define('views/chat', [
 				}
 			},
 
+			'[data-chat-disabled]': {
+				visible: '!@chatEnabled'
+			},
+
 			'[data-textarea]': {
 				on: {
 					'keydown': function (e) {
@@ -179,7 +198,8 @@ define('views/chat', [
 				each: {
 					prop: 'users',
 					view: User,
-					dataProp: 'user'
+					dataProp: 'user',
+					removeClass: 'hidden'
 				}
 			}
 		}

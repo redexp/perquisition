@@ -13,7 +13,6 @@
 
 <% appendScripts([
     ['lib/spreadcast/spreadcast.js', 'spreadcast'],
-    'lib/webrtc/webrtc.js',
     'lib/htmlToText/htmlToText.js',
     ['lib/marked/marked.min.js', 'markdown'],
     ['lib/highlight/highlight.pack.js', 'highlight'],
@@ -30,10 +29,13 @@
     <div id="toolbar" class="chat-toolbar">
         <div>
             <button data-start-camera class="btn btn-sm btn-primary hidden" type="button"><%= __('chat.start_camera') %></button>
-            <button data-start-screen class="btn btn-sm btn-primary hidden" type="button"><%= __('chat.start_screen') %></button>
+            <button data-stop-camera class="btn btn-sm btn-primary hidden" type="button"><%= __('chat.stop_camera') %></button>
         </div>
 
-        <div data-title class="chat-title"></div>
+        <div class="chat-title">
+            <span data-title></span>
+            <a data-video_url href="#" target="_blank"><%= __('chat.course_video') %></a>
+        </div>
 
         <div class="chat-view-switcher">
             <div data-view="videos"><%= __('chat.videos') %></div>
@@ -41,21 +43,20 @@
             <div data-view="users"><%= __('chat.users') %></div>
         </div>
 
+        <% if (user.hasRole('teacher')) { %>
+        <div>
+            <button data-disable-chat class="btn btn-sm btn-default" type="button"><%= __('chat.disable_chat') %></button>
+            <button data-enable-chat class="btn btn-sm btn-primary" type="button" style="display: none;"><%= __('chat.enable_chat') %></button>
+        </div>
+        <% } %>
+
         <a href="/logout"><%= __('main.logout') %></a>
     </div>
 
     <div id="chat" class="chat-page">
         <div data-block="videos" class="videos">
             <div data-videos>
-                <div class="video">
-                    <div class="video-toolbar top">
-                        <button data-stop-video class="btn btn-xs btn-default" type="button"><%= __('chat.stop_video') %></button>
-                    </div>
-                    <div data-video></div>
-                    <div class="video-toolbar bottom hidden">
-                        <button data-full-screen class="btn btn-xs btn-default" type="button"><%= __('chat.full_screen') %></button>
-                    </div>
-                </div>
+                <div class="video"></div>
             </div>
         </div>
 
@@ -77,19 +78,22 @@
                 </div>
             </div>
             <div class="chat-textarea">
+                <div data-chat-disabled class="chat-textarea-overlay"><%= __('chat.disabled') %></div>
                 <div data-textarea contenteditable="true" class="form-control"></div>
                 <button data-add-message class="btn btn-sm btn-primary" type="button"><i class="fa fa-send"></i></button>
             </div>
         </div>
 
         <div data-block="users" data-users class="users" style="display: none;">
-            <div>
+            <div class="hidden">
                 <img data-photo src="" alt="Photo"/>
                 <div data-name class="user-name"></div>
                 <% if (user.hasRole('teacher')) { %>
                     <div>
+                        <button data-enable-chat class="btn btn-xs btn-primary" type="button"><i class="fa fa-comment-o"></i></button>
+                        <button data-disable-chat class="btn btn-xs btn-default" type="button"><i class="fa fa-comment-o"></i></button>
                         <button data-enable-video class="btn btn-xs btn-primary" type="button"><i class="fa fa-video-camera"></i></button>
-                        <button data-disable-video class="btn btn-xs btn-default" type="button"><i class="fa fa-times"></i></button>
+                        <button data-disable-video class="btn btn-xs btn-default" type="button"><i class="fa fa-video-camera"></i></button>
                     </div>
                 <% } %>
             </div>

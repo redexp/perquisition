@@ -30,5 +30,21 @@ module.exports = {
 	'chat.full_screen': [
 		'Full screen',
 		'На весь экран'
+	],
+	'chat.course_video': [
+		'Live stream',
+		'Онлайн видео'
+	],
+	'chat.enable_chat': [
+		'Enable chat',
+		'Включить чат'
+	],
+	'chat.disable_chat': [
+		'Disable chat',
+		'Выключить чат'
+	],
+	'chat.disabled': [
+		'Chat disabled',
+		'Чат выключен'
 	]
 };

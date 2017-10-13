@@ -21,7 +21,7 @@ chat.get('/', function (req, res) {
 		is_teacher: user.hasRole('teacher'),
 		token: token
 	});
-	res.serverData.course = pick(course, ['id', 'title']);
+	res.serverData.course = pick(course, ['id', 'title', 'video_url', 'chat_enabled']);
 
 	getChatUsers(course.id)
 		.then(function (users) {

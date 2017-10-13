@@ -32,11 +32,13 @@ define('views/toolbar', [
 
 		data: {
 			title: '',
-			canStartVideo: false,
+			videoURL: '',
+			videoEnabled: false,
+			chatEnabled: false,
 			mode: 'checkbox',
-			videos: true,
+			videos: false,
 			chat: true,
-			users: false
+			users: true
 		},
 
 		toggleView: function (e) {
@@ -45,9 +47,24 @@ define('views/toolbar', [
 			this.set(name, !this.data[name]);
 		},
 
+		disableChat: function () {
+			this.callbacks.disableChat();
+		},
+
+		enableChat: function () {
+			this.callbacks.enableChat();
+		},
+
 		template: {
 			'[data-title]': {
 				text: '@title'
+			},
+
+			'[data-video_url]': {
+				visible: '@videoURL',
+				attr: {
+					'href': '@videoURL'
+				}
 			},
 
 			'[data-start-camera]': {
@@ -55,15 +72,7 @@ define('views/toolbar', [
 					this.callbacks.startCamera();
 				},
 				toggleClass: {
-					'hidden': '!@canStartVideo'
-				}
-			},
-			'[data-start-screen]': {
-				click: function () {
-					this.callbacks.startScreen();
-				},
-				toggleClass: {
-					'hidden': '!@canStartVideo'
+					'hidden': '!@videoEnabled'
 				}
 			},
 
@@ -78,6 +87,16 @@ define('views/toolbar', [
 						}
 					}
 				}
+			},
+
+			'[data-disable-chat]': {
+				visible: '@chatEnabled',
+				click: 'disableChat'
+			},
+
+			'[data-enable-chat]': {
+				visible: '!@chatEnabled',
+				click: 'enableChat'
 			}
 		}
 	});

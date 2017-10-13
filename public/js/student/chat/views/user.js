@@ -11,6 +11,14 @@ define('views/user', [
 	View.extend({
 		constructor: User,
 
+		enableChat: function () {
+			this.parent.callbacks.enableUserChat(this.data.user);
+		},
+
+		disableChat: function () {
+			this.parent.callbacks.disableUserChat(this.data.user);
+		},
+
 		enableVideo: function () {
 			this.parent.callbacks.enableUserVideo(this.data.user);
 		},
@@ -29,6 +37,14 @@ define('views/user', [
 						return '/student/photo/' + this.data.user.photo;
 					}
 				}
+			},
+			'[data-enable-chat]': {
+				visible: '!@user.chatEnabled',
+				click: 'enableChat'
+			},
+			'[data-disable-chat]': {
+				visible: '@user.chatEnabled',
+				click: 'disableChat'
 			},
 			'[data-enable-video]': {
 				visible: '!@user.videoEnabled',
