@@ -15,7 +15,7 @@ Message.saveAll = function (messages) {
 
 Message.getTodayMessages = function (params) {
 	var query = {
-		time: {$gt: moment.utc().format('YYY-MM-DD') + ' 00:00:00'}
+		// time: {$gt: moment.utc().format('YYYY-MM-DD') + ' 00:00:00'}
 	};
 
 	if (params.course_id) {

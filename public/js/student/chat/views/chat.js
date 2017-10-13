@@ -33,6 +33,8 @@ define('views/chat', [
 		}
 
 		this.set('videosWidth', videosWidth);
+
+		this.scrollToBottom();
 	}
 
 	View.extend({
@@ -42,7 +44,8 @@ define('views/chat', [
 			videos: '[data-block="videos"]',
 			divider: '[data-divider]',
 			textarea: '[data-textarea]',
-			users: '[data-block="users"]'
+			users: '[data-block="users"]',
+			messagesBlock: '[data-messages-block]'
 		},
 
 		data: function () {
@@ -82,6 +85,10 @@ define('views/chat', [
 			this.ui.textarea.empty();
 		},
 
+		scrollToBottom: function () {
+			this.ui.messagesBlock.scrollTop(this.ui.messagesBlock.prop('scrollHeight'));
+		},
+
 		template: {
 			'@root': {
 				toggleClass: {
@@ -102,7 +109,7 @@ define('views/chat', [
 			'[data-block="videos"]': {
 				style: {
 					'height': '@videosHeight',
-					'width': {
+					'min-width': {
 						'@videosWidth set/chatVisible': function () {
 							return this.data.chatVisible ? this.data.videosWidth : 'auto';
 						}
@@ -137,7 +144,18 @@ define('views/chat', [
 					prop: 'messages',
 					view: Message,
 					dataProp: 'message',
-					dataIndexProp: 'index'
+					dataIndexProp: 'index',
+					removeClass: 'hidden',
+					add: function (div, item) {
+						var block = this.ui.messagesBlock;
+						var scroll = block.scrollTop() + block.height() + 50 >= block.prop('scrollHeight');
+
+						div.append(item.node);
+
+						if (scroll) {
+							this.scrollToBottom();
+						}
+					}
 				}
 			},
 

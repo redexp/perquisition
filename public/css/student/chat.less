@@ -91,6 +91,7 @@ html, body {
 
     > .divider {
         width: 10px;
+        min-width: 10px;
         display: flex;
         justify-content: center;
 
@@ -110,7 +111,7 @@ html, body {
     }
 
     > .users {
-        width: 300px;
+        min-width: 300px;
     }
 
     &.resizing {
@@ -192,21 +193,44 @@ html, body {
 
     .chat-messages {
         > div {
-            padding: 5px 10px;
+            padding: 5px 10px 0;
         }
 
         .message-user {
             display: flex;
             flex-direction: row;
             justify-content: space-between;
+        }
 
-            > div:first-child {
-                font-size: 16px;
-                font-weight: 600;
+        .message-user-name {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .message-time {
+            color: #ccc;
+        }
+
+        .message-text {
+            > p:last-child {
+                margin-bottom: 0;
+            }
+        }
+
+        > div.same-user {
+            padding-top: 0;
+
+            .message-user-name {
+                display: none;
             }
 
-            > div:last-child {
-                color: #ccc;
+            .message-time {
+                flex-grow: 1;
+                text-align: right;
+            }
+
+            &.same-time .message-time {
+                display: none;
             }
         }
     }
@@ -230,6 +254,7 @@ html, body {
 
 .users {
     border-left: 1px solid #ccc;
+    overflow: auto;
 
     > div {
         display: flex;

@@ -71,12 +71,13 @@ define('controllers/chat', [
 		node: '#chat',
 		data: {
 			chatVisible: !store.IS_MOBILE,
-			users: store.users
+			users: store.users,
+			messages: serverData('messages')
 		}
 	});
 
 	var videos = chat.model('videos');
-	var messages = chat.model('messages').reset(serverData('messages'));
+	var messages = chat.model('messages');
 	var users = chat.model('users');
 
 	room.onAddStream = function (video, id) {
