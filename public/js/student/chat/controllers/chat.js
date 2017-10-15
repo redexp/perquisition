@@ -1,7 +1,6 @@
 define('controllers/chat', [
 	'views/toolbar',
 	'views/chat',
-	'spreadcast',
 	'fayeClient',
 	'store',
 	'uuid',
@@ -11,7 +10,6 @@ define('controllers/chat', [
 ], function (
 	Toolbar,
 	Chat,
-	spreadcast,
 	fayeClient,
 	store,
 	uuid,
@@ -192,6 +190,8 @@ define('controllers/chat', [
 
 	function createRoom() {
 		if (createRoom.room) return createRoom.room;
+
+		var spreadcast = require('spreadcast');
 
 		var room = createRoom.room = new spreadcast.Room({
 			name: course.id,
