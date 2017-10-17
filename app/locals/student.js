@@ -15,7 +15,7 @@ module.exports = {
 		"Homework",
 		"Домашнее задание",
 	],
-	'student.perquisition': [
+	'student.perquisitions': [
 		"Tests",
 		"Контрольные",
 	],

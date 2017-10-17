@@ -1,33 +1,33 @@
 module.exports = {
-	'questions.row': [
+	'question.row': [
 		'Row',
 		'Строка'
 	],
-	'questions.section': [
+	'question.section': [
 		'Section',
 		'Секция'
 	],
-	'questions.choice': [
+	'question.choice': [
 		'Choice',
 		'Выбор'
 	],
-	'questions.title': [
+	'question.title': [
 		'Question',
 		'Вопрос'
 	],
-	'questions.multiple': [
+	'question.multiple': [
 		'Multiple',
 		'Несколько правильных ответов'
 	],
-	'questions.options': [
+	'question.options': [
 		'Options',
 		'Варианты ответов'
 	],
-	'questions.option_answer': [
+	'question.option_answer': [
 		'Answer',
 		'Правильный ответ'
 	],
-	'questions.option_title': [
+	'question.option_title': [
 		'Title',
 		'Текст'
 	],

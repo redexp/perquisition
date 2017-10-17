@@ -35,19 +35,19 @@ define('views/questions-list', [
 				questions: [],
 				types: [
 					{
-						title: __('questions.row'),
+						title: __('question.row'),
 						id:   Row.id,
 						view: Row,
 						data: Row.data
 					},
 					{
-						title: __('questions.section'),
+						title: __('question.section'),
 						id:   Section.id,
 						view: Section,
 						data: Section.data
 					},
 					{
-						title: __('questions.choice'),
+						title: __('question.choice'),
 						id:   Choice.id,
 						view: Choice,
 						data: Choice.data

@@ -1,7 +1,6 @@
 <% layout('layout') %>
 
 <% appendScripts([
-	'lib/bootstrap/transition.js',
 	'lib/bootstrap/modal.js',
 	'views/form.js',
 	'views/modal-form.js',
@@ -54,6 +53,7 @@
                         <li><a data-link href="/student/courses/:id/chat"><%= __('course.chat') %></a></li>
                         <li><a data-link href="/teacher/courses/:id/homework"><%= __('course.homework') %></a></li>
                         <li><a data-link href="/teacher/courses/:id/questions"><%= __('course.edit_questions') %></a></li>
+                        <li><a data-link href="/teacher/courses/:id/tests"><%= __('course.tests') %></a></li>
                         <li><a data-link href="/teacher/courses/:id/reports"><%= __('course.reports') %></a></li>
                         <li class="divider"></li>
                         <li><a data-delete href="#"><%= __('main.delete') %></a></li>

@@ -1,6 +1,6 @@
 define('htmlToText', ['jquery'], function ($) {
 
-	return function htmlToText(domNode) {
+	function htmlToText(domNode) {
 		if (domNode instanceof $) {
 			domNode = domNode.get(0);
 		}
@@ -22,5 +22,15 @@ define('htmlToText', ['jquery'], function ($) {
 		}
 
 		return text.trim();
+	}
+
+	htmlToText.undo = function (text) {
+		var html = text.trim();
+
+		if (!html) return html;
+
+		return '<p>' + html.replace(/\n/g, '</p><p>') + '</p>';
 	};
+
+	return htmlToText;
 });

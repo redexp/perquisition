@@ -1,5 +1,6 @@
 var courses = require('express').Router();
 var Course = require('app/models/course');
+var Test = require('app/models/test');
 var User = require('app/models/user');
 var Team = require('app/models/team');
 var fayeClient = require('app/lib/faye').getClient();
@@ -114,18 +115,15 @@ courses.post('/chat-enabled', function (req, res) {
 	;
 });
 
-courses.get('/:id/questions', function (req, res) {
-	Course.findUserCourse(req.params.id, req.user, {write: true})
-		.then(function (course) {
-			res.locals.serverData.course = course;
+courses.get('/:id/questions', Course.request({write: true}), function (req, res) {
+	res.serverData.course = req.course;
 
-			return course.getQuestions();
-		})
+	return req.course.getQuestions()
 		.then(function (questions) {
-			res.locals.serverData.questions = questions;
-		})
-		.then(function () {
+			res.serverData.questions = questions;
 			res.render('teacher/questions');
 		})
 	;
 });
+
+courses.use(require('./tests'));

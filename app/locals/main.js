@@ -67,4 +67,8 @@ module.exports = {
 		'Send',
 		'Отправить'
 	],
+	'main.title': [
+		'Title',
+		'Название'
+	],
 };

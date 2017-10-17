@@ -68,23 +68,9 @@ function scriptsToDevHtml(scripts) {
 }
 
 function scriptsToProdHtml(scripts) {
-	scripts = libFirst(scripts);
-
-	var libs = [],
-		rest = [];
-
-	scripts.forEach(function (script) {
-		if (script.src.indexOf('/js/lib/') === 0) {
-			libs.push(script);
-		}
-		else {
-			rest.push(script);
-		}
-	});
-
 	var html = '';
 
-	[libs, rest].forEach(function (scripts) {
+	libFirst(scripts).forEach(function (scripts) {
 		var hash = md5(JSON.stringify(pluck(scripts, 'src'))),
 			path = `${app.PUBLIC_DIR}/js/cache/${hash}.js`;
 

@@ -114,6 +114,30 @@ Course.findByTeams = function (teams) {
 	});
 };
 
+Course.request = function (perms) {
+	var key = JSON.stringify(perms);
+	var request = Course.request[key];
+
+	if (!request) {
+		request = Course.request[key] = function (req, res, next) {
+			var id = req.params.id;
+			var user = req.user;
+
+			Course.findUserCourse(id, user, perms)
+				.then(function (course) {
+					if (!course) throw new Error('course.not_found');
+
+					req.course = course;
+					next();
+				})
+				.catch(res.catch)
+			;
+		};
+	}
+
+	return request;
+};
+
 Course.prototype.toJSON = function () {
 	return this.get();
 };

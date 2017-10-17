@@ -1,0 +1,45 @@
+<% layout('layout') %>
+
+<% appendStyles([
+    //    'student/courses.css'
+]) %>
+
+<% appendScripts([
+    ['lib/component-composer/component-composer.js', 'composer'],
+    ['lib/marked/marked.min.js', 'markdown'],
+    ['lib/highlight/highlight.pack.js', 'highlight'],
+    'lib/compose/compose.js',
+    'lib/detachHTML/detachHTML.js',
+    ['lib/velocity/velocity.min.js', 'velocity'],
+    'lib/steps/steps.js',
+    'student/perquisition/**/*.js'
+]) %>
+
+<%- renderTranslationsFor('student/perquisition') %>
+
+<%- partial('student/header') %>
+
+<div class="steps">
+    <div id="perquisitions" class="step active p-lg">
+        <table class="table">
+            <thead>
+            <tr>
+                <th><%= __('main.title') %></th>
+                <th>&nbsp;</th>
+            </tr>
+            </thead>
+            <tbody data-list>
+            <tr>
+                <td data-title></td>
+                <td class="text-right">
+                    <button data-start class="btn btn-xs btn-default" type="button"><%= __('student.start_perquisition') %></button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="perquisition" class="step p-lg">
+        test
+    </div>
+</div>

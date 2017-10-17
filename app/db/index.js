@@ -42,6 +42,11 @@ db.execute = function (query, type) {
     return db.query(query.text, {replacements: query.values, type: type});
 };
 
+var pick = require('lodash/pick');
+db.Model.prototype.pick = function (props) {
+	return pick(this, props instanceof Array ? props : Array.prototype.slice.call(arguments, 0));
+};
+
 module.exports = db;
 
 require('./relations');

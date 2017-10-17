@@ -1,0 +1,228 @@
+<% layout('layout') %>
+
+<% appendStyles([
+    'lib/questions/questions.css',
+    'highlight/github-gist.css'
+]) %>
+
+<% appendScripts([
+    ['lib/component-composer/component-composer.js', 'composer'],
+    ['lib/marked/marked.min.js', 'markdown'],
+    ['lib/highlight/highlight.pack.js', 'highlight'],
+    ['lib/velocity/velocity.min.js', 'velocity'],
+    'lib/bootstrap/modal.js',
+    'lib/detachHTML/detachHTML.js',
+    'lib/steps/steps.js',
+    'lib/clone/clone.js',
+    'lib/htmlToText/htmlToText.js',
+    'lib/uuid/uuid.js',
+    'views/form.js',
+    'views/modal-form.js',
+    'teacher/tests/**/*.js'
+]) %>
+
+<%- renderTranslationsFor('teacher/tests') %>
+
+<%- partial('teacher/header') %>
+
+<div class="steps">
+    <div id="tests" class="step active p-lg">
+        <table class="table">
+            <thead>
+            <tr>
+                <th><%= __('main.title') %></th>
+                <th>&nbsp;</th>
+            </tr>
+            </thead>
+            <tbody data-list>
+            <tr class="hidden">
+                <td data-title></td>
+                <td class="text-right">
+                    <button data-edit class="btn btn-xs btn-default" type="button"><%= __('main.edit') %></button>
+                    <button data-delete class="btn btn-xs btn-default" type="button"><%= __('main.delete') %></button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <button data-add-test class="btn btn-success" type="button"><%= __('main.add') %></button>
+    </div>
+
+    <div id="test-form" class="step p-lg">
+        <div class="form-group">
+            <label><%= __('main.title') %></label>
+            <div data-test-title class="form-control" contenteditable="true"></div>
+        </div>
+
+        <div class="form-group">
+            <label><%= __('course.questions') %></label>
+            <div id="questions" class="questions">
+                <div data-arrow data-direction="vertical" class="questions-arrow">
+                    <i class="fa fa-long-arrow-right"></i>
+                </div>
+
+                <div data-questions class="questions-container">
+
+                    <div id="row" class="question question-row panel panel-default">
+                        <div data-drag-clone class="question-clone"><%= __('question.row') %></div>
+
+                        <div data-toolbar class="panel-heading toolbared">
+                            <div data-drag-zone class="question-drag-block"><%= __('question.row') %></div>
+
+                            <div>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                                        <%= __('main.actions') %> <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-right">
+                                        <li data-edit><a href="#"><%= __('main.edit') %></a></li>
+                                        <li data-clone><a href="#"><%= __('main.clone') %></a></li>
+                                        <li class="divider"></li>
+                                        <li data-delete><a href="#"><%= __('main.delete') %></a></li>
+                                    </ul>
+                                </div>
+
+                                <button data-collapse class="btn btn-xs btn-default"><i class="fa fa-angle-up"></i></button>
+                                <button data-expand class="btn btn-xs btn-default"><i class="fa fa-angle-down"></i></button>
+                            </div>
+                        </div>
+
+                        <div data-content class="question-content panel-body">
+                            <div data-questions></div>
+
+                            <div data-content-toolbar class="add-question">
+                                <div class="btn-group">
+                                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><i class="fa fa-plus"></i></button>
+                                    <ul class="dropdown-menu dropdown-menu-right" data-questions-types>
+                                        <li><a data-title href="#"></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="section" class="question question-section panel panel-default">
+                        <div data-drag-clone class="question-clone"><%= __('question.section') %></div>
+
+                        <div data-toolbar class="panel-heading toolbared">
+                            <div data-drag-zone class="question-drag-block"><%= __('question.section') %></div>
+
+                            <div>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                                        <%= __('main.actions') %> <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-right">
+                                        <li data-edit><a href="#"><%= __('main.edit') %></a></li>
+                                        <li data-clone><a href="#"><%= __('main.clone') %></a></li>
+                                        <li class="divider"></li>
+                                        <li data-delete><a href="#"><%= __('main.delete') %></a></li>
+                                    </ul>
+                                </div>
+
+                                <button data-collapse class="btn btn-xs btn-default"><i class="fa fa-angle-up"></i></button>
+                                <button data-expand class="btn btn-xs btn-default"><i class="fa fa-angle-down"></i></button>
+                            </div>
+                        </div>
+
+                        <div data-content class="question-content panel-body">
+                            <div data-questions></div>
+
+                            <div data-content-toolbar class="add-question">
+                                <div class="btn-group">
+                                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><i class="fa fa-plus"></i></button>
+                                    <ul class="dropdown-menu dropdown-menu-right" data-questions-types>
+                                        <li><a data-title href="#"></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="choice" class="question question-choice panel panel-default">
+                        <div data-drag-clone class="question-clone"><%= __('question.choice') %></div>
+
+                        <div data-toolbar class="panel-heading toolbared">
+                            <div data-drag-zone class="question-drag-block"><%= __('question.choice') %></div>
+
+                            <div>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                                        <%= __('main.actions') %> <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-right">
+                                        <li data-edit><a href="#"><%= __('main.edit') %></a></li>
+                                        <li data-clone><a href="#"><%= __('main.clone') %></a></li>
+                                        <li class="divider"></li>
+                                        <li data-delete><a href="#"><%= __('main.delete') %></a></li>
+                                    </ul>
+                                </div>
+
+                                <button data-collapse class="btn btn-xs btn-default"><i class="fa fa-angle-up"></i></button>
+                                <button data-expand class="btn btn-xs btn-default"><i class="fa fa-angle-down"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="question-content panel-body">
+                            <div data-title></div>
+                            <div data-options class="options">
+                                <div>
+                                    <input type="checkbox"/>
+                                    <div data-text></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="add-question">
+                    <div class="btn-group">
+                        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><i class="fa fa-plus"></i></button>
+                        <ul class="dropdown-menu" data-types>
+                            <li><a data-title href="#"></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <%- partial('components/submit') %>
+        <%- partial('components/cancel') %>
+    </div>
+</div>
+
+<div id="choice-form" class="question-form-choice modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"><%= __('question.choice') %></h4>
+            </div>
+            <form class="modal-body">
+                <div class="form-group">
+                    <label><%= __('question.title') %></label>
+                    <div data-title class="form-control" contenteditable="true"></div>
+                </div>
+
+                <div class="form-group">
+                    <label><%= __('question.multiple') %></label>
+                    <input name="multiple" type="checkbox"/>
+                </div>
+
+                <div class="form-group">
+                    <label><%= __('question.options') %></label>
+                    <div data-options class="options">
+                        <div>
+                            <input data-is_answer title="<%= __('question.option_answer') %>" type="radio" name="data[options][]"/>
+                            <div data-text class="form-control" contenteditable="true"></div>
+                            <button data-delete class="btn btn-sm btn-default" type="button"><i class="fa fa-minus"></i></button>
+                        </div>
+                    </div>
+                    <button data-add-option class="btn btn-sm btn-success" type="button"><i class="fa fa-plus"></i></button>
+                </div>
+
+                <%- partial('components/submit') %>
+                <%- partial('components/cancel') %>
+            </form>
+        </div>
+    </div>
+</div>

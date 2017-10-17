@@ -19,8 +19,20 @@ module.exports = {
 		'Questions',
 		'Вопросы'
 	],
+	'course.tests': [
+		'Tests',
+		'Контрольные'
+	],
+	'course.questions': [
+		'Questions',
+		'Вопросы'
+	],
 	'course.reports': [
 		'Reports',
 		'Отчёты'
+	],
+	'course.not_found': [
+		'Course not found',
+		'Курс не найден'
 	]
 };

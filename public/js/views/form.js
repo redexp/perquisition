@@ -32,7 +32,10 @@ define('views/form', [
 
 		open: function (params) {
 			this.context = params.context;
-			this.callbacks.save = params.save;
+
+			if (params.save) {
+				this.callbacks.save = params.save;
+			}
 
 			this.model('errors').removeAll();
 
@@ -43,6 +46,10 @@ define('views/form', [
 		close: function () {
 			this.set('state', 'close');
 			this.trigger('close');
+
+			if (this.callbacks.close) {
+				this.callbacks.close();
+			}
 		},
 
 		submit: function () {

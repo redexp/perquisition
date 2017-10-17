@@ -7,7 +7,6 @@
 
 <% appendScripts([
     ['lib/component-composer/component-composer.js', 'composer'],
-    'lib/bootstrap/transition.js',
     'lib/bootstrap/modal.js',
     'lib/clone/clone.js',
     'lib/compose/compose.js',
@@ -30,10 +29,10 @@
     <div data-questions class="questions-container">
 
         <div data-question-type="row" class="panel panel-default">
-            <div data-drag-clone class="question-clone"><%= __('questions.row') %></div>
+            <div data-drag-clone class="question-clone"><%= __('question.row') %></div>
 
             <div data-toolbar class="panel-heading toolbared">
-                <div data-drag-zone class="question-drag-block"><%= __('questions.row') %></div>
+                <div data-drag-zone class="question-drag-block"><%= __('question.row') %></div>
 
                 <div>
                     <div class="btn-group">
@@ -68,10 +67,10 @@
         </div>
 
         <div data-question-type="section" class="panel panel-default">
-            <div data-drag-clone class="question-clone"><%= __('questions.section') %></div>
+            <div data-drag-clone class="question-clone"><%= __('question.section') %></div>
 
             <div data-toolbar class="panel-heading toolbared">
-                <div data-drag-zone class="question-drag-block"><%= __('questions.section') %></div>
+                <div data-drag-zone class="question-drag-block"><%= __('question.section') %></div>
 
                 <div>
                     <div class="btn-group">
@@ -106,10 +105,10 @@
         </div>
 
         <div data-question-type="choice" class="panel panel-default">
-            <div data-drag-clone class="question-clone"><%= __('questions.choice') %></div>
+            <div data-drag-clone class="question-clone"><%= __('question.choice') %></div>
 
             <div data-toolbar class="panel-heading toolbared">
-                <div data-drag-zone class="question-drag-block"><%= __('questions.choice') %></div>
+                <div data-drag-zone class="question-drag-block"><%= __('question.choice') %></div>
 
                 <div>
                     <div class="btn-group">
@@ -155,11 +154,11 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title"><%= __('questions.row') %></h4>
+                    <h4 class="modal-title"><%= __('question.row') %></h4>
                 </div>
                 <form class="modal-body">
                     <div class="form-group">
-                        <label><%= __('questions.title') %></label>
+                        <label><%= __('question.title') %></label>
                         <input name="title" type="text" class="form-control"/>
                     </div>
 
@@ -178,11 +177,11 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title"><%= __('questions.section') %></h4>
+                    <h4 class="modal-title"><%= __('question.section') %></h4>
                 </div>
                 <form class="modal-body">
                     <div class="form-group">
-                        <label><%= __('questions.title') %></label>
+                        <label><%= __('question.title') %></label>
                         <input name="title" type="text" class="form-control"/>
                     </div>
 
@@ -201,11 +200,11 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title"><%= __('questions.choice') %></h4>
+                    <h4 class="modal-title"><%= __('question.choice') %></h4>
                 </div>
                 <form class="modal-body">
                     <div class="form-group">
-                        <label><%= __('questions.title') %></label>
+                        <label><%= __('question.title') %></label>
                         <div data-title contenteditable="true" class="form-control"></div>
 
                         <p data-title_required class="error help-block text-danger">
@@ -214,7 +213,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label><%= __('questions.multiple') %></label>
+                        <label><%= __('question.multiple') %></label>
                         <label class="switch">
                             <input name="data[multiple]" class="switch-input" type="checkbox" checked/>
                             <span class="switch-body">&nbsp;</span>
@@ -223,12 +222,12 @@
                     </div>
 
                     <div class="form-group">
-                        <label><%= __('questions.options') %></label>
+                        <label><%= __('question.options') %></label>
                         <table class="table">
                             <thead>
                             <tr>
-                                <th class="text-center"><%= __('questions.option_answer') %></th>
-                                <th><%= __('questions.option_title') %></th>
+                                <th class="text-center"><%= __('question.option_answer') %></th>
+                                <th><%= __('question.option_title') %></th>
                                 <th>&nbsp;</th>
                             </tr>
                             </thead>
