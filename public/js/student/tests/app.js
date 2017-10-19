@@ -1,7 +1,8 @@
 require(['store', 'serverData'], function (store, serverData) {
-	store.perquisitions = serverData('perquisitions');
+	store.tests = serverData('tests');
 });
 
 require([
-	'controllers/list'
+	'controllers/list',
+	'controllers/test'
 ]);

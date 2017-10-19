@@ -51,6 +51,10 @@ define('views/test-form', [
 			this.questions.model('questions').removeAll();
 		},
 
+		cancel: function () {
+			this.callbacks.cancel();
+		},
+
 		getValues: function () {
 			return {};
 		},
@@ -69,7 +73,7 @@ define('views/test-form', [
 			},
 
 			'[data-cancel]': {
-				click: 'close'
+				click: 'cancel'
 			}
 		}
 	});

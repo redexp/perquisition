@@ -4,8 +4,8 @@ var Test = require('app/models/test');
 
 module.exports = tests;
 
-tests.get('/:id/tests', Course.request({write: true}), function (req, res) {
-	res.serverData.course = req.course;
+tests.get('/:id/tests', Course.request({read: true}), function (req, res) {
+	res.serverData.course = req.course.pick('id', 'title');
 
 	Test
 		.findAll({
@@ -17,28 +17,30 @@ tests.get('/:id/tests', Course.request({write: true}), function (req, res) {
 		})
 		.then(function (tests) {
 			res.serverData.tests = tests;
-			res.render('teacher/tests');
+			res.render('student/tests');
 		})
 	;
 });
 
 tests.post('/test/questions', function (req, res) {
-	Test
-		.findOne({
-			attributes: ['id', 'questions'],
-			where: {id: Number(req.body.id)}
+	Course
+		.findUserCourse(req.body.course_id, req.user, {read: true})
+		.then(function (course) {
+			return Test
+				.findOne({
+					attributes: ['questions'],
+					where: {
+						id: req.body.test_id,
+						course_id: course.id
+					}
+				})
+			;
 		})
 		.then(function (test) {
 			if (!test) throw new Error('course.test_not_found');
 
-			return test.questions;
+			res.json(test.questions);
 		})
-		.then(res.json, res.catch)
-	;
-});
-
-tests.post('/test', function (req, res) {
-	Test.upsert(req.body)
-		.then(res.json, res.catch)
+		.catch(res.catch)
 	;
 });

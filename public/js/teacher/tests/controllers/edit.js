@@ -22,12 +22,12 @@ define('controllers/edit', [
 
 	form.callbacks.save = function (data) {
 		data.course_id = store.course.id;
-		return ajax('/teacher/courses/test', data).then(function () {
-			steps('tests');
+		return ajax('/teacher/courses/test', data).then(function (test) {
+			steps('tests', {oldTest: form.test, newTest: test});
 		});
 	};
 
-	form.callbacks.close = function () {
+	form.callbacks.cancel = function () {
 		steps('tests');
 	};
 

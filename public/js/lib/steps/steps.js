@@ -50,13 +50,19 @@ define('steps', [
 		var d = $.Deferred();
 		var p = d.promise();
 
-		parent.height(active.outerHeight());
+		var aHeight = active.outerHeight();
+
+		parent.height(aHeight);
 
 		step.addClass('stepping-next');
 		active.addClass('stepping-active');
-		body.addClass('stepping');
+		body.addClass('stepping-' + type);
 
-		parent.velocity({height: step.outerHeight()}, {duration: 500});
+		var sHeight = step.outerHeight();
+
+		if (sHeight > aHeight) {
+			parent.height(sHeight);
+		}
 
 		step.velocity(effects[direction + 'Effects'][0], {duration: 500});
 		active.velocity(effects[direction + 'Effects'][1], {duration: 500, complete: d.resolve});

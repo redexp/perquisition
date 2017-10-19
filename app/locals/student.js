@@ -15,9 +15,13 @@ module.exports = {
 		"Homework",
 		"Домашнее задание",
 	],
-	'student.perquisitions': [
+	'student.tests': [
 		"Tests",
 		"Контрольные",
+	],
+	'student.start_test': [
+		"Start test",
+		"Начать контрольную",
 	],
 	'student.profile': [
 		"Your profile",

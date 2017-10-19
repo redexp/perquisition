@@ -1,7 +1,7 @@
 <% layout('layout') %>
 
 <% appendStyles([
-    'lib/questions/questions.css',
+    'lib/questions/edit/questions.css',
     'highlight/github-gist.css'
 ]) %>
 
@@ -36,7 +36,9 @@
             </thead>
             <tbody data-list>
             <tr class="hidden">
-                <td data-title></td>
+                <td>
+                    <div data-title class="fixed-height-title"></div>
+                </td>
                 <td class="text-right">
                     <button data-edit class="btn btn-xs btn-default" type="button"><%= __('main.edit') %></button>
                     <button data-delete class="btn btn-xs btn-default" type="button"><%= __('main.delete') %></button>

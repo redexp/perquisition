@@ -77,25 +77,6 @@
     animation: overlay 300ms;
 }
 
-.auto-height-textarea {
-
-}
-
-.auto-height-helper {
-    white-space: pre-wrap;
-    overflow: hidden;
-    //height: 0;
-    position: fixed;
-    top: 0;
-    left: 0;
-    background-color: #fff;
-    z-index: 10000;
-
-    //padding: 7px 12px;
-    font-size: 14px;
-    line-height: 1.42857143;
-}
-
 .hidden-file-selector {
     width: 0.1px;
     height: 0.1px;
@@ -103,6 +84,11 @@
     overflow: hidden;
     position: absolute;
     z-index: -1;
+}
+
+.fixed-height-title {
+    overflow-y: hidden;
+    max-height: 25px;
 }
 
 .row-top {

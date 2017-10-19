@@ -114,6 +114,36 @@ Course.findByTeams = function (teams) {
 	});
 };
 
+Course.findByUserOrTeams = function (user, teams) {
+	return Promise.resolve(teams).then(function (teams) {
+		var or = [{
+			users_permissions: {
+				$or: [
+					{'*,read': 'true'},
+					{[user.id + ',read']: 'true'},
+				]
+			}
+		}];
+
+		if (teams.length > 0) {
+			or.push({
+				teams_permissions: {
+					$or: teams.map(function (team) {
+						return {[team.id + ',read']: 'true'};
+					})
+				}
+			});
+		}
+
+		return Course.findAll({
+			where: {
+				$or: or
+			},
+			order: [['id', 'ASC']]
+		});
+	});
+};
+
 Course.request = function (perms) {
 	var key = JSON.stringify(perms);
 	var request = Course.request[key];
