@@ -54,7 +54,7 @@ module.exports = function (req, res) {
 function scriptsToDevHtml(scripts) {
 	var html = '';
 
-	libFirst(scripts).forEach(function (script) {
+	libFirst(scripts, true).forEach(function (script) {
 		if (script.defineName) {
 			html += `<script>define('${script.defineName}');</script>`;
 		}
@@ -70,7 +70,7 @@ function scriptsToDevHtml(scripts) {
 function scriptsToProdHtml(scripts) {
 	var html = '';
 
-	libFirst(scripts).forEach(function (scripts) {
+	libFirst(scripts, false).forEach(function (scripts) {
 		var hash = md5(JSON.stringify(pluck(scripts, 'src'))),
 			path = `${app.PUBLIC_DIR}/js/cache/${hash}.js`;
 
@@ -115,7 +115,7 @@ function scriptsToProdHtml(scripts) {
 	return html;
 }
 
-function libFirst(scripts) {
+function libFirst(scripts, concat) {
 	var lib = [],
 		rest = [];
 
@@ -128,5 +128,5 @@ function libFirst(scripts) {
 		}
 	});
 
-	return [].concat(lib, rest);
+	return concat ? [].concat(lib, rest) : [lib, rest];
 }
