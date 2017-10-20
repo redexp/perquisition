@@ -14,12 +14,21 @@ define('views/test-form', [
 		Form.apply(this, arguments);
 
 		this.on('open', function (params) {
+			this.test = params.test;
 			this.model('questions').reset(params.test.questions);
 		});
 
-		this.on('save', function () {
+		this.on('save', function (data) {
+			data.test_id = this.test.id;
+			data.course_id = this.test.course_id;
+			data.answers = {};
+
+			function addAnswer(uuid, value) {
+				data.answers[uuid] = value;
+			}
+
 			this.model('questions').views.forEach(function (view) {
-				view.showAnswer();
+				view.showAnswer(addAnswer);
 			});
 		});
 	}
@@ -29,6 +38,7 @@ define('views/test-form', [
 
 		data: function () {
 			return {
+				saved: false,
 				questions: [],
 				types: [Row, Section, Choice]
 			};
@@ -36,6 +46,11 @@ define('views/test-form', [
 
 		clear: function () {
 			this.model('questions').removeAll();
+			this.set('saved', false);
+		},
+
+		cancel: function () {
+			this.callbacks.cancel();
 		},
 
 		getQuestionView: function (question) {
@@ -64,7 +79,15 @@ define('views/test-form', [
 			},
 
 			'@submit': {
-				click: 'submit'
+				click: 'submit',
+				prop: {
+					'disabled': '@saved'
+				}
+			},
+
+			'[data-cancel]': {
+				visible: '@saved',
+				click: 'cancel'
 			}
 		}
 	});

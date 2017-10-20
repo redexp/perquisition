@@ -1,11 +1,17 @@
 define('controllers/test', [
 	'views/test-form',
 	'steps',
-	'ajax'
+	'store',
+	'ajax',
+	'notify',
+	'lang'
 ], function (
 	TestForm,
 	steps,
-	ajax
+	store,
+	ajax,
+	notify,
+	__
 ) {
 
 	var form = new TestForm({
@@ -13,9 +19,15 @@ define('controllers/test', [
 	});
 
 	form.callbacks.save = function (data) {
-		return ajax('/student/courses/test', data).then(function () {
-			form.set('back', true);
+		return ajax('/student/courses/test/answer', data).then(function (test) {
+			notify.success(__('main.saved'));
+			form.set('saved', true);
+			store.trigger('tested', test);
 		});
+	};
+
+	form.callbacks.cancel = function () {
+		steps('tests');
 	};
 
 	steps.on('test-form', function (test) {

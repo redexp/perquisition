@@ -25,9 +25,9 @@ define('views/types/choice', [
 			options: '[data-options]'
 		},
 
-		showAnswer: function () {
+		showAnswer: function (addAnswer) {
 			this.views['@options'].forEach(function (view) {
-				view.showAnswer();
+				view.showAnswer(addAnswer);
 			});
 		},
 
@@ -52,12 +52,18 @@ define('views/types/choice', [
 		data: {
 			is_answer: false,
 			is_error: false,
-			is_success: false
+			is_success: false,
+			disabled: false
 		},
 
-		showAnswer: function () {
-			this.set('is_error', this.data.option.is_answer && !this.data.is_answer);
-			this.set('is_success', this.data.option.is_answer && this.data.is_answer);
+		showAnswer: function (addAnswer) {
+			this.set('is_error', (this.data.is_answer && !this.data.option.is_answer) || (!this.data.is_answer && this.data.option.is_answer));
+			this.set('is_success', this.data.option.is_answer);
+			this.set('disabled', true);
+
+			if (this.data.is_answer) {
+				addAnswer(this.data.option.uuid, true);
+			}
 		},
 
 		template: {
@@ -71,6 +77,9 @@ define('views/types/choice', [
 			'[data-is_answer]': {
 				connect: {
 					'checked': 'is_answer'
+				},
+				prop: {
+					'disabled': '@disabled'
 				}
 			},
 

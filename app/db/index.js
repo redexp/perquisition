@@ -47,6 +47,14 @@ db.Model.prototype.pick = function (props) {
 	return pick(this, props instanceof Array ? props : Array.prototype.slice.call(arguments, 0));
 };
 
+db.Model.prototype.toJSON = function () {
+	return this.get();
+};
+
 module.exports = db;
 
 require('./relations');
+
+require('pg').types.setTypeParser(1114, function (value) {
+	return value;
+});

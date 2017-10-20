@@ -17,9 +17,9 @@ define('views/types/base-container', [
 			questions: '@root'
 		},
 
-		showAnswer: function () {
+		showAnswer: function (addAnswer) {
 			this.views['@questions'].forEach(function (view) {
-				view.showAnswer();
+				view.showAnswer(addAnswer);
 			});
 		},
 

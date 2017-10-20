@@ -23,8 +23,20 @@ module.exports = {
 		"Start test",
 		"Начать контрольную",
 	],
+	'student.testing': [
+		"Testing",
+		"Идёт контрольная",
+	],
+	'student.tested': [
+		"Tested",
+		"Контрольная пройдена",
+	],
 	'student.profile': [
 		"Your profile",
 		"Настройки",
+	],
+	'student.back_to_tests': [
+		"Back to tests",
+		"Вернуться к контрольным",
 	],
 };

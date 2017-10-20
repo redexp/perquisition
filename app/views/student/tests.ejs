@@ -8,9 +8,11 @@
 <% appendScripts([
     ['lib/marked/marked.min.js', 'markdown'],
     ['lib/highlight/highlight.pack.js', 'highlight'],
-    'lib/detachHTML/detachHTML.js',
     ['lib/velocity/velocity.min.js', 'velocity'],
+    ['lib/moment/min/moment.min.js', 'moment'],
+    'lib/detachHTML/detachHTML.js',
     'lib/steps/steps.js',
+    'lib/dateFormat/dateFormat.js',
     'views/form.js',
     'student/tests/**/*.js'
 ]) %>
@@ -34,7 +36,12 @@
                     <div data-title class="fixed-height-title"></div>
                 </td>
                 <td class="text-right">
-                    <button data-start-test class="btn btn-xs btn-default" type="button"><%= __('student.start_test') %></button>
+                    <button data-start-test class="btn btn-xs btn-default" type="button">
+                        <span data-state-title="not-tested"><%= __('student.start_test') %></span>
+                        <span data-state-title="testing"><%= __('student.testing') %></span>
+                        <span data-state-title="tested"><%= __('student.tested') %></span>
+                        <span data-timeout></span>
+                    </button>
                 </td>
             </tr>
             </tbody>
@@ -53,7 +60,7 @@
                 <div data-title class="question-title"></div>
                 <div data-options class="options">
                     <div>
-                        <input data-is_answer type="checkbox"/>
+                        <div class="option-checkbox"><input data-is_answer type="checkbox"/></div>
                         <div data-text></div>
                         <div data-description></div>
                     </div>
@@ -62,5 +69,6 @@
         </div>
 
         <%- partial('components/submit') %>
+        <button data-cancel type="button" class="btn btn-default"><%= __('student.back_to_tests') %></button>
     </div>
 </div>

@@ -12,3 +12,12 @@ Test.upsert = function (data) {
 		return Test.create(data);
 	}
 };
+
+Test.findByIdAndCourse = function (id, course) {
+	return Test.findOne({
+		where: {
+			id: id,
+			course_id: course.id
+		}
+	});
+};

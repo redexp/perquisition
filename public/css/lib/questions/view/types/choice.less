@@ -4,14 +4,26 @@
         flex-direction: row;
         flex-wrap: wrap;
         align-items: flex-start;
-        margin-bottom: 15px;
+        margin-bottom: 10px;
 
         &:last-child {
             margin-bottom: 0;
         }
 
-        > input {
-            margin-right: 15px;
+        .option-checkbox {
+            margin-right: 10px;
+            padding: 4px 8px;
+            border-radius: 3px;
+        }
+
+        &.error > .option-checkbox {
+            background-color: #ff9c9c;
+        }
+        &.success > .option-checkbox {
+            background-color: #d7ffab;
+        }
+        &.success.error > .option-checkbox {
+            background-color: #fdffab;
         }
 
         > [data-text], > [data-description] {
@@ -20,9 +32,13 @@
             }
         }
 
+        > [data-text] {
+            padding-top: 5px;
+        }
+
         > [data-description] {
             width: 100%;
-            margin-left: 20px;
+            margin-left: 30px;
             padding: 5px 7px;
             border: 1px solid #e7e7e7;
             border-radius: 3px;
