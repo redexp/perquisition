@@ -41,7 +41,8 @@ define('views/forms/choice', [
 				return {
 					uuid: option.uuid,
 					is_answer: !!option.is_answer,
-					text: htmlToText(view.ui.text)
+					text: htmlToText(view.ui.text),
+					description: htmlToText(view.ui.description)
 				};
 			});
 		});
@@ -89,7 +90,11 @@ define('views/forms/choice', [
 				each: {
 					prop: 'options',
 					view: Option,
-					dataProp: 'option'
+					dataProp: 'option',
+					add: function (div, view) {
+						div.append(view.node);
+						view.ui.text.focus();
+					}
 				}
 			},
 
@@ -101,19 +106,31 @@ define('views/forms/choice', [
 
 	function Option() {
 		View.apply(this, arguments);
+
+		this.set('description', !!this.data.option.description);
 	}
 
 	View.extend({
 		constructor: Option,
 
 		ui: {
-			text: '[data-text]'
+			text: '[data-text]',
+			description: '[data-description]'
 		},
 
 		data: function () {
 			return {
-				type: this.parent.data.multiple ? 'checkbox' : 'radio'
+				type: this.parent.data.multiple ? 'checkbox' : 'radio',
+				description: false
 			};
+		},
+
+		toggleDescription: function () {
+			this.set('description', !this.data.description);
+
+			if (this.data.description) {
+				this.ui.description.focus();
+			}
 		},
 
 		deleteOption: function () {
@@ -133,6 +150,17 @@ define('views/forms/choice', [
 			'[data-text]': {
 				html: {
 					'=option.text': htmlToText.undo
+				}
+			},
+
+			'[data-toggle-description]': {
+				click: 'toggleDescription'
+			},
+
+			'[data-description]': {
+				visible: '@description',
+				html: {
+					'=option.description': htmlToText.undo
 				}
 			},
 

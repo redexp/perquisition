@@ -31,8 +31,9 @@ define('controllers/tests', [
 
 	steps.on('tests', function (params) {
 		if (params && params.oldTest && params.newTest) {
-			if (params.oldTest.id && tests.model('list').findWhere({id: params.oldTest.id})) {
-				tests.model('list').replace(params.oldTest, params.newTest);
+			if (params.oldTest.id) {
+				var item = tests.model('list').findWhere({id: params.oldTest.id});
+				tests.model('list').replace(item, params.newTest);
 			}
 			else {
 				tests.model('list').add(params.newTest);

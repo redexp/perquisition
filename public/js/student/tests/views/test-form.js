@@ -17,7 +17,11 @@ define('views/test-form', [
 			this.model('questions').reset(params.test.questions);
 		});
 
-
+		this.on('save', function () {
+			this.model('questions').views.forEach(function (view) {
+				view.showAnswer();
+			});
+		});
 	}
 
 	Form.extend({
@@ -57,6 +61,10 @@ define('views/test-form', [
 					dataProp: 'question',
 					node: false
 				}
+			},
+
+			'@submit': {
+				click: 'submit'
 			}
 		}
 	});

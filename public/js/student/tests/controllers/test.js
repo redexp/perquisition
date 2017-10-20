@@ -13,7 +13,9 @@ define('controllers/test', [
 	});
 
 	form.callbacks.save = function (data) {
-
+		return ajax('/student/courses/test', data).then(function () {
+			form.set('back', true);
+		});
 	};
 
 	steps.on('test-form', function (test) {

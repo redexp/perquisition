@@ -171,6 +171,7 @@
                                 <div>
                                     <input type="checkbox"/>
                                     <div data-text></div>
+                                    <div data-description></div>
                                 </div>
                             </div>
                         </div>
@@ -214,8 +215,12 @@
                     <label><%= __('question.options') %></label>
                     <div data-options class="options">
                         <div>
-                            <input data-is_answer title="<%= __('question.option_answer') %>" type="radio" name="data[options][]"/>
-                            <div data-text class="form-control" contenteditable="true"></div>
+                            <input data-is_answer title="<%= __('question.option_answer') %>" type="radio" name="options"/>
+                            <div>
+                                <div data-text class="form-control" contenteditable="true"></div>
+                                <button data-toggle-description class="btn btn-xs btn-default" type="button"><%= __('question.option_description') %></button>
+                                <div data-description class="form-control" contenteditable="true"></div>
+                            </div>
                             <button data-delete class="btn btn-sm btn-default" type="button"><i class="fa fa-minus"></i></button>
                         </div>
                     </div>

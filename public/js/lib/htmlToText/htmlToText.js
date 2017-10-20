@@ -25,7 +25,9 @@ define('htmlToText', ['jquery'], function ($) {
 	}
 
 	htmlToText.undo = function (text) {
-		var html = text.trim();
+		if (!text && text !== 0) return '';
+
+		var html = String(text).trim();
 
 		if (!html) return html;
 

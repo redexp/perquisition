@@ -31,4 +31,8 @@ module.exports = {
 		'Title',
 		'Текст'
 	],
+	'question.option_description': [
+		'Description',
+		'Описание'
+	],
 };

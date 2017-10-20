@@ -67,13 +67,21 @@ define('views/types/choice', [
 					'name': function () {
 						return 'view-' + this.parent.id;
 					}
-				}
+				},
+				checked: '=option.is_answer'
 			},
 
 			'[data-text]': {
 				html: function () {
-					return markdown(this.data.option.text);
+					return markdown(this.data.option.text || '');
 				}
+			},
+
+			'[data-description]': {
+				html: function () {
+					return markdown(this.data.option.description || '');
+				},
+				visible: '=option.description'
 			}
 		}
 	});

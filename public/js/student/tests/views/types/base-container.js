@@ -17,6 +17,12 @@ define('views/types/base-container', [
 			questions: '@root'
 		},
 
+		showAnswer: function () {
+			this.views['@questions'].forEach(function (view) {
+				view.showAnswer();
+			});
+		},
+
 		template: {
 			'@questions': {
 				each: {
