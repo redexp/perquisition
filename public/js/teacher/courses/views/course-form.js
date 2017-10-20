@@ -131,7 +131,8 @@ define('views/course-form', [
 		data: function () {
 			return {
 				course: {
-					title: ''
+					title: '',
+					video_url: ''
 				},
 				users: [],
 				teams: []
@@ -202,6 +203,11 @@ define('views/course-form', [
 			'[name="title"]': {
 				prop: {
 					'value': '@course.title'
+				}
+			},
+			'[name="video_url"]': {
+				prop: {
+					'value': '@course.video_url'
 				}
 			},
 

@@ -90,6 +90,7 @@ define('controllers/courses', [
 
 				return ajax('/teacher/courses/update', data).then(function () {
 					courses.model('list').modelOf(course).set(data);
+					notify.success(__('main.saved'));
 				});
 			}
 		});
