@@ -1,9 +1,11 @@
 define('views/homework-form', [
 	'views/form',
-	'htmlToText'
+	'htmlToText',
+	'jquery'
 ], function (
 	Form,
-	htmlToText
+	htmlToText,
+	$
 ) {
 
 	function HomeworkForm() {
@@ -40,6 +42,21 @@ define('views/homework-form', [
 			};
 		},
 
+		addImageFile: function (file) {
+			if (file.type !== 'image/png' && file.type !== 'image/jpeg') return;
+
+			var view = this;
+			var reader = new FileReader();
+			reader.onload = function () {
+				view.addImage(reader.result);
+			};
+			reader.readAsDataURL(file);
+		},
+
+		addImage: function (data) {
+			document.execCommand('insertHTML', false, $('<img>').attr('src', data).prop('outerHTML'));
+		},
+
 		template: {
 			'@title': {
 				html: {
@@ -49,6 +66,12 @@ define('views/homework-form', [
 			'@description': {
 				html: {
 					'@homework.description': htmlToText.undo
+				},
+				on: {
+					'drop': function (e) {
+						e.preventDefault();
+						this.addImageFile(e.originalEvent.dataTransfer.files[0]);
+					}
 				}
 			},
 
