@@ -127,3 +127,4 @@ courses.get('/:id/questions', Course.request({write: true}), function (req, res)
 });
 
 courses.use(require('./tests'));
+courses.use(require('./homework'));

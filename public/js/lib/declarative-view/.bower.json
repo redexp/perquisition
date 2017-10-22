@@ -1,7 +1,7 @@
 {
   "name": "declarative-view",
   "main": "declarative-view.js",
-  "version": "1.23.0",
+  "version": "1.24.0",
   "homepage": "https://github.com/redexp/declarative-view",
   "authors": [
     "Sergii Kliuchnyk"
@@ -31,14 +31,13 @@
   "scripts": {
     "install-sinon": "cd libs/sinon && npm install"
   },
-  "_release": "1.23.0",
+  "_release": "1.24.0",
   "_resolution": {
     "type": "version",
-    "tag": "v1.23.0",
-    "commit": "0f1e7588ec8401ec1f4b157874a1ab39c1b5f306"
+    "tag": "v1.24.0",
+    "commit": "4d69e32ba77024d9ef129d094ae53dfb0c942368"
   },
   "_source": "https://github.com/redexp/declarative-view.git",
-  "_target": "^1.23.0",
-  "_originalSource": "declarative-view",
-  "_direct": true
+  "_target": "1.*",
+  "_originalSource": "declarative-view"
 }

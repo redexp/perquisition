@@ -71,4 +71,8 @@ module.exports = {
 		'Title',
 		'Название'
 	],
+	'main.are_you_sure': [
+		'Are you sure?',
+		'Вы уверены?'
+	],
 };

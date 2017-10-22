@@ -1,0 +1,59 @@
+<% layout('layout') %>
+
+<% appendStyles([
+    'highlight/github-gist.css'
+]) %>
+
+<% appendScripts([
+    ['lib/marked/marked.min.js', 'markdown'],
+    ['lib/highlight/highlight.pack.js', 'highlight'],
+    ['lib/velocity/velocity.min.js', 'velocity'],
+    'lib/steps/steps.js',
+    'lib/clone/clone.js',
+    'lib/htmlToText/htmlToText.js',
+    'views/form.js',
+    'teacher/homework/**/*.js'
+]) %>
+
+<%- renderTranslationsFor('teacher/homework') %>
+
+<%- partial('teacher/header') %>
+
+<div class="steps">
+    <div id="homeworks" class="step active p-lg">
+        <table class="table">
+            <thead>
+            <tr>
+                <th><%= __('main.title') %></th>
+                <th>&nbsp;</th>
+            </tr>
+            </thead>
+            <tbody data-list>
+            <tr class="hidden">
+                <td data-title></td>
+                <td class="text-right">
+                    <button data-edit class="btn btn-xs btn-default" type="button"><%= __('main.edit') %></button>
+                    <button data-delete class="btn btn-xs btn-default" type="button"><%= __('main.delete') %></button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <button data-add-homework class="btn btn-success" type="button"><%= __('main.add') %></button>
+    </div>
+
+    <form id="homework-form" class="step p-lg">
+        <div class="form-group">
+            <label><%= __('main.title') %></label>
+            <div data-title class="form-control" contenteditable="true"></div>
+        </div>
+
+        <div class="form-group">
+            <label><%= __('course.homework_description') %></label>
+            <div data-description class="form-control" contenteditable="true" style="min-height: 100px; max-height: 400px;"></div>
+        </div>
+
+        <%- partial('components/submit') %>
+        <%- partial('components/cancel') %>
+    </form>
+</div>

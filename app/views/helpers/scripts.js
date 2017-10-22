@@ -78,37 +78,21 @@ function scriptsToProdHtml(scripts) {
 
 		if (fs.existsSync(path)) return;
 
-		var p = Promise.resolve(),
-			lineWriter = fs.createWriteStream(path);
+		var lineWriter = fs.createWriteStream(path);
 
 		scripts.forEach(function (script) {
-			p = p.then(function () {
-				return new Promise(function (done, fail) {
-					if (!fs.existsSync(app.PUBLIC_DIR + script.src)) {
-						lineWriter.write(`\nconsole.error('File not found: ${script.src}');\n`);
-						done();
-						return;
-					}
+			var path = app.PUBLIC_DIR + script.src;
 
-					if (script.defineName) {
-						lineWriter.write(`\ndefine('${script.defineName}');\n`);
-					}
+			if (!fs.existsSync(path)) {
+				lineWriter.write(`\nconsole.error('File not found: ${script.src}');\n`);
+				return;
+			}
 
-					var lineReader = reader.createInterface({
-						input: fs.createReadStream(app.PUBLIC_DIR + script.src)
-					});
+			if (script.defineName) {
+				lineWriter.write(`\ndefine('${script.defineName}');\n`);
+			}
 
-					lineReader.on('line', function (line) {
-						lineWriter.write(line.replace(/^\s*/, '') + "\n");
-					});
-
-					lineReader.on('close', done);
-				});
-			});
-		});
-
-		p.then(function () {
-			lineWriter.end();
+			lineWriter.write(fs.readFileSync(path).toString().replace(/^\s+/gm, '') + "\n;\n");
 		});
 	});
 

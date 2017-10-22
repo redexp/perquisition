@@ -34,5 +34,9 @@ module.exports = {
 	'course.not_found': [
 		'Course not found',
 		'Курс не найден'
-	]
+	],
+	'course.homework_description': [
+		'Description',
+		'Описание'
+	],
 };

@@ -150,7 +150,7 @@ Course.request = function (perms) {
 
 	if (!request) {
 		request = Course.request[key] = function (req, res, next) {
-			var id = req.params.id;
+			var id = req.params.id || req.body.course_id;
 			var user = req.user;
 
 			Course.findUserCourse(id, user, perms)

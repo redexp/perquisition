@@ -63,6 +63,15 @@ define('views/form', [
 			}
 		},
 
+		cancel: function () {
+			this.set('state', 'close');
+			this.trigger('cancel');
+
+			if (this.callbacks.cancel) {
+				this.callbacks.cancel();
+			}
+		},
+
 		getValues: function () {
 			return deparam(this.ui.form.find(':input'));
 		},

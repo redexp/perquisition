@@ -4,6 +4,7 @@ define('utils', [], function () {
 		extend: extend,
 		rest: rest,
 		map: map,
+		pick: pick,
 		debounce: debounce
 	};
 
@@ -42,6 +43,19 @@ define('utils', [], function () {
 			}
 			return arr;
 		}
+	}
+
+	function pick(obj, args) {
+		args = args instanceof Array ? args : rest(arguments);
+
+		var data = {}, prop;
+
+		for (var i = 0, len = args.length; i < len; i++) {
+			prop = args[i];
+			data[prop] = obj[prop];
+		}
+
+		return data;
 	}
 
 	function debounce(wait, func) {

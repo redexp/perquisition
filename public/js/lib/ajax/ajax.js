@@ -6,10 +6,16 @@ define('ajax', [
 	$
 ) {
 
-	return function ajax(url, data, cb) {
+	return ajax;
+
+	function ajax(url, data, cb) {
 		if (typeof data === 'function') {
 			cb = data;
 			data = {};
+		}
+
+		if (ajax.baseURL && url.charAt(0) !== '/') {
+			url = ajax.baseURL + url;
 		}
 
 		data = data || {};
@@ -38,7 +44,7 @@ define('ajax', [
 		});
 
 		return p;
-	};
+	}
 
 	function hasFormData(data) {
 		if (data instanceof window.FormData) return false;
