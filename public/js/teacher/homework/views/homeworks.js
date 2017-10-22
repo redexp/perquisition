@@ -50,6 +50,25 @@ define('views/homeworks', [
 		},
 
 		template: {
+			'[data-is_public]': {
+				visible: {
+					'@homework.is_public': function (state) {
+						state = state ? 'true' : 'false';
+						return function (node) {
+							return node.attr('data-is_public') === state;
+						};
+					}
+				}
+			},
+
+			'[data-is_public="true"]': {
+				attr: {
+					'href': function () {
+						return '/homework/' + this.data.homework.id;
+					}
+				}
+			},
+
 			'[data-title]': {
 				html: {
 					'@homework.title': markdown

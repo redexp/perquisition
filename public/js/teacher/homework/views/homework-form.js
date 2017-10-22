@@ -19,6 +19,7 @@ define('views/homework-form', [
 			data.course_id = this.homework.course_id;
 			data.title = htmlToText(this.ui.title);
 			data.description = htmlToText(this.ui.description);
+			data.is_public = Boolean(data.is_public);
 		});
 	}
 

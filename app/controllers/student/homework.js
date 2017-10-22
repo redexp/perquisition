@@ -39,3 +39,20 @@ homework.post('/homework/description', Course.request({read: true}), function (r
 	;
 });
 
+app.get('/homework/:id', function (req, res) {
+	Homework
+		.findOne({
+			where: {
+				id: req.params.id,
+				is_public: true
+			}
+		})
+		.then(function (homework) {
+			if (!homework) throw new Error('course.homework_not_found');
+
+			res.serverData.homework = homework;
+			res.render('student/public/homework');
+		})
+		.catch(res.catch)
+	;
+});

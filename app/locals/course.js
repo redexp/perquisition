@@ -39,4 +39,8 @@ module.exports = {
 		'Description',
 		'Описание'
 	],
+	'course.public': [
+		'Public',
+		'Открытый доступ'
+	],
 };

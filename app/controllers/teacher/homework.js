@@ -9,7 +9,7 @@ homework.get('/:id/homework', Course.request({read: true}), function (req, res) 
 
 	Homework
 		.findAll({
-			attributes: ['id', 'course_id', 'title'],
+			attributes: ['id', 'course_id', 'title', 'is_public'],
 			where: {
 				course_id: req.course.id
 			},

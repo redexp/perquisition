@@ -24,13 +24,18 @@
         <table class="table">
             <thead>
             <tr>
+                <th width="15">&nbsp;</th>
                 <th><%= __('main.title') %></th>
                 <th>&nbsp;</th>
             </tr>
             </thead>
             <tbody data-list>
             <tr class="hidden">
-                <td data-title></td>
+                <td>
+                    <i data-is_public="false" class="fa fa-lock"></i>
+                    <a data-is_public="true" href="#"><i class="fa fa-unlock-alt"></i></a>
+                </td>
+                <td data-title class="markdown"></td>
                 <td class="text-right">
                     <button data-edit class="btn btn-xs btn-default" type="button"><%= __('main.edit') %></button>
                     <button data-delete class="btn btn-xs btn-default" type="button"><%= __('main.delete') %></button>
@@ -46,6 +51,15 @@
         <div class="form-group">
             <label><%= __('main.title') %></label>
             <div data-title class="form-control" contenteditable="true"></div>
+        </div>
+
+        <div class="form-group">
+            <label><%= __('course.public') %></label>
+            <label class="switch">
+                <input name="is_public" class="switch-input" type="checkbox" checked/>
+                <span class="switch-body">&nbsp;</span>
+                <span class="switch-handle"></span>
+            </label>
         </div>
 
         <div class="form-group">

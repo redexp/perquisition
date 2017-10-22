@@ -7,6 +7,10 @@ var Homework = db.define('homework', {
 	},
 	description: {
 		type: TYPES.STRING
+	},
+	is_public: {
+		type: TYPES.BOOLEAN,
+		defaultValue: true
 	}
 });
 

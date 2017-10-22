@@ -1,0 +1,18 @@
+<% layout('layout') %>
+
+<% appendStyles([
+    'highlight/github-gist.css'
+]) %>
+
+<% appendScripts([
+    ['lib/marked/marked.min.js', 'markdown'],
+    ['lib/highlight/highlight.pack.js', 'highlight'],
+    'student/public/homework/**/*.js'
+]) %>
+
+<%- renderTranslationsFor('student/public/homework') %>
+
+<div id="homework" class="p-lg">
+    <div data-title class="text-center m-b"></div>
+    <div data-description></div>
+</div>
