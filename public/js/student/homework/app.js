@@ -1,5 +1,16 @@
-define('declarative-view', ['view'], function (View) {
-	return View;
+require(['ajax'], function (ajax) {
+	ajax.baseURL = '/student/courses/homework/';
 });
 
-require(['controllers/homework']);
+require(['markdown', 'highlight'], function (markdown, highlight) {
+	markdown.setOptions({
+		highlight: function (code, lang) {
+			return lang ? highlight.highlight(lang, code, true).value : code;
+		},
+		langPrefix: 'hljs '
+	});
+});
+
+require([
+	'controllers/homework'
+]);

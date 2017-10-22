@@ -75,4 +75,12 @@ module.exports = {
 		'Are you sure?',
 		'Вы уверены?'
 	],
+	'main.open': [
+		'Open',
+		'Открыть'
+	],
+	'main.close': [
+		'Close',
+		'Закрыть'
+	],
 };

@@ -1,17 +1,42 @@
 define('controllers/homework', [
-	'views/questions',
+	'views/homeworks',
+	'views/homework-form',
 	'serverData',
-	'compose'
+	'ajax',
+	'steps',
+	'utils'
 ], function (
-	Questions,
+	Homeworks,
+	HomeworkForm,
 	serverData,
-	compose
+	ajax,
+	steps,
+	utils
 ) {
 
-	var questions = new Questions({
-		node: '#questions',
+	var homeworks = new Homeworks({
+		node: '#homeworks',
 		data: {
-			questions: compose(serverData('questions'))
+			list: serverData('homeworks')
 		}
+	});
+
+	var form = new HomeworkForm({
+		node: '#homework-form'
+	});
+
+	form.callbacks.cancel = function () {
+		steps('homeworks');
+	};
+
+	homeworks.callbacks.openHomework = function (homework) {
+		ajax('description', utils.pick(homework, 'id', 'course_id'), function (description) {
+			homework.description = description;
+			steps('homework-form', homework);
+		});
+	};
+
+	steps.on('homework-form', function (homework) {
+		form.open({homework: homework});
 	});
 });

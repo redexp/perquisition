@@ -20,9 +20,5 @@ courses.get('/:id', Course.request({read: true}), function (req, res) {
 courses.get('/:id/chat', Course.request({read: true}));
 courses.use('/:id/chat', require('./chat'));
 
-courses.get('/:id/homework', Course.request({read: true}), function (req, res) {
-	res.serverData.course = req.course;
-	res.render('student/homework');
-});
-
 courses.use(require('./tests'));
+courses.use(require('./homework'));
