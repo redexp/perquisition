@@ -11,7 +11,7 @@ define('htmlToText', ['jquery'], function ($) {
 		for (var i = 0, len = nodes.length; i < len; i++) {
 			var node = nodes[i];
 
-			text += node.innerHTML
+			text += (node.nodeType === 1 ? node.innerHTML : node.textContent)
 				.replace(/&nbsp;/g, ' ')
 				.replace(/&lt;/g, '<')
 				.replace(/&gt;/g, '>')
