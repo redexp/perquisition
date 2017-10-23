@@ -11,7 +11,13 @@ define('htmlToText', ['jquery'], function ($) {
 		for (var i = 0, len = nodes.length; i < len; i++) {
 			var node = nodes[i];
 
-			text += node.innerHTML.replace(/&nbsp;/g, ' ').replace(/\n/g, '');
+			text += node.innerHTML
+				.replace(/&nbsp;/g, ' ')
+				.replace(/&lt;/g, '<')
+				.replace(/&gt;/g, '>')
+				.replace(/<br\/?>/g, "\n")
+				.replace(/\n/g, '')
+			;
 
 			if (
 				node.nodeType === 1 ||
@@ -21,7 +27,7 @@ define('htmlToText', ['jquery'], function ($) {
 			}
 		}
 
-		return text.trim();
+		return text;
 	}
 
 	htmlToText.undo = function (text) {
@@ -31,11 +37,20 @@ define('htmlToText', ['jquery'], function ($) {
 
 		if (!html) return html;
 
-		html = html.replace(/^ +/gm, function (s) {
-			return '&nbsp;'.repeat(s.length);
-		});
+		html = html
+			.replace(/^ +/gm, function (s) {
+				return '&nbsp;'.repeat(s.length);
+			})
+			.replace(/<(\w+|)/g, function (x, tag) {
+				return tag === 'img' || tag === 'br' ? x : '&lt;' + tag;
+			})
+		;
 
-		return '<p>' + html.replace(/\n/g, '</p><p>') + '</p>';
+		html = '<p>' + html.replace(/\n/g, '</p><p>') + '</p>';
+
+		html = html.replace(/<p><\/p>/g, '<p><br></p>');
+
+		return html;
 	};
 
 	return htmlToText;
