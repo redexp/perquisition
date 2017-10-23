@@ -11,7 +11,7 @@ define('htmlToText', ['jquery'], function ($) {
 		for (var i = 0, len = nodes.length; i < len; i++) {
 			var node = nodes[i];
 
-			text += node.textContent.replace(/\n/g, '');
+			text += node.innerHTML.replace(/&nbsp;/g, ' ').replace(/\n/g, '');
 
 			if (
 				node.nodeType === 1 ||
@@ -30,6 +30,10 @@ define('htmlToText', ['jquery'], function ($) {
 		var html = String(text).trim();
 
 		if (!html) return html;
+
+		html = html.replace(/^ +/gm, function (s) {
+			return '&nbsp;'.repeat(s.length);
+		});
 
 		return '<p>' + html.replace(/\n/g, '</p><p>') + '</p>';
 	};

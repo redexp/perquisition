@@ -1,10 +1,12 @@
 define('views/homework-form', [
 	'views/form',
 	'htmlToText',
+	'markdown',
 	'jquery'
 ], function (
 	Form,
 	htmlToText,
+	markdown,
 	$
 ) {
 
@@ -38,7 +40,8 @@ define('views/homework-form', [
 				homework: {
 					title: '',
 					description: ''
-				}
+				},
+				descriptionPreview: ''
 			};
 		},
 
@@ -57,6 +60,14 @@ define('views/homework-form', [
 			document.execCommand('insertHTML', false, $('<img>').attr('src', data).prop('outerHTML'));
 		},
 
+		previewDescription: function () {
+			this.set('descriptionPreview', htmlToText(this.ui.description));
+		},
+
+		editDescription: function () {
+			this.set('descriptionPreview', '');
+		},
+
 		template: {
 			'@title': {
 				html: {
@@ -72,7 +83,24 @@ define('views/homework-form', [
 						e.preventDefault();
 						this.addImageFile(e.originalEvent.dataTransfer.files[0]);
 					}
+				},
+				hidden: '@descriptionPreview'
+			},
+
+			'[data-description-preview]': {
+				html: {
+					'@descriptionPreview': markdown
 				}
+			},
+
+			'[data-preview-description]': {
+				click: 'previewDescription',
+				visible: '!@descriptionPreview'
+			},
+
+			'[data-edit-description]': {
+				click: 'editDescription',
+				visible: '@descriptionPreview'
 			},
 
 			'[data-cancel]': {
