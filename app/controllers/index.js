@@ -10,9 +10,9 @@ if (app.IS_DEV) {
 	});
 }
 
-app.use(require('./login'));
+app.use(app.unauth = require('express').Router());
 
-app.use('/test', require('./test'));
+app.use(require('./login'));
 
 app.use(function (req, res, next) {
 	if (!req.user) {

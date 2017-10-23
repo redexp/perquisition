@@ -39,7 +39,7 @@ homework.post('/homework/description', Course.request({read: true}), function (r
 	;
 });
 
-app.get('/homework/:id', function (req, res) {
+app.unauth.get('/homework/:id', function (req, res) {
 	Homework
 		.findOne({
 			where: {
