@@ -47,12 +47,22 @@
             display: none;
         }
 
-        > .panel-heading [data-expand] {
-            display: none;
+        > .panel-heading {
+            [data-collapse] {
+                display: inline-block;
+            }
+            [data-expand] {
+                display: none;
+            }
         }
 
-        &.collapsed > .panel-heading [data-expand] {
-            display: inline-block;
+        &.collapsed > .panel-heading {
+            [data-collapse] {
+                display: none;
+            }
+            [data-expand] {
+                display: inline-block;
+            }
         }
     }
 }

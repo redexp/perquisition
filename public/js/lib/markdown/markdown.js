@@ -26,7 +26,7 @@ define('markdown', [
 	function spoiler(text) {
 		return text
 			.replace(/<spoiler label="([^"]+)">/g, function (x, label) {
-				return '<div class="spoiler"><label class="btn btn-sm btn-default">'+ label +' <i class="fa fa-caret-down"></i><i class="fa fa-caret-up"></i></label><div>';
+				return '<div class="spoiler"><label class="btn btn-sm btn-default">'+ label +' <i class="fa fa-caret-down"></i><i class="fa fa-caret-up"></i></label><div>\n';
 			})
 			.replace(/<\/spoiler>/g, '</div></div>')
 		;

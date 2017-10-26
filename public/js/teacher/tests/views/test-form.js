@@ -27,6 +27,14 @@ define('views/test-form', [
 			form.callbacks.editQuestion(question);
 		};
 
+		questions.callbacks.cloneQuestion = function (question) {
+			form.callbacks.cloneQuestion(question);
+		};
+
+		questions.callbacks.deleteQuestion = function (question) {
+			form.callbacks.deleteQuestion(question);
+		};
+
 		this.on('open', function (params) {
 			this.test = params.test;
 			questions.model('questions').reset(clone(params.test.questions));

@@ -13,9 +13,11 @@
 
 <% appendScripts([
     ['lib/spreadcast/spreadcast.js', 'spreadcast'],
-    'lib/htmlToText/htmlToText.js',
-    ['lib/marked/marked.min.js', 'markdown'],
+    ['lib/markdown-it/dist/markdown-it.min.js', 'markdown-it'],
     ['lib/highlight/highlight.pack.js', 'highlight'],
+    'lib/markdown/markdown.js',
+    'lib/code-editor/code-editor.js',
+    'lib/htmlToText/htmlToText.js',
     ['lib/moment/min/moment.min.js', 'moment'],
     'lib/faye/faye-browser-min.js',
     'lib/uuid/uuid.js',
@@ -79,7 +81,7 @@
             </div>
             <div class="chat-textarea">
                 <div data-chat-disabled class="chat-textarea-overlay"><%= __('chat.disabled') %></div>
-                <div data-textarea contenteditable="true" class="form-control"></div>
+                <div data-textarea data-code-editor contenteditable="true" class="form-control"></div>
                 <button data-add-message class="btn btn-sm btn-primary" type="button"><i class="fa fa-send"></i></button>
             </div>
         </div>

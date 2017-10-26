@@ -21,21 +21,6 @@ require(['store', 'serverData'], function (store, serverData) {
 	}
 });
 
-require(['markdown', 'highlight'], function (markdown, highlight) {
-	markdown.setOptions({
-		highlight: function (code, lang) {
-			try {
-				return lang ? highlight.highlight(lang, code, true).value : code;
-			}
-			catch (e) {
-				console.error('Highlight error', e);
-				return code;
-			}
-		},
-		langPrefix: 'hljs '
-	});
-});
-
 require([
 	'controllers/chat'
 ]);

@@ -5,7 +5,10 @@ define('controllers/edit', [
 	'ajax',
 	'promise',
 	'uuid',
-	'store'
+	'store',
+	'clone',
+	'notify',
+	'lang'
 ], function (
 	TestForm,
 	questionsForms,
@@ -13,7 +16,10 @@ define('controllers/edit', [
 	ajax,
 	Promise,
 	uuid,
-	store
+	store,
+	clone,
+	notify,
+	__
 ) {
 
 	var form = new TestForm({
@@ -23,6 +29,7 @@ define('controllers/edit', [
 	form.callbacks.save = function (data) {
 		data.course_id = store.course.id;
 		return ajax('/teacher/courses/test', data).then(function (test) {
+			notify.success(__('main.saved'));
 			steps('tests', {oldTest: form.test, newTest: test});
 		});
 	};
@@ -45,6 +52,18 @@ define('controllers/edit', [
 				question.model('question').assign(data);
 			}
 		});
+	};
+
+	form.callbacks.cloneQuestion = function (question) {
+		var list = question.parent === question.composer ? question.parent.model('questions') : question.parent.model(['question', 'questions']);
+		list.add(clone(question.data.question), list.indexOf(question.data.question) + 1);
+	};
+
+	form.callbacks.deleteQuestion = function (question) {
+		if (!confirm(__('main.are_you_sure'))) return;
+
+		var list = question.parent === question.composer ? question.parent.model('questions') : question.parent.model(['question', 'questions']);
+		list.remove(question.data.question);
 	};
 
 	steps.on('test-form', function (test) {
