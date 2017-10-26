@@ -1,0 +1,29 @@
+.spoiler {
+    > label {
+        i.fa-caret-up {
+            display: none;
+        }
+        i.fa-caret-down {
+            display: inline-block;
+        }
+    }
+
+    > div {
+        display: none;
+    }
+
+    &.open {
+        > label {
+            i.fa-caret-up {
+                display: inline-block;
+            }
+            i.fa-caret-down {
+                display: none;
+            }
+        }
+
+        > div {
+            display: block;
+        }
+    }
+}

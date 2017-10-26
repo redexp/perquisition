@@ -5,8 +5,10 @@
 ]) %>
 
 <% appendScripts([
-    ['lib/marked/marked.min.js', 'markdown'],
+    ['lib/markdown-it/dist/markdown-it.min.js', 'markdown-it'],
     ['lib/highlight/highlight.pack.js', 'highlight'],
+    'lib/markdown/markdown.js',
+    'lib/code-editor/code-editor.js',
     ['lib/velocity/velocity.min.js', 'velocity'],
     'lib/steps/steps.js',
     'lib/clone/clone.js',
@@ -68,7 +70,7 @@
                 <button data-preview-description class="btn btn-xs btn-default" type="button"><%= __('course.preview') %></button>
                 <button data-edit-description class="btn btn-xs btn-default" type="button"><%= __('main.close') %></button>
             </label>
-            <div data-description class="form-control" contenteditable="true" style="min-height: 100px; max-height: 400px;"></div>
+            <div data-description data-code-editor class="form-control" contenteditable="true" style="min-height: 100px; max-height: 400px;"></div>
             <div data-description-preview></div>
         </div>
 

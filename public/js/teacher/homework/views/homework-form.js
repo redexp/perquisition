@@ -14,6 +14,7 @@ define('views/homework-form', [
 		Form.apply(this, arguments);
 
 		this.on('open', function (params) {
+			this.set('descriptionPreview', '');
 			this.homework = params.homework;
 			this.model('homework').assign(params.homework, 'default');
 		});
