@@ -1,0 +1,1 @@
+.spoiler>label i.fa-caret-up{display:none}.spoiler>label i.fa-caret-down{display:inline-block}.spoiler>div{display:none}.spoiler.open>label i.fa-caret-up{display:inline-block}.spoiler.open>label i.fa-caret-down{display:none}.spoiler.open>div{display:block}
