@@ -58,6 +58,17 @@ define('views/types/choice', [
 	View.extend({
 		constructor: Option,
 
+		showUsers: function () {
+			var uuid = this.data.option.uuid;
+
+			this.parent.composer.callbacks.showUsers(
+				this.parent.composer.answers
+					.filter(function (answer) {
+						return !!answer.answers[uuid];
+					})
+			);
+		},
+
 		template: {
 			'input': {
 				attr: {
@@ -69,6 +80,16 @@ define('views/types/choice', [
 					}
 				},
 				checked: '=option.is_answer'
+			},
+
+			'[data-answers-count]': {
+				text: function () {
+					var uuid = this.data.option.uuid;
+					return this.parent.composer.answers.reduce(function (sum, answer) {
+						return sum + (answer.answers[uuid] ? 1 : 0);
+					}, 0);
+				},
+				click: '!showUsers'
 			},
 
 			'[data-text]': {

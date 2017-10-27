@@ -19,24 +19,15 @@ define('views/test-form', [
 			node: this.find('#questions')
 		});
 
-		questions.callbacks.addQuestion = function (type, parent) {
-			form.callbacks.addQuestion(type, parent);
-		};
-
-		questions.callbacks.editQuestion = function (question) {
-			form.callbacks.editQuestion(question);
-		};
-
-		questions.callbacks.cloneQuestion = function (question) {
-			form.callbacks.cloneQuestion(question);
-		};
-
-		questions.callbacks.deleteQuestion = function (question) {
-			form.callbacks.deleteQuestion(question);
-		};
+		['addQuestion', 'editQuestion', 'cloneQuestion', 'deleteQuestion', 'showUsers'].forEach(function (callback) {
+			questions.callbacks[callback] = function () {
+				form.callbacks[callback].apply(null, arguments);
+			};
+		});
 
 		this.on('open', function (params) {
 			this.test = params.test;
+			questions.answers = params.test.answers;
 			questions.model('questions').reset(clone(params.test.questions));
 		});
 

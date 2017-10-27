@@ -1,29 +1,37 @@
 define('controllers/edit', [
 	'views/test-form',
 	'views/questions-forms',
+	'views/answers-form',
 	'steps',
 	'ajax',
 	'promise',
 	'uuid',
 	'store',
 	'clone',
+	'utils',
 	'notify',
 	'lang'
 ], function (
 	TestForm,
 	questionsForms,
+	AnswersForm,
 	steps,
 	ajax,
 	Promise,
 	uuid,
 	store,
 	clone,
+	utils,
 	notify,
 	__
 ) {
 
 	var form = new TestForm({
 		node: '#test-form'
+	});
+
+	var answersForm = new AnswersForm({
+		node: '#answers-form'
 	});
 
 	form.callbacks.save = function (data) {
@@ -66,24 +74,44 @@ define('controllers/edit', [
 		list.remove(question.data.question);
 	};
 
+	form.callbacks.showUsers = function (answers) {
+		var ids = answers.map(function (answer) {
+			return answer.user_id;
+		});
+
+		ajax('users', {ids: ids}).then(function (users) {
+			users = utils.indexBy(users, 'id');
+
+			answersForm.open({users: answers.map(function (answer) {
+				var user = users[answer.user_id];
+				user.time = answer.time;
+				return user;
+			})});
+		});
+	};
+
 	steps.on('test-form', function (test) {
 		form.clear();
 
 		var p;
 
 		if (test.id) {
-			p = ajax('/teacher/courses/test/questions', {id: test.id});
+			p = Promise.all([
+				ajax('questions', {id: test.id}),
+				ajax('answers', {id: test.id})
+			]);
 		}
 		else {
-			p = Promise.resolve([]);
+			p = Promise.resolve([[], []]);
 		}
 
-		p.then(function (questions) {
+		p.then(function (data) {
 			form.open({
 				test: {
 					id: test.id,
 					title: test.title,
-					questions: questions
+					questions: data[0],
+					answers: data[1]
 				}
 			});
 		});

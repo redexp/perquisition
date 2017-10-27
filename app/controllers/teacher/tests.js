@@ -1,6 +1,8 @@
 var tests = require('express').Router();
 var Course = require('app/models/course');
 var Test = require('app/models/test');
+var Answer = require('app/models/answer');
+var User = require('app/models/user');
 
 module.exports = tests;
 
@@ -32,6 +34,25 @@ tests.post('/test/questions', function (req, res) {
 			if (!test) throw new Error('course.test_not_found');
 
 			return test.questions;
+		})
+		.then(res.json, res.catch)
+	;
+});
+
+tests.post('/test/answers', function (req, res) {
+	Answer
+		.findAll({
+			where: {test_id: Number(req.body.id)}
+		})
+		.then(res.json, res.catch)
+	;
+});
+
+tests.post('/test/users', function (req, res) {
+	User
+		.findAll({
+			attributes: ['id', 'photo', 'name'],
+			where: {id: {$in: req.body.ids}}
 		})
 		.then(res.json, res.catch)
 	;

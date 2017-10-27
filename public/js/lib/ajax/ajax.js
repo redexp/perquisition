@@ -6,6 +6,8 @@ define('ajax', [
 	$
 ) {
 
+	ajax.baseURL = '';
+
 	return ajax;
 
 	function ajax(url, data, cb) {

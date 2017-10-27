@@ -11,6 +11,7 @@
     ['lib/highlight/highlight.pack.js', 'highlight'],
     'lib/markdown/markdown.js',
     ['lib/velocity/velocity.min.js', 'velocity'],
+    ['lib/moment/min/moment.min.js', 'moment'],
     'lib/bootstrap/modal.js',
     'lib/detachHTML/detachHTML.js',
     'lib/steps/steps.js',
@@ -171,6 +172,7 @@
                             <div data-options class="options">
                                 <div>
                                     <input type="checkbox"/>
+                                    <a data-answers-count href="#"></a>
                                     <div data-text></div>
                                     <div data-description></div>
                                 </div>
@@ -231,6 +233,24 @@
                 <%- partial('components/submit') %>
                 <%- partial('components/cancel') %>
             </form>
+        </div>
+    </div>
+</div>
+
+<div id="answers-form" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div data-users class="m-b">
+                    <div class="row-center m-b-sm">
+                        <strong data-time class="m-r-sm"></strong>
+                        <img data-photo src="" alt="Photo" height="40" class="m-r-sm"/>
+                        <div data-name></div>
+                    </div>
+                </div>
+
+                <%- partial('components/cancel') %>
+            </div>
         </div>
     </div>
 </div>

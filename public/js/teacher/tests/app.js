@@ -1,6 +1,8 @@
 define('declarative-view', ['view'], function (View) { return View; });
 
-require(['store', 'serverData'], function (store, serverData) {
+require(['ajax', 'store', 'serverData'], function (ajax, store, serverData) {
+	ajax.baseURL = '/teacher/courses/test/';
+
 	store.course = serverData('course');
 	store.tests = serverData('tests');
 });

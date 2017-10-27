@@ -5,6 +5,7 @@ define('utils', [], function () {
 		rest: rest,
 		map: map,
 		pick: pick,
+		indexBy: indexBy,
 		debounce: debounce
 	};
 
@@ -56,6 +57,16 @@ define('utils', [], function () {
 		}
 
 		return data;
+	}
+
+	function indexBy(arr, prop) {
+		var hash = {};
+
+		arr.forEach(function (item) {
+			hash[item[prop]] = item;
+		});
+
+		return hash;
 	}
 
 	function debounce(wait, func) {
