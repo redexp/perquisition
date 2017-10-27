@@ -83,7 +83,7 @@ define('controllers/edit', [
 			users = utils.indexBy(users, 'id');
 
 			answersForm.open({users: answers.map(function (answer) {
-				var user = users[answer.user_id];
+				var user = clone(users[answer.user_id]);
 				user.time = answer.time;
 				return user;
 			})});

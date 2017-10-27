@@ -42,7 +42,8 @@ tests.post('/test/questions', function (req, res) {
 tests.post('/test/answers', function (req, res) {
 	Answer
 		.findAll({
-			where: {test_id: Number(req.body.id)}
+			where: {test_id: Number(req.body.id)},
+			order: [['time', 'ASC']]
 		})
 		.then(res.json, res.catch)
 	;
