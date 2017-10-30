@@ -84,6 +84,9 @@ define('views/types/choice', [
 				attr: {
 					'type': function () {
 						return this.parent.data.question.multiple ? 'checkbox' : 'radio';
+					},
+					'name': function () {
+						return 'view' + this.parent.id;
 					}
 				}
 			},
