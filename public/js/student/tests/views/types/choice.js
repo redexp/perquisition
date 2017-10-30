@@ -44,6 +44,18 @@ define('views/types/choice', [
 
 	function Option() {
 		View.apply(this, arguments);
+
+		if (!this.parent.data.question.multiple) {
+			this.on('set/is_answer', function (checked) {
+				if (!checked) return;
+
+				var view = this;
+				this.parent.model(['question', 'options']).views.forEach(function (item) {
+					if (item === view) return;
+					item.set('is_answer', false);
+				});
+			});
+		}
 	}
 
 	View.extend({
