@@ -108,6 +108,18 @@ define('views/forms/choice', [
 		View.apply(this, arguments);
 
 		this.set('description', !!this.data.option.description);
+
+		this.listenOn(this.model('option'), 'set/is_answer', function (checked) {
+			if (!checked || this.parent.data.multiple) return;
+
+			var view = this;
+
+			this.parent.model('options').views.forEach(function (item) {
+				if (item === view) return;
+
+				item.model('option').set('is_answer', false);
+			});
+		});
 	}
 
 	View.extend({
