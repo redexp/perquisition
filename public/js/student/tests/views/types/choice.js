@@ -57,7 +57,7 @@ define('views/types/choice', [
 		},
 
 		showAnswer: function (addAnswer) {
-			this.set('is_error', (this.data.is_answer && !this.data.option.is_answer) || (!this.data.is_answer && this.data.option.is_answer));
+			this.set('is_error', this.data.is_answer && !this.data.option.is_answer);
 			this.set('is_success', this.data.option.is_answer);
 			this.set('disabled', true);
 
@@ -80,6 +80,11 @@ define('views/types/choice', [
 				},
 				prop: {
 					'disabled': '@disabled'
+				},
+				attr: {
+					'type': function () {
+						return this.parent.data.question.multiple ? 'checkbox' : 'radio';
+					}
 				}
 			},
 
