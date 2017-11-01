@@ -35,7 +35,7 @@ define('views/questions', [
 				componentDataProp: 'question',
 				componentTypeProp: 'type',
 				questions: [],
-				types: [Row, Section, Choice].map(function (Class) {
+				types: [Choice, Row, Section].map(function (Class) {
 					return {
 						view:  Class,
 						id:    Class.id,

@@ -34,6 +34,7 @@ define('views/test-form', [
 		this.on('save', function (data) {
 			data.id = this.test.id;
 			data.course_id = this.test.course_id;
+			data.status = this.ui.published.prop('checked') ? 'published' : 'draft';
 			data.title = htmlToText(this.ui.title);
 			data.questions = clone(questions.data.questions);
 		});
@@ -43,7 +44,8 @@ define('views/test-form', [
 		constructor: TestForm,
 
 		ui: {
-			title: '[data-test-title]'
+			title: '[data-test-title]',
+			published: '[name="published"]'
 		},
 
 		clear: function () {
@@ -63,6 +65,14 @@ define('views/test-form', [
 				html: {
 					'open': function (params) {
 						return htmlToText.undo(params.test.title);
+					}
+				}
+			},
+
+			'@published': {
+				checked: {
+					'open': function (params) {
+						return params.test.status === 'published';
 					}
 				}
 			},

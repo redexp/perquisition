@@ -24,6 +24,7 @@ define('views/homework-form', [
 			data.course_id = this.homework.course_id;
 			data.title = htmlToText(this.ui.title);
 			data.description = htmlToText(this.ui.description);
+			data.status = data.published ? 'published' : 'draft';
 			data.is_public = Boolean(data.is_public);
 		});
 	}
@@ -40,6 +41,8 @@ define('views/homework-form', [
 			return {
 				homework: {
 					title: '',
+					published: false,
+					is_public: false,
 					description: ''
 				},
 				descriptionPreview: ''
@@ -75,6 +78,23 @@ define('views/homework-form', [
 					'@homework.title': htmlToText.undo
 				}
 			},
+
+			'[name="published"]': {
+				checked: {
+					'open': function (params) {
+						return params.homework.status === 'published';
+					}
+				}
+			},
+
+			'[name="is_public"]': {
+				checked: {
+					'open': function (params) {
+						return params.homework.is_public;
+					}
+				}
+			},
+
 			'@description': {
 				html: {
 					'@homework.description': htmlToText.undo

@@ -21,6 +21,7 @@ define('controllers/tests', [
 		steps('test-form', {
 			course_id: course.id,
 			title: '',
+			status: 'draft',
 			questions: []
 		});
 	};

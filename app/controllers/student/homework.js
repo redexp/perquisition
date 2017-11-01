@@ -12,7 +12,8 @@ homework.get('/:id/homework', Course.request({read: true}), function (req, res) 
 		.findAll({
 			attributes: ['id', 'course_id', 'title'],
 			where: {
-				course_id: req.course.id
+				course_id: req.course.id,
+				status: 'published'
 			},
 			order: [['id', 'ASC']]
 		})
@@ -44,6 +45,7 @@ app.unauth.get('/homework/:id', function (req, res) {
 		.findOne({
 			where: {
 				id: req.params.id,
+				status: 'published',
 				is_public: true
 			}
 		})

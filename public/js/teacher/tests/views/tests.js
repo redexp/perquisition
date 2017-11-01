@@ -46,6 +46,16 @@ define('views/tests', [
 		},
 
 		template: {
+			'[data-status]': {
+				visible: {
+					'@test.status': function (status) {
+						return function (node) {
+							return node.attr('data-status') === status;
+						};
+					}
+				}
+			},
+
 			'[data-title]': {
 				html: function () {
 					return markdown(this.data.test.title);

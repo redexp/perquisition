@@ -11,7 +11,7 @@ tests.get('/:id/tests', Course.request({write: true}), function (req, res) {
 
 	Test
 		.findAll({
-			attributes: ['id', 'course_id', 'title'],
+			attributes: ['id', 'course_id', 'title', 'status'],
 			where: {
 				course_id: req.course.id
 			},

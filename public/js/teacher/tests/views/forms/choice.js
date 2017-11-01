@@ -76,7 +76,9 @@ define('views/forms/choice', [
 		template: {
 			'[data-title]': {
 				html: {
-					'@title': htmlToText.undo
+					'open': function (params) {
+						return htmlToText.undo(params.question.title);
+					}
 				}
 			},
 

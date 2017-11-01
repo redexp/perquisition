@@ -109,7 +109,8 @@ Course.findByTeams = function (teams) {
 						return {[team.id + ',read']: 'true'};
 					})
 				}
-			}
+			},
+			order: [['id', 'ASC']]
 		});
 	});
 };

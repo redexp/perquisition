@@ -32,12 +32,17 @@
         <table class="table">
             <thead>
             <tr>
+                <th width="10">&nbsp;</th>
                 <th><%= __('main.title') %></th>
                 <th>&nbsp;</th>
             </tr>
             </thead>
             <tbody data-list>
             <tr class="hidden">
+                <td>
+                    <span data-status="published" class="label label-primary"><%= __('course.published') %></span>
+                    <span data-status="draft" class="label label-warning"><%= __('course.draft') %></span>
+                </td>
                 <td>
                     <div data-title class="fixed-height-title"></div>
                 </td>
@@ -56,6 +61,17 @@
         <div class="form-group">
             <label><%= __('main.title') %></label>
             <div data-test-title class="form-control" contenteditable="true"></div>
+        </div>
+
+        <div class="form-group">
+            <label><%= __('course.published') %></label>
+            <div>
+                <label class="switch">
+                    <input name="published" class="switch-input" type="checkbox"/>
+                    <span class="switch-body">&nbsp;</span>
+                    <span class="switch-handle"></span>
+                </label>
+            </div>
         </div>
 
         <div class="form-group">
@@ -150,12 +166,13 @@
                             <div data-drag-zone class="question-drag-block"><%= __('question.choice') %></div>
 
                             <div>
+                                <button data-edit class="btn btn-xs btn-default" type="button"><%= __('main.edit') %></button>
+
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
                                         <%= __('main.actions') %> <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-right">
-                                        <li data-edit><a href="#"><%= __('main.edit') %></a></li>
                                         <li data-clone><a href="#"><%= __('main.clone') %></a></li>
                                         <li class="divider"></li>
                                         <li data-delete><a href="#"><%= __('main.delete') %></a></li>

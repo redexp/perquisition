@@ -107,12 +107,10 @@ define('controllers/edit', [
 
 		p.then(function (data) {
 			form.open({
-				test: {
-					id: test.id,
-					title: test.title,
+				test: utils.extend(clone(test), {
 					questions: data[0],
 					answers: data[1]
-				}
+				})
 			});
 		});
 	});

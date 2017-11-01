@@ -47,4 +47,12 @@ module.exports = {
 		'Preview',
 		'Просмотр'
 	],
+	'course.published': [
+		'Published',
+		'Опубликовано'
+	],
+	'course.draft': [
+		'Draft',
+		'Черновик'
+	],
 };
