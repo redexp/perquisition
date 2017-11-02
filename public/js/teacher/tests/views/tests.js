@@ -45,6 +45,10 @@ define('views/tests', [
 			this.parent.callbacks.editTest(this.data.test);
 		},
 
+		deleteTest: function () {
+			this.parent.callbacks.deleteTest(this.data.test);
+		},
+
 		template: {
 			'[data-status]': {
 				visible: {
@@ -64,6 +68,10 @@ define('views/tests', [
 
 			'[data-edit]': {
 				click: 'editTest'
+			},
+
+			'[data-delete]': {
+				click: 'deleteTest'
 			}
 		}
 	});

@@ -59,6 +59,18 @@ tests.post('/test/users', function (req, res) {
 	;
 });
 
+tests.post('/test/delete', Course.request({write: true}), function (req, res) {
+	Test.findById(req.body.id)
+		.then(function (test) {
+			return test.destroy()
+		})
+		.then(function () {
+			res.json(true);
+		})
+		.catch(res.catch)
+	;
+});
+
 tests.post('/test', function (req, res) {
 	Test.upsert(req.body)
 		.then(res.json, res.catch)

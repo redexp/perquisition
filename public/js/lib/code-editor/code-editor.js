@@ -4,7 +4,7 @@ require([
 	$
 ) {
 
-	$('[data-code-editor]').on('keyup', function (e) {
+	$('body').on('keyup', '[data-code-editor]', function (e) {
 		if (e.keyCode !== 13) return;
 
 		var sel = getSelection();
@@ -26,7 +26,7 @@ require([
 		document.execCommand('insertHTML', false, '&nbsp;'.repeat(tabs[0].length));
 	});
 
-	$('[data-code-editor]').on('keydown', function (e) {
+	$('body').on('keydown', '[data-code-editor]', function (e) {
 		if (e.keyCode !== 9) return;
 
 		var sel = getSelection();

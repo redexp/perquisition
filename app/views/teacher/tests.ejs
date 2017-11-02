@@ -10,6 +10,7 @@
     ['lib/markdown-it/dist/markdown-it.min.js', 'markdown-it'],
     ['lib/highlight/highlight.pack.js', 'highlight'],
     'lib/markdown/markdown.js',
+    'lib/code-editor/code-editor.js',
     ['lib/velocity/velocity.min.js', 'velocity'],
     ['lib/moment/min/moment.min.js', 'moment'],
     'lib/bootstrap/modal.js',
@@ -60,7 +61,7 @@
     <div id="test-form" class="step p-lg">
         <div class="form-group">
             <label><%= __('main.title') %></label>
-            <div data-test-title class="form-control" contenteditable="true"></div>
+            <div data-test-title data-code-editor class="form-control" contenteditable="true"></div>
         </div>
 
         <div class="form-group">
@@ -223,7 +224,7 @@
             <form class="modal-body">
                 <div class="form-group">
                     <label><%= __('question.title') %></label>
-                    <div data-title class="form-control" contenteditable="true"></div>
+                    <div data-title data-code-editor class="form-control" contenteditable="true"></div>
                 </div>
 
                 <div class="form-group">
@@ -237,9 +238,9 @@
                         <div>
                             <input data-is_answer title="<%= __('question.option_answer') %>" type="radio" name="options"/>
                             <div>
-                                <div data-text class="form-control" contenteditable="true"></div>
+                                <div data-text data-code-editor class="form-control" contenteditable="true"></div>
                                 <button data-toggle-description class="btn btn-xs btn-default" type="button"><%= __('question.option_description') %></button>
-                                <div data-description class="form-control" contenteditable="true"></div>
+                                <div data-description data-code-editor class="form-control" contenteditable="true"></div>
                             </div>
                             <button data-delete class="btn btn-sm btn-default" type="button"><i class="fa fa-minus"></i></button>
                         </div>

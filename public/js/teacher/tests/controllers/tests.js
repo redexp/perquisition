@@ -1,11 +1,15 @@
 define('controllers/tests', [
 	'views/tests',
 	'store',
-	'steps'
+	'steps',
+	'ajax',
+	'lang'
 ], function (
 	Tests,
 	store,
-	steps
+	steps,
+	ajax,
+	__
 ) {
 
 	var course = store.course;
@@ -28,6 +32,13 @@ define('controllers/tests', [
 
 	tests.callbacks.editTest = function (test) {
 		steps('test-form', test);
+	};
+
+	tests.callbacks.deleteTest = function (test) {
+		if (!confirm(__('main.are_you_sure'))) return;
+
+		tests.model('list').remove(test);
+		ajax('delete', {id: test.id, course_id: test.course_id});
 	};
 
 	steps.on('tests', function (params) {
