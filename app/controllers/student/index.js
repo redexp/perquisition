@@ -18,6 +18,7 @@ student.get('/', function (req, res) {
 
 student.use('/courses', require('./courses'));
 student.use('/profile', require('./profile'));
+student.use('/license-key', require('./license-key'));
 
 var fs = require('fs');
 

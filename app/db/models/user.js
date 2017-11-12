@@ -28,6 +28,13 @@ var User = db.define('user', {
 	},
 	password_code: {
 		type: TYPES.STRING
+	},
+	license_key: {
+		type: TYPES.STRING
+	},
+	is_license_key_used: {
+		type: TYPES.BOOLEAN,
+		defaultValue: false
 	}
 });
 

@@ -1,0 +1,12 @@
+<% layout('layout') %>
+
+<% appendScripts([
+    'student/license/**/*.js'
+]) %>
+
+<%- partial('student/header') %>
+
+<div class="p">
+    <h3><%= __('student.license_key') %></h3>
+    <div id="main" class="well" style="display: inline-block;"><%- licenseKey || __('student.no_license_key') %></div>
+</div>
